@@ -1,0 +1,167 @@
+20:44:08 models: 17, tools: ['grounded', 'same', 'extract', 'classify_batch', 'tag_batch'], groups: ['api.groq.com', 'api.mistral.ai', 'local', 'remote', 'openrouter.ai', 'api.typesafe.ai', 'generativelanguage.googleapis.com']
+20:44:08 mistral-ministral8b/grounded: start
+20:44:08 groq-gptoss20b/grounded: start
+20:44:08 typesafe-jev/grounded: start
+20:44:08 or-nemotron120b/grounded: start
+20:44:08 gemini-flashlite/grounded: start
+20:44:08 air-qwen: gate refuses (on battery); waiting
+20:44:09 or-nemotron120b/grounded: unavailable 0/3 (MINION_BACKEND_ERROR: openai-compat HTTP 404: {"error":{"message":"Provider returned error","code":404,"metadata":{"raw":"{\"status\":404,\"title\":\"Not Found\)
+20:44:11 mini-gemma4b/grounded: start
+20:44:15 typesafe-jev/grounded: done 9/31
+20:44:15 typesafe-jev/classify_batch: start
+20:44:21 typesafe-jev/classify_batch: done 34/34
+20:44:25 mistral-ministral8b/grounded: done 29/31
+20:44:25 mistral-ministral8b/same: start
+20:44:37 mistral-ministral8b/same: done 20/30
+20:44:37 mistral-ministral8b/extract: start
+20:44:55 mistral-ministral8b/extract: done 28/30
+20:44:55 mistral-ministral8b/classify_batch: start
+20:44:58 mistral-ministral8b/classify_batch: rate_limited_out 6/12 (provider kept refusing (quota?))
+20:44:58 mistral-ministral8b/tag_batch: start
+20:44:59 mistral-ministral8b/tag_batch: rate_limited_out 0/3 (provider kept refusing (quota?))
+20:45:29 groq-gptoss20b/grounded: done 31/31
+20:45:29 groq-gptoss20b/same: start
+20:45:43 mini-gemma4b/grounded: done 20/31
+20:45:44 mini-gemma4b/same: start
+20:46:44 mini-gemma4b/same: done 19/30
+20:46:45 mini-gemma4b/extract: start
+20:47:11 groq-gptoss20b/same: done 20/30
+20:47:11 groq-gptoss20b/extract: start
+20:47:30 gemini-flashlite/grounded: done 30/31
+20:47:30 gemini-flashlite/same: start
+20:48:20 mini-gemma4b/extract: done 26/30
+20:48:21 mini-gemma4b/classify_batch: start
+20:48:36 groq-gptoss20b/extract: done 27/30
+20:48:36 groq-gptoss20b/classify_batch: start
+20:48:39 groq-gptoss20b/classify_batch: rate_limited_out 1/4 (provider kept refusing (quota?))
+20:48:39 groq-gptoss20b/tag_batch: start
+20:48:39 groq-gptoss20b/tag_batch: rate_limited_out 0/3 (provider kept refusing (quota?))
+20:48:39 groq-gptoss120b/grounded: start
+20:49:00 mini-gemma4b/classify_batch: done 29/34
+20:49:01 mini-gemma4b/tag_batch: start
+20:49:08 air-qwen: gate refuses (on battery); waiting
+20:49:43 mini-gemma4b/tag_batch: done 14/32
+20:49:43 mini-gemma4b: unloaded
+20:49:46 mini-phi4mini/grounded: start
+20:49:54 groq-gptoss120b/grounded: done 31/31
+20:49:54 groq-gptoss120b/same: start
+20:50:35 gemini-flashlite/same: done 25/30
+20:50:35 gemini-flashlite/extract: start
+20:50:53 mini-phi4mini/grounded: done 22/31
+20:50:54 mini-phi4mini/same: start
+20:51:35 mini-phi4mini/same: done 21/30
+20:51:36 mini-phi4mini/extract: start
+20:51:48 groq-gptoss120b/same: done 20/30
+20:51:48 groq-gptoss120b/extract: start
+20:52:49 mini-phi4mini/extract: done 27/30
+20:52:50 mini-phi4mini/classify_batch: start
+20:53:16 mini-phi4mini/classify_batch: done 28/34
+20:53:17 mini-phi4mini/tag_batch: start
+20:53:35 gemini-flashlite/extract: done 27/30
+20:53:35 gemini-flashlite/classify_batch: start
+20:53:35 gemini-flashlite/classify_batch: rate_limited_out 0/3 (provider kept refusing (quota?))
+20:53:35 gemini-flashlite/tag_batch: start
+20:53:35 gemini-flashlite/tag_batch: rate_limited_out 0/3 (provider kept refusing (quota?))
+20:53:42 groq-gptoss120b/extract: done 29/30
+20:53:42 groq-gptoss120b/classify_batch: start
+20:53:43 groq-gptoss120b/classify_batch: rate_limited_out 1/4 (provider kept refusing (quota?))
+20:53:43 groq-gptoss120b/tag_batch: start
+20:53:43 groq-gptoss120b/tag_batch: rate_limited_out 0/3 (provider kept refusing (quota?))
+20:53:43 mini-phi4mini/tag_batch: done 18/32
+20:53:43 mini-phi4mini: unloaded
+20:53:44 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+20:54:08 air-qwen: gate refuses (on battery); waiting
+20:58:46 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+20:59:08 air-qwen: gate refuses (on battery); waiting
+20:59:09 models: 17, tools: ['grounded', 'same', 'extract', 'classify_batch', 'tag_batch'], groups: ['api.groq.com', 'api.mistral.ai', 'local', 'remote', 'openrouter.ai', 'api.typesafe.ai', 'generativelanguage.googleapis.com']
+20:59:09 groq-gptoss20b/classify_batch: start
+20:59:09 mistral-ministral8b/classify_batch: start
+20:59:09 or-nemotron120b/grounded: start
+20:59:09 gemini-flashlite/classify_batch: start
+20:59:09 air-qwen: gate refuses (on battery); waiting
+20:59:10 or-nemotron120b/grounded: unavailable 0/3 (MINION_BACKEND_ERROR: openai-compat HTTP 404: {"error":{"message":"Provider returned error","code":404,"metadata":{"raw":"{\"status\":404,\"title\":\"Not Found\)
+20:59:11 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+20:59:23 mistral-ministral8b/classify_batch: done 30/34
+20:59:23 mistral-ministral8b/tag_batch: start
+20:59:24 mistral-ministral8b/tag_batch: unavailable 0/3 (MINION_BACKEND_ERROR: openai-compat HTTP 400: {"object":"error","message":"Invalid structured output syntax","type":"invalid_request_invalid_args","param":null,)
+21:00:12 groq-gptoss20b/classify_batch: done 33/34
+21:00:12 groq-gptoss20b/tag_batch: start
+21:00:12 groq-gptoss20b/tag_batch: unavailable 0/3 (MINION_BACKEND_ERROR: openai-compat HTTP 400: {"error":{"message":"invalid JSON schema for response_format: 'tags': /properties/labels: uniqueItems is not suppo)
+21:00:12 groq-gptoss120b/classify_batch: start
+21:01:21 groq-gptoss120b/classify_batch: done 34/34
+21:01:21 groq-gptoss120b/tag_batch: start
+21:01:21 groq-gptoss120b/tag_batch: unavailable 0/3 (MINION_BACKEND_ERROR: openai-compat HTTP 400: {"error":{"message":"invalid JSON schema for response_format: 'tags': /properties/labels: uniqueItems is not suppo)
+21:02:24 gemini-flashlite/classify_batch: done 33/34
+21:02:24 gemini-flashlite/tag_batch: start
+21:04:10 air-qwen/grounded: start
+21:04:10 air-qwen/grounded: unavailable 0/3 (MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError))
+21:04:10 air-qwen: unloaded
+21:04:10 air-jev-style/classify_batch: start
+21:04:12 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+21:04:16 air-jev-style/classify_batch: done 32/34
+21:04:16 air-jev-style-2b/classify_batch: start
+21:04:16 air-jev-style-2b/classify_batch: unavailable 0/3 (MINION_DOWN: systemone backend not reachable at http://127.0.0.1:8766/v1/systemone (ConnectError))
+21:04:16 try-ministral8b/grounded: start
+21:05:44 gemini-flashlite/tag_batch: done 28/32
+21:05:55 try-ministral8b/grounded: done 14/31
+21:05:55 try-ministral8b/same: start
+21:07:10 try-ministral8b/same: done 19/30
+21:07:10 try-ministral8b/extract: start
+21:09:13 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+21:10:06 try-ministral8b/extract: done 30/30
+21:10:06 try-ministral8b/classify_batch: start
+21:10:47 try-ministral8b/classify_batch: done 30/34
+21:10:47 try-ministral8b/tag_batch: start
+21:11:37 try-ministral8b/tag_batch: done 23/32
+21:11:37 try-ministral8b: unloaded
+21:11:37 try-llama31-8b: gate refuses (free memory 36 percent, need 45); waiting
+21:14:14 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+21:16:37 try-llama31-8b/grounded: start
+21:17:23 try-llama31-8b/grounded: done 21/31
+21:17:24 try-llama31-8b/same: start
+21:17:55 try-llama31-8b/same: done 20/30
+21:17:55 try-llama31-8b/extract: start
+21:18:47 try-llama31-8b/extract: done 30/30
+21:18:47 try-llama31-8b/classify_batch: start
+21:19:07 try-llama31-8b/classify_batch: done 23/34
+21:19:07 try-llama31-8b/tag_batch: start
+21:19:16 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+21:19:27 try-llama31-8b/tag_batch: done 21/32
+21:19:27 try-llama31-8b: unloaded
+21:24:17 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+21:29:18 mini-gemma4e4b: gate refuses (free memory would fall below 25 percent after loading about 8.8 GB); waiting
+21:29:33 models: 3, tools: ['grounded', 'same', 'extract', 'classify_batch', 'tag_batch'], groups: ['remote']
+21:29:35 mini-nemotronmini/grounded: start
+21:30:54 mini-nemotronmini/grounded: done 11/31
+21:30:55 mini-nemotronmini/same: start
+21:31:43 mini-nemotronmini/same: done 18/30
+21:31:44 mini-nemotronmini/extract: start
+21:33:08 mini-nemotronmini/extract: done 26/30
+21:33:09 mini-nemotronmini/classify_batch: start
+21:33:33 mini-nemotronmini/classify_batch: done 16/34
+21:33:34 mini-nemotronmini/tag_batch: start
+21:34:01 mini-nemotronmini/tag_batch: done 14/32
+21:34:01 mini-nemotronmini: unloaded
+21:34:04 try-llama32-3b/grounded: start
+21:34:57 try-llama32-3b/grounded: done 15/31
+21:34:58 try-llama32-3b/same: start
+21:35:27 try-llama32-3b/same: done 18/30
+21:35:28 try-llama32-3b/extract: start
+21:36:21 try-llama32-3b/extract: done 24/30
+21:36:23 try-llama32-3b/classify_batch: start
+21:36:39 try-llama32-3b/classify_batch: done 23/34
+21:36:40 try-llama32-3b/tag_batch: start
+21:37:00 try-llama32-3b/tag_batch: done 9/32
+21:37:00 try-llama32-3b: unloaded
+21:37:03 try-gemma3-1b/grounded: start
+21:38:00 try-gemma3-1b/grounded: done 9/31
+21:38:01 try-gemma3-1b/same: start
+21:38:57 try-gemma3-1b/same: done 10/30
+21:38:58 try-gemma3-1b/extract: start
+21:39:57 try-gemma3-1b/extract: done 21/30
+21:39:58 try-gemma3-1b/classify_batch: start
+21:40:23 try-gemma3-1b/classify_batch: done 24/34
+21:40:24 try-gemma3-1b/tag_batch: start
+21:40:50 try-gemma3-1b/tag_batch: done 10/32
+21:40:50 try-gemma3-1b: unloaded
+21:40:50 done

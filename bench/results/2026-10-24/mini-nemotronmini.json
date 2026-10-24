@@ -1,0 +1,1578 @@
+{
+ "model": "mini-nemotronmini",
+ "backend_model": "nemotron-mini",
+ "cloud": false,
+ "kind": "fast",
+ "machine": "remote",
+ "units": {
+  "grounded": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 8.638576984405518,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 2.3548638820648193,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 1.5469489097595215,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 2.3442370891571045,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 2.3527700901031494,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 2.3343091011047363,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 2.378002882003784,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 1.9451360702514648,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 2.6883790493011475,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 1.9203290939331055,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 2.185460090637207,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 2.275089979171753,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 1.7843620777130127,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 1.979321002960205,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 3.191420316696167,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 3.5348329544067383,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 3.1709177494049072,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 3.1927568912506104,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 1.6377339363098145,
+     "got": "unclear",
+     "raw": "supported",
+     "quote_survived": false,
+     "ok": false
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 1.8670730590820312,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 2.3094940185546875,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 1.7711131572723389,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 1.9226031303405762,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "number",
+     "expected": "supported",
+     "latency": 2.911259174346924,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 2.926159143447876,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 2.8661959171295166,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "number",
+     "expected": "supported",
+     "latency": 2.077958822250366,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 1.8142130374908447,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 2.151068925857544,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 2.658385992050171,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 2.0809710025787354,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": false
+    }
+   ],
+   "p50": 2.3094940185546875,
+   "p95": 3.1927568912506104
+  },
+  "same": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.5229902267456055,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.7480828762054443,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.310006856918335,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.3293750286102295,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.3328971862792969,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.4335548877716064,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.3308968544006348,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.536513090133667,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.4329500198364258,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 1.3275609016418457,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.828113079071045,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.6399259567260742,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.4364361763000488,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.856442928314209,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.4489710330963135,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.827195167541504,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.7331149578094482,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.748283863067627,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.7434511184692383,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.6363048553466797,
+     "error": "MINION_SCHEMA",
+     "detail": "MINION_SCHEMA: model gave no evidence that appears in either text",
+     "ok": false,
+     "evidence_fail": true
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.6163849830627441,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.7629098892211914,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.6397037506103516,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.5186660289764404,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.7064361572265625,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.69028902053833,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.5327601432800293,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.639549970626831,
+     "error": "MINION_SCHEMA",
+     "detail": "MINION_SCHEMA: model gave no evidence that appears in either text",
+     "ok": false,
+     "evidence_fail": true
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.7425389289855957,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 1.3867340087890625,
+     "got": "different",
+     "ok": false
+    }
+   ],
+   "p50": 1.626344919204712,
+   "p95": 1.828113079071045
+  },
+  "extract": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "event",
+     "latency": 3.2084240913391113,
+     "got": {
+      "name": "Spring Jazz Night",
+      "date": "2027-04-14",
+      "city": "Gandor",
+      "price_eur": 25
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 2.7929577827453613,
+     "got": {
+      "name": "The Orchard Book Fair",
+      "date": "2026-09-02",
+      "city": "Pellin",
+      "price_eur": 5
+     },
+     "ok": false,
+     "fields": 3,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 3.3244359493255615,
+     "got": {
+      "name": "Winter Lantern Walk",
+      "date": "2026-12-18",
+      "city": "Oskarsvik",
+      "price_eur": 12.5
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 2.9218292236328125,
+     "got": {
+      "name": "Harbour Cleanup Day",
+      "date": "2026-06-06",
+      "city": "Brannock",
+      "price_eur": 0
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 3.339931011199951,
+     "got": {
+      "name": "Mia's Maker Market",
+      "date": "2027-03-30",
+      "city": "Tolle",
+      "price_eur": 8
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 3.0524299144744873,
+     "got": {
+      "name": "Kite Festival",
+      "date": "2026-08-21",
+      "city": "Ravenna Sands",
+      "price_eur": 15
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 3.0771450996398926,
+     "got": {
+      "name": "Autumn Chess Open",
+      "date": "2026-11-09",
+      "city": "Lindholm",
+      "price_eur": 20
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 3.068369150161743,
+     "got": {
+      "name": "Summer Solstice Concert",
+      "date": "2027-06-21",
+      "city": "Mirabel",
+      "price_eur": 35
+     },
+     "ok": false,
+     "fields": 3,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 3.5876080989837646,
+     "got": {
+      "invoice_number": "INV-2041",
+      "total": 1250.0,
+      "currency": "EUR",
+      "due_date": "2026-11-30"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 3.2723488807678223,
+     "got": {
+      "invoice_number": "7788-B",
+      "total": 320.4,
+      "currency": "USD",
+      "due_date": "5 January 2027"
+     },
+     "ok": false,
+     "fields": 3,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 3.7911980152130127,
+     "got": {
+      "invoice_number": "INV-0093",
+      "total": 89,
+      "currency": "GBP",
+      "due_date": "2027-03-14"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 3.377695083618164,
+     "got": {
+      "invoice_number": "A-5510",
+      "total": 2000,
+      "currency": "SEK",
+      "due_date": "2026-12-01"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 3.0757129192352295,
+     "got": {
+      "invoice_number": "K-12",
+      "total": 47.95,
+      "currency": "EUR",
+      "due_date": "2027-07-15"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 3.479137897491455,
+     "got": {
+      "invoice_number": "330/2026",
+      "total": 15400,
+      "currency": "NOK",
+      "due_date": "28 February 2027"
+     },
+     "ok": false,
+     "fields": 3,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 3.3027541637420654,
+     "got": {
+      "invoice_number": "Z-901",
+      "total": 64.0,
+      "currency": "CHF",
+      "due_date": "2027-05-03"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 3.4565367698669434,
+     "got": {
+      "invoice_number": "INV-77",
+      "total": 1000000,
+      "currency": "JPY",
+      "due_date": "2026-10-31"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "person",
+     "latency": 2.0112087726593018,
+     "got": {
+      "name": "Elin Aaberg",
+      "role": "marine biologist",
+      "city": "Tromvik"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 1.9811451435089111,
+     "got": {
+      "name": "Tomas Reyes",
+      "role": "head librarian",
+      "city": "Velmar"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 2.253960132598877,
+     "got": {
+      "name": "Sofia Lindqvist",
+      "role": "pastry chef",
+      "city": "Pellin"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 2.3007359504699707,
+     "got": {
+      "name": "Jonas Brandt",
+      "role": "electrician",
+      "city": "Oskarsvik"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 1.9798030853271484,
+     "got": {
+      "name": "Ravi Menon",
+      "role": "high-school teacher",
+      "city": "Brannock"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 2.272977113723755,
+     "got": {
+      "name": "Anke Verhoeven",
+      "role": "mayor",
+      "city": "Tolle"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 1.9393572807312012,
+     "got": {
+      "name": "Pia Holm",
+      "role": "nurse",
+      "city": "Lindholm"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "product",
+     "latency": 2.7676079273223877,
+     "got": {
+      "product": "Trailmaster backpack",
+      "price": 89.9,
+      "color": "forest green",
+      "in_stock": true
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 2.3601999282836914,
+     "got": {
+      "product": "Luma desk lamp",
+      "price": 34,
+      "color": "white",
+      "in_stock": false
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 2.6612768173217773,
+     "got": {
+      "product": "Birchwood cutting board",
+      "price": 27.5,
+      "color": "natural",
+      "in_stock": true
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 2.272742986679077,
+     "got": {
+      "product": "Aero 5 headphones",
+      "price": 129,
+      "color": "black",
+      "in_stock": true
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 2.540090799331665,
+     "got": {
+      "product": "Pebble water bottle",
+      "price": 15,
+      "color": "blue",
+      "in_stock": false
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 2.4576492309570312,
+     "got": {
+      "product": "Cedar Hill notebook",
+      "price": 6,
+      "color": "red",
+      "in_stock": true
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 2.457336902618408,
+     "got": {
+      "product": "Harbor rain jacket",
+      "price": 110,
+      "color": "yellow",
+      "in_stock": false
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    }
+   ],
+   "p50": 2.857393503189087,
+   "p95": 3.5876080989837646
+  },
+  "classify_batch": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "plain",
+     "latency": 0.8719010353088379,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.935338020324707,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6749110221862793,
+     "expected": "billing",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7434077262878418,
+     "expected": "billing",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7164790630340576,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7264950275421143,
+     "expected": "billing",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.707744836807251,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6434159278869629,
+     "expected": "technical",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.662529706954956,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.741206169128418,
+     "expected": "technical",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7164459228515625,
+     "expected": "technical",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7599186897277832,
+     "expected": "technical",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6762261390686035,
+     "expected": "shipping",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.8165979385375977,
+     "expected": "shipping",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7188003063201904,
+     "expected": "shipping",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7151501178741455,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.8196730613708496,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7153940200805664,
+     "expected": "shipping",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6623148918151855,
+     "expected": "account",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6699619293212891,
+     "expected": "account",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7164838314056396,
+     "expected": "account",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.716702938079834,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7178590297698975,
+     "expected": "account",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7155580520629883,
+     "expected": "account",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7524497509002686,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6817641258239746,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7170453071594238,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.817863941192627,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.9228579998016357,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.7165532112121582,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "trap",
+     "latency": 0.7162549495697021,
+     "expected": "technical",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "trap",
+     "latency": 0.8149678707122803,
+     "expected": "shipping",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "bad",
+     "latency": 0.00010609626770019531,
+     "expected": "MINION_BAD_INPUT",
+     "got": "MINION_BAD_INPUT",
+     "ok": true
+    },
+    {
+     "tag": "bad",
+     "latency": 3.123283386230469e-05,
+     "expected": "MINION_BAD_INPUT",
+     "got": "MINION_BAD_INPUT",
+     "ok": true
+    }
+   ],
+   "p50": 0.7165185213088989,
+   "p95": 0.8719010353088379
+  },
+  "tag_batch": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "one",
+     "latency": 0.9693460464477539,
+     "expected": [
+      "payment"
+     ],
+     "got": [
+      "payment",
+      "price"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "one",
+     "latency": 0.8451230525970459,
+     "expected": [
+      "delivery"
+     ],
+     "got": [
+      "delivery"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 0.920151948928833,
+     "expected": [
+      "quality"
+     ],
+     "got": [
+      "packaging",
+      "quality"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "one",
+     "latency": 0.9230670928955078,
+     "expected": [
+      "service"
+     ],
+     "got": [
+      "service"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 0.9210150241851807,
+     "expected": [
+      "price"
+     ],
+     "got": [
+      "price"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 0.8198590278625488,
+     "expected": [
+      "packaging"
+     ],
+     "got": [
+      "packaging"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 1.1253318786621094,
+     "expected": [
+      "payment"
+     ],
+     "got": [
+      "payment",
+      "service"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "one",
+     "latency": 0.7447750568389893,
+     "expected": [
+      "delivery"
+     ],
+     "got": [
+      "delivery"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 0.9758162498474121,
+     "expected": [
+      "quality"
+     ],
+     "got": [
+      "packaging",
+      "quality"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "one",
+     "latency": 0.9402461051940918,
+     "expected": [
+      "service"
+     ],
+     "got": [
+      "service"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 1.0017390251159668,
+     "expected": [
+      "price"
+     ],
+     "got": [
+      "price"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 0.8432447910308838,
+     "expected": [
+      "packaging"
+     ],
+     "got": [
+      "packaging"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "two",
+     "latency": 0.817518949508667,
+     "expected": [
+      "delivery",
+      "packaging"
+     ],
+     "got": [
+      "delivery"
+     ],
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "two",
+     "latency": 0.898643970489502,
+     "expected": [
+      "price",
+      "quality"
+     ],
+     "got": [
+      "quality"
+     ],
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "two",
+     "latency": 0.8364527225494385,
+     "expected": [
+      "payment",
+      "service"
+     ],
+     "got": [
+      "service"
+     ],
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "two",
+     "latency": 0.9460752010345459,
+     "expected": [
+      "delivery",
+      "quality"
+     ],
+     "got": [
+      "delivery",
+      "quality"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "two",
+     "latency": 1.005051851272583,
+     "expected": [
+      "price",
+      "service"
+     ],
+     "got": [
+      "price",
+      "service"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "two",
+     "latency": 0.9778270721435547,
+     "expected": [
+      "packaging",
+      "quality"
+     ],
+     "got": [
+      "packaging",
+      "quality"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "two",
+     "latency": 0.8665330410003662,
+     "expected": [
+      "payment",
+      "service"
+     ],
+     "got": [
+      "service"
+     ],
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "two",
+     "latency": 1.1259338855743408,
+     "expected": [
+      "delivery",
+      "price"
+     ],
+     "got": [
+      "delivery",
+      "price"
+     ],
+     "ok": true,
+     "missed": 0,
+     "spurious": 0
+    },
+    {
+     "tag": "three",
+     "latency": 1.024770975112915,
+     "expected": [
+      "delivery",
+      "packaging",
+      "price"
+     ],
+     "got": [
+      "delivery",
+      "price"
+     ],
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "three",
+     "latency": 0.8448169231414795,
+     "expected": [
+      "payment",
+      "quality",
+      "service"
+     ],
+     "got": [
+      "payment",
+      "service"
+     ],
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "three",
+     "latency": 0.8968429565429688,
+     "expected": [
+      "packaging",
+      "price",
+      "quality"
+     ],
+     "got": [
+      "packaging",
+      "price"
+     ],
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "three",
+     "latency": 0.8184897899627686,
+     "expected": [
+      "delivery",
+      "payment",
+      "service"
+     ],
+     "got": [
+      "delivery",
+      "service"
+     ],
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "none",
+     "latency": 0.921440839767456,
+     "expected": [],
+     "got": [
+      "service"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "none",
+     "latency": 0.8413879871368408,
+     "expected": [],
+     "got": [
+      "service"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "none",
+     "latency": 0.7960901260375977,
+     "expected": [],
+     "got": [
+      "service"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "none",
+     "latency": 0.9246017932891846,
+     "expected": [],
+     "got": [
+      "service"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "none",
+     "latency": 0.8182361125946045,
+     "expected": [],
+     "got": [
+      "service"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "none",
+     "latency": 0.8437070846557617,
+     "expected": [],
+     "got": [
+      "delivery"
+     ],
+     "ok": false,
+     "missed": 0,
+     "spurious": 1
+    },
+    {
+     "tag": "bad",
+     "latency": 9.989738464355469e-05,
+     "expected": "MINION_BAD_INPUT",
+     "got": "MINION_BAD_INPUT",
+     "ok": true
+    },
+    {
+     "tag": "bad",
+     "latency": 1.6927719116210938e-05,
+     "expected": "MINION_BAD_INPUT",
+     "got": "MINION_BAD_INPUT",
+     "ok": true
+    }
+   ],
+   "p50": 0.8977434635162354,
+   "p95": 1.024770975112915
+  }
+ }
+}

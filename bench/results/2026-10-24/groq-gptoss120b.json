@@ -1,0 +1,1189 @@
+{
+ "model": "groq-gptoss120b",
+ "backend_model": "openai/gpt-oss-120b",
+ "cloud": true,
+ "kind": "fast",
+ "machine": "local",
+ "units": {
+  "grounded": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 0.5828452110290527,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 0.8851590156555176,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 0.39365315437316895,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 0.7445790767669678,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 0.7998380661010742,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 0.533545970916748,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 0.8370029926300049,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 0.7395586967468262,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 0.9298381805419922,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 0.7621381282806396,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 0.6768109798431396,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 0.46715378761291504,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 0.8504781723022461,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 0.7377140522003174,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 0.9142811298370361,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 4.705143928527832,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 2.9705169200897217,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 0.9833559989929199,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 0.3797628879547119,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 0.6983969211578369,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 0.5649290084838867,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 0.5832009315490723,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 0.3991119861602783,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "supported",
+     "latency": 1.4758882522583008,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 1.3936378955841064,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 0.5959551334381104,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "supported",
+     "latency": 0.7926161289215088,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 0.6830718517303467,
+     "got": "supported",
+     "raw": "supported",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 0.5578241348266602,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "number",
+     "expected": "contradicted",
+     "latency": 2.5716590881347656,
+     "got": "contradicted",
+     "raw": "contradicted",
+     "quote_survived": true,
+     "ok": true
+    },
+    {
+     "tag": "unrelated",
+     "expected": "unclear",
+     "latency": 2.685497999191284,
+     "got": "unclear",
+     "raw": "unclear",
+     "quote_survived": false,
+     "ok": true
+    }
+   ],
+   "p50": 0.7445790767669678,
+   "p95": 2.685497999191284
+  },
+  "same": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.6640713214874268,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 3.6775128841400146,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.4541759490966797,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.325045108795166,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.44895386695861816,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.49997997283935547,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.58660888671875,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.5970869064331055,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.4196012020111084,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "same",
+     "expected": "same",
+     "latency": 0.605128288269043,
+     "got": "same",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 0.9081127643585205,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.129748821258545,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 0.8707427978515625,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 1.110534906387329,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 2.6929988861083984,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 0.8313179016113281,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 0.7363719940185547,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 0.8278987407684326,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 0.8361601829528809,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "different",
+     "expected": "different",
+     "latency": 0.7049160003662109,
+     "got": "different",
+     "ok": true
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.7793190479278564,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.7847278118133545,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.48966002464294434,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.8740589618682861,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.44786620140075684,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.46216797828674316,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.6620388031005859,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.7755217552185059,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.6735360622406006,
+     "got": "different",
+     "ok": false
+    },
+    {
+     "tag": "partly",
+     "expected": "partly",
+     "latency": 0.951606035232544,
+     "got": "different",
+     "ok": false
+    }
+   ],
+   "p50": 0.7206439971923828,
+   "p95": 2.6929988861083984
+  },
+  "extract": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "event",
+     "latency": 0.8614871501922607,
+     "got": {
+      "name": "Spring Jazz Night",
+      "date": "2027-04-14",
+      "city": "Gandor",
+      "price_eur": 25
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 0.7562789916992188,
+     "got": {
+      "name": "The Orchard Book Fair",
+      "date": "2026-09-02",
+      "city": "Pellin",
+      "price_eur": 5
+     },
+     "ok": false,
+     "fields": 3,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 0.6793758869171143,
+     "got": {
+      "name": "Winter Lantern Walk",
+      "date": "2026-12-18",
+      "city": "Oskarsvik",
+      "price_eur": 12.5
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 0.7408492565155029,
+     "got": {
+      "name": "Harbour Cleanup Day",
+      "date": "2026-06-06",
+      "city": "Brannock",
+      "price_eur": 0
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 0.5891551971435547,
+     "got": {
+      "name": "Mia's Maker Market",
+      "date": "2027-03-30",
+      "city": "Tolle",
+      "price_eur": 8
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 0.773460865020752,
+     "got": {
+      "name": "Kite Festival",
+      "date": "2026-08-21",
+      "city": "Ravenna Sands",
+      "price_eur": 15
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 0.6919448375701904,
+     "got": {
+      "name": "Autumn Chess Open",
+      "date": "2026-11-09",
+      "city": "Lindholm",
+      "price_eur": 20
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "event",
+     "latency": 0.6835572719573975,
+     "got": {
+      "name": "Summer Solstice Concert",
+      "date": "2027-06-20",
+      "city": "Mirabel",
+      "price_eur": 35
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 4.9855077266693115,
+     "got": {
+      "invoice_number": "INV-2041",
+      "total": 1250.0,
+      "currency": "EUR",
+      "due_date": "2026-11-30"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 0.8378329277038574,
+     "got": {
+      "invoice_number": "7788-B",
+      "total": 320.4,
+      "currency": "USD",
+      "due_date": "2027-01-05"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 0.7310419082641602,
+     "got": {
+      "invoice_number": "INV-0093",
+      "total": 89,
+      "currency": "GBP",
+      "due_date": "2027-03-14"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 1.0811002254486084,
+     "got": {
+      "invoice_number": "A-5510",
+      "total": 2000,
+      "currency": "SEK",
+      "due_date": "2026-12-01"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 0.7474470138549805,
+     "got": {
+      "invoice_number": "K-12",
+      "total": 47.95,
+      "currency": "EUR",
+      "due_date": "2027-07-15"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 0.46892404556274414,
+     "got": {
+      "invoice_number": "330/2026",
+      "total": 15400,
+      "currency": "NOK",
+      "due_date": "2027-02-28"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 0.6239778995513916,
+     "got": {
+      "invoice_number": "Z-901",
+      "total": 64.0,
+      "currency": "CHF",
+      "due_date": "2027-05-03"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "invoice",
+     "latency": 0.44909214973449707,
+     "got": {
+      "invoice_number": "INV-77",
+      "total": 1000000,
+      "currency": "JPY",
+      "due_date": "2026-10-31"
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "person",
+     "latency": 0.5409369468688965,
+     "got": {
+      "name": "Elin Aaberg",
+      "role": "marine biologist",
+      "city": "Tromvik"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 0.385073184967041,
+     "got": {
+      "name": "Tomas Reyes",
+      "role": "head librarian",
+      "city": "Velmar"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 0.8978192806243896,
+     "got": {
+      "name": "Sofia Lindqvist",
+      "role": "pastry chef",
+      "city": "Pellin"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 1.3442060947418213,
+     "got": {
+      "name": "Jonas Brandt",
+      "role": "electrician",
+      "city": "Oskarsvik"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 0.7532260417938232,
+     "got": {
+      "name": "Ravi Menon",
+      "role": "high-school teacher",
+      "city": "Brannock"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 0.7282729148864746,
+     "got": {
+      "name": "Anke Verhoeven",
+      "role": "mayor",
+      "city": "Tolle"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "person",
+     "latency": 0.8081150054931641,
+     "got": {
+      "name": "Pia Holm",
+      "role": "nurse",
+      "city": "Lindholm"
+     },
+     "ok": true,
+     "fields": 3,
+     "fields_total": 3
+    },
+    {
+     "tag": "product",
+     "latency": 0.6604270935058594,
+     "got": {
+      "product": "Trailmaster backpack",
+      "price": 89.9,
+      "color": "forest green",
+      "in_stock": true
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 1.852795124053955,
+     "got": {
+      "product": "Luma desk lamp",
+      "price": 34,
+      "color": "white",
+      "in_stock": false
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 0.6983218193054199,
+     "got": {
+      "product": "Birchwood cutting board",
+      "price": 27.5,
+      "color": "natural",
+      "in_stock": true
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 0.7117328643798828,
+     "got": {
+      "product": "Aero 5 headphones",
+      "price": 129,
+      "color": "black",
+      "in_stock": true
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 0.5707798004150391,
+     "got": {
+      "product": "Pebble water bottle",
+      "price": 15,
+      "color": "blue",
+      "in_stock": false
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 1.5737900733947754,
+     "got": {
+      "product": "Cedar Hill notebook",
+      "price": 6,
+      "color": "red",
+      "in_stock": true
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    },
+    {
+     "tag": "product",
+     "latency": 0.4840240478515625,
+     "got": {
+      "product": "Harbor rain jacket",
+      "price": 110,
+      "color": "yellow",
+      "in_stock": false
+     },
+     "ok": true,
+     "fields": 4,
+     "fields_total": 4
+    }
+   ],
+   "p50": 0.7296574115753174,
+   "p95": 1.852795124053955
+  },
+  "classify_batch": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "plain",
+     "latency": 0.7700991630554199,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5747158527374268,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.4806089401245117,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.473142147064209,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6138870716094971,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5557518005371094,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.4606361389160156,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5764720439910889,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5671329498291016,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6198940277099609,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5151841640472412,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.36237096786499023,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5475120544433594,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5925109386444092,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6313250064849854,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.2632746696472168,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.3467748165130615,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5651397705078125,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.46077609062194824,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.4210166931152344,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.26557016372680664,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.4769928455352783,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5501918792724609,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5448000431060791,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.9689407348632812,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.6113090515136719,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5748538970947266,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.707298755645752,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5783729553222656,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.5419518947601318,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "trap",
+     "latency": 0.6244070529937744,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "trap",
+     "latency": 0.7009029388427734,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "bad",
+     "latency": 3.62396240234375e-05,
+     "expected": "MINION_BAD_INPUT",
+     "got": "MINION_BAD_INPUT",
+     "ok": true
+    },
+    {
+     "tag": "bad",
+     "latency": 6.9141387939453125e-06,
+     "expected": "MINION_BAD_INPUT",
+     "got": "MINION_BAD_INPUT",
+     "ok": true
+    }
+   ],
+   "p50": 0.5529718399047852,
+   "p95": 0.707298755645752
+  },
+  "tag_batch": {
+   "status": "unavailable",
+   "reason": "MINION_BACKEND_ERROR: openai-compat HTTP 400: {\"error\":{\"message\":\"invalid JSON schema for response_format: 'tags': /properties/labels: uniqueItems is not suppo",
+   "items": [
+    {
+     "tag": "one",
+     "latency": 0.07741117477416992,
+     "expected": [
+      "payment"
+     ],
+     "error": "MINION_BACKEND_ERROR",
+     "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 400: {\"error\":{\"message\":\"invalid JSON schema for response_format: 'tags': /properties/labels: uniqueItems is not suppo",
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 0.07894706726074219,
+     "expected": [
+      "delivery"
+     ],
+     "error": "MINION_BACKEND_ERROR",
+     "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 400: {\"error\":{\"message\":\"invalid JSON schema for response_format: 'tags': /properties/labels: uniqueItems is not suppo",
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    },
+    {
+     "tag": "one",
+     "latency": 0.08389997482299805,
+     "expected": [
+      "quality"
+     ],
+     "error": "MINION_BACKEND_ERROR",
+     "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 400: {\"error\":{\"message\":\"invalid JSON schema for response_format: 'tags': /properties/labels: uniqueItems is not suppo",
+     "ok": false,
+     "missed": 1,
+     "spurious": 0
+    }
+   ]
+  }
+ }
+}

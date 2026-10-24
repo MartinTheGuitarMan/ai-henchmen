@@ -1,0 +1,9 @@
+{
+  "note": "Local candidates beside the roster. Names and ports are examples; adjust to the models you have pulled.",
+  "models": {
+    "try-ministral8b": {"backend": "ollama", "base_url": "http://127.0.0.1:11435/v1", "model": "ministral-3:8b", "ollama_native": true, "timeout": 300},
+    "try-llama31-8b":  {"backend": "ollama", "base_url": "http://127.0.0.1:11435/v1", "model": "llama3.1:8b", "ollama_native": true, "timeout": 300},
+    "try-llama32-3b":  {"backend": "ollama", "base_url": "http://127.0.0.1:11437/v1", "model": "llama3.2:3b", "ollama_native": true, "timeout": 300},
+    "try-gemma3-1b":   {"backend": "ollama", "base_url": "http://127.0.0.1:11437/v1", "model": "gemma3:1b", "ollama_native": true, "timeout": 300}
+  }
+}
