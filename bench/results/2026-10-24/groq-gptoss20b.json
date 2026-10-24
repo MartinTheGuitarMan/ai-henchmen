@@ -1186,6 +1186,193 @@
      "spurious": 0
     }
    ]
+  },
+  "ask": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "invented-animal",
+     "latency": 0.5825309753417969,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm that a spotted mountain hippo exists or how to find one.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.5770699977874756,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.2626669406890869,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.44165515899658203,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.4511909484863281,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.404522180557251,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of this study.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.48906397819519043,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.2964601516723633,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm that such a paper exists.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.22273898124694824,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the population of Velmarsund.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.46889781951904297,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.30084800720214844,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.3503081798553467,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 0.4509620666503906,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Paris",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.1663200855255127,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "William Shakespeare",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.34899115562438965,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Au",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.36597704887390137,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Spiders have eight legs.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.3877277374267578,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Jupiter",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.3962419033050537,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Giraffe",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.23097705841064453,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "1989",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.16680502891540527,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Carbon dioxide",
+     "confidence": "high"
+    }
+   ],
+   "p50": 0.3768523931503296,
+   "p95": 0.5770699977874756
   }
  }
 }

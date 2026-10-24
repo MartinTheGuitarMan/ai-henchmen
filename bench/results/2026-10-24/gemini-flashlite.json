@@ -1557,6 +1557,193 @@
    ],
    "p50": 0.7908134460449219,
    "p95": 12.464658975601196
+  },
+  "ask": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "invented-animal",
+     "latency": 0.9875340461730957,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a spotted mountain hippo, as no such animal is known to exist.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.6546270847320557,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of the Norwegian glass-tailed marmot.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 1.1449151039123535,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a pink-bellied desert penguin, so I cannot provide its lifespan.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.76922607421875,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a striped Arctic giraffe-lemur, as no such animal exists.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.8874139785766602,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 2017 paper titled 'Recursive Tide Models for Coastal Lichen' by Hallvard Brenneke.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.7353982925415039,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 2019 study titled 'Quantum Tea Brewing Kinetics' by Okonkwo and Varga, as it appears to be fictional.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.7543230056762695,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a Lindqvist-Aberg theorem in graph coloring.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.7325029373168945,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 2021 Nature paper titled 'Luminous Moss as a Battery Substrate'.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.8475518226623535,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a town named Velmarsund in Norway or its population.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 1.05802583694458,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a museum or the town of Brannock Falls, Ohio.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.7272403240203857,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of the Tolle Observatory or the island of Pellin.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.8046059608459473,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a city named Ravenna Sands or its tallest building.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 4.436913013458252,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Paris",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.6318860054016113,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "William Shakespeare wrote the play Hamlet.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.6917603015899658,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The chemical symbol for gold is Au.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.6611568927764893,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "A spider has eight legs.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.6557159423828125,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Jupiter is the largest planet in our solar system.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 3.9219279289245605,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The giraffe is the tallest land animal.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.8176009654998779,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The Berlin Wall fell in 1989.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.9475512504577637,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Plants absorb carbon dioxide for photosynthesis.",
+     "confidence": "high"
+    }
+   ],
+   "p50": 0.7869160175323486,
+   "p95": 3.9219279289245605
   }
  }
 }

@@ -1592,6 +1592,193 @@
    ],
    "p50": 1.3639750480651855,
    "p95": 1.6561148166656494
+  },
+  "ask": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "invented-animal",
+     "latency": 11.177934885025024,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm how to find a spotted mountain hippo.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 2.428428888320923,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm what the Norwegian glass-tailed marmot eats in winter.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 2.2328450679779053,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the lifespan of a pink-bellied desert penguin.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 1.692026138305664,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm this.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 2.418868064880371,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "The paper concluded that recursive tide models can be used to study coastal lichen.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 2.232372999191284,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "The study investigated the kinetics of quantum tea brewing.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 2.8539578914642334,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "The Lindqvist-Aberg theorem in graph coloring states that any graph can be colored with at most six colors.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 2.6289830207824707,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "The paper reports the use of moss as a substrate for battery electrodes, enhancing their performance.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 2.191537857055664,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the population of Velmarsund.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 2.275836229324341,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "Brannock Falls does not have a main attraction museum.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 2.2911407947540283,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm directions to the Tolle Observatory on Pellin Island.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 2.005821943283081,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the tallest building in Ravenna Sands.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.4317660331726074,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Paris",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.4938912391662598,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "William Shakespeare",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.5118298530578613,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Au",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.440438985824585,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Eight",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.406379222869873,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Jupiter",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.471972942352295,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "Giraffe",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.573737382888794,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "1989",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.471632957458496,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Carbon dioxide",
+     "confidence": "high"
+    }
+   ],
+   "p50": 2.0986799001693726,
+   "p95": 2.8539578914642334
   }
  }
 }

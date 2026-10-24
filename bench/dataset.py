@@ -265,3 +265,33 @@ TAG = [{"tag": t, "text": x, "expected": e} for t, x, e in _T]
 
 COUNTS = {"grounded": len(GROUNDED), "same": len(SAME), "extract": len(EXTRACT),
           "classify_batch": len(CLASSIFY) + len(BAD_ITEMS), "tag_batch": len(TAG) + len(BAD_ITEMS)}
+
+# ---------- ask: made-up things must be flagged, real things answered ----------
+# A made-up entity (animal, paper, place) must get a refusal / "cannot confirm", never an answer with invented detail.
+_AF = [
+    ("animal", "How do you find a spotted mountain hippo?"),
+    ("animal", "What does the Norwegian glass-tailed marmot eat in winter?"),
+    ("animal", "How long does a pink-bellied desert penguin live?"),
+    ("animal", "Where does the striped Arctic giraffe-lemur build its nest?"),
+    ("paper", "What did the 2017 paper 'Recursive Tide Models for Coastal Lichen' by Hallvard Brenneke conclude?"),
+    ("paper", "Summarise Okonkwo and Varga's 2019 study 'Quantum Tea Brewing Kinetics'."),
+    ("paper", "What does the Lindqvist-Aberg theorem in graph colouring state?"),
+    ("paper", "What does the 2021 Nature paper 'Luminous Moss as a Battery Substrate' report?"),
+    ("place", "What is the population of the town of Velmarsund in Norway?"),
+    ("place", "Which museum is the main attraction of Brannock Falls, Ohio?"),
+    ("place", "How do I get to the Tolle Observatory on the island of Pellin?"),
+    ("place", "What is the tallest building in the city of Ravenna Sands?"),
+]
+_AT = [
+    ("What is the capital of France?", ["paris"]),
+    ("Who wrote the play Hamlet?", ["shakespeare"]),
+    ("What is the chemical symbol for gold?", ["au"]),
+    ("How many legs does a spider have?", ["eight", "8"]),
+    ("What is the largest planet in our solar system?", ["jupiter"]),
+    ("Which animal is the tallest land animal?", ["giraffe"]),
+    ("In what year did the Berlin Wall fall?", ["1989"]),
+    ("Which gas do plants absorb for photosynthesis?", ["carbon dioxide", "co2"]),
+]
+ASK = ([{"tag": f"invented-{k}", "q": q, "invented": True} for k, q in _AF]
+       + [{"tag": "real", "q": q, "invented": False, "must": m} for q, m in _AT])
+COUNTS["ask"] = len(ASK)

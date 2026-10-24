@@ -1564,6 +1564,193 @@
    ],
    "p50": 1.4539860486984253,
    "p95": 1.9133639335632324
+  },
+  "ask": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "invented-animal",
+     "latency": 5.472650051116943,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 'spotted mountain hippo.' Hippos (*Hippopotamus* spp.) are aquatic mammals typically found in rivers and lakes in sub-Saharan Africa and are not known for living in",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 1.8371829986572266,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the diet of a Norwegian glass-tailed marmot, as this species does not exist.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 1.7877581119537354,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 'pink-bellied desert penguin' species.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 1.7291309833526611,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 'striped Arctic giraffe-lemur'.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 1.7664473056793213,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm it as I do not have access to specific papers or their conclusions.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 2.7948427200317383,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm it as I do not have access to the content or existence of the study 'Quantum Tea Brewing Kinetics' by Okonkwo and Varga in 2019.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 1.8194591999053955,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 'Lindqvist-Aberg theorem' in graph coloring.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 1.1468188762664795,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm it.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 1.4665300846099854,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the population of Velmarsund in Norway.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 2.3404061794281006,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the main attraction of Brannock Falls, Ohio, as it is not a widely recognized location for a museum or major tourist attraction.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 1.758545160293579,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of the Tolle Observatory or the island of Pellin.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 1.9291820526123047,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the tallest building in Ravenna Sands as it is not a recognized city or location.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.3678288459777832,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The capital of France is **Paris**.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.6814749240875244,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "I cannot confirm the author of *Hamlet* based on my knowledge cutoff.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.4140138626098633,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The chemical symbol for gold is **Au**.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.3832759857177734,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Spiders typically have **8 legs**.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.0600099563598633,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Jupiter",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 1.9624319076538086,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The tallest confirmed land animal is the **giraffe** (*Giraffa camelopardalis*).",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 2.691957950592041,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "I cannot confirm the exact year without external sources, but the Berlin Wall began to be dismantled in **1989** as part of the events leading to German reunification.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.531728982925415,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Plants primarily absorb carbon dioxide (CO\u2082) for photosynthesis.",
+     "confidence": "high"
+    }
+   ],
+   "p50": 1.7624962329864502,
+   "p95": 2.7948427200317383
   }
  }
 }

@@ -165,3 +165,34 @@
 21:40:50 try-gemma3-1b/tag_batch: done 10/32
 21:40:50 try-gemma3-1b: unloaded
 21:40:50 done
+21:43:18 models: 11, tools: ['ask'], groups: ['generativelanguage.googleapis.com', 'api.groq.com', 'remote', 'api.mistral.ai', 'local']
+21:43:18 gemini-flashlite/ask: start
+21:43:18 mistral-ministral8b/ask: start
+21:43:18 groq-gptoss120b/ask: start
+21:43:18 try-llama31-8b/ask: start
+21:43:21 mini-gemma4b/ask: start
+21:43:29 mistral-ministral8b/ask: done 19/20
+21:43:30 groq-gptoss120b/ask: done 20/20
+21:43:30 groq-gptoss20b/ask: start
+21:43:37 groq-gptoss20b/ask: done 20/20
+21:43:44 try-llama31-8b/ask: done 19/20
+21:43:44 try-llama31-8b: unloaded
+21:43:44 try-ministral8b/ask: start
+21:44:09 mini-gemma4b/ask: done 19/20
+21:44:09 mini-gemma4b: unloaded
+21:44:11 mini-nemotronmini/ask: start
+21:44:23 try-ministral8b/ask: done 18/20
+21:44:23 try-ministral8b: unloaded
+21:44:33 gemini-flashlite/ask: done 20/20
+21:44:47 mini-nemotronmini/ask: done 12/20
+21:44:47 mini-nemotronmini: unloaded
+21:44:50 mini-phi4mini/ask: start
+21:45:27 mini-phi4mini/ask: done 18/20
+21:45:27 mini-phi4mini: unloaded
+21:45:30 try-gemma3-1b/ask: start
+21:45:56 try-gemma3-1b/ask: done 17/20
+21:45:57 try-gemma3-1b: unloaded
+21:45:59 try-llama32-3b/ask: start
+21:46:27 try-llama32-3b/ask: done 19/20
+21:46:27 try-llama32-3b: unloaded
+21:46:27 done

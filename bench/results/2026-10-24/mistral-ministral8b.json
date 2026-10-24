@@ -1184,6 +1184,193 @@
      "spurious": 0
     }
    ]
+  },
+  "ask": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "invented-animal",
+     "latency": 0.8808269500732422,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 'spotted mountain hippo.' Hippos are typically associated with rivers and savannas in Africa, and no well-documented species of hippo is known to be spotted or inha",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.47157788276672363,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm what the Norwegian glass-tailed marmot eats in winter, as this species does not exist.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.5152819156646729,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the lifespan of a 'pink-bellied desert penguin' as it does not exist in reality.",
+     "confidence": "high"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.6655628681182861,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a 'striped Arctic giraffe-lemur' or its nesting habits, as these are not recognized species or creatures in known biology.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.5420081615447998,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "Cannot confirm. I do not have access to specific papers, authors, or recent research conclusions like the one mentioned.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.8162400722503662,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "Cannot confirm. 'Okonkwo and Varga' is not a recognized pair of researchers, and there is no known study titled 'Quantum Tea Brewing Kinetics' published in 2019.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.6626687049865723,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the Lindqvist-Aberg theorem in graph coloring as it is not a widely recognized or documented result in my knowledge.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.9459381103515625,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the details of a specific 2021 *Nature* paper titled *'Luminous Moss as a Battery Substrate'*, as I do not have access to real-time or specific publication data.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.5475988388061523,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the population of Velmarsund in Norway as it is not a widely recognized or documented town.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.6327612400054932,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the main attraction of Brannock Falls, Ohio, as it is not a widely recognized location or known for a specific museum.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.567206859588623,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of the Tolle Observatory or the island of Pellin. Please verify the location's authenticity before proceeding.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.4945058822631836,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the tallest building in Ravenna Sands as it is not a known or widely recognized city.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 0.4418001174926758,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Paris",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.4979398250579834,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "William Shakespeare is traditionally credited with writing *Hamlet*, though some scholars debate the exact authorship due to stylistic variations in the text.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 0.31439900398254395,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Au",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.44046783447265625,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Spiders typically have 8 legs.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.4491899013519287,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Jupiter is the largest planet in our solar system.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.47609591484069824,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The tallest land animal is the giraffe.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.42694997787475586,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The Berlin Wall fell in **1989**.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.36638617515563965,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Plants primarily absorb carbon dioxide (CO\u2082) for photosynthesis.",
+     "confidence": "high"
+    }
+   ],
+   "p50": 0.5066108703613281,
+   "p95": 0.8808269500732422
   }
  }
 }

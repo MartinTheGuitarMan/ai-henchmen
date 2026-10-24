@@ -1573,6 +1573,193 @@
    ],
    "p50": 0.8977434635162354,
    "p95": 1.024770975112915
+  },
+  "ask": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "invented-animal",
+     "latency": 7.927541971206665,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "you cannot confirm it",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 1.1428320407867432,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "nuts and seeds",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 1.0840020179748535,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "low",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 1.120506763458252,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "Africa",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 2.2439727783203125,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the conclusion of the paper 'Recursive Tide Models for Coastal Lichen' by Hallvard Brenneke.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 2.8254199028015137,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "The study 'Quantum Tea Brewing Kinetics' by Okonkwo and Varga in 2019 is about the kinetics of tea brewing using quantum mechanics.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 2.0758609771728516,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "The Lindqvist-Aberg theorem in graph colouring states that every graph can be coloured with at most 2 colours.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 1.394554853439331,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "Luminous Moss as a Battery Substrate",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 1.571131944656372,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the population of Velmarsund in Norway.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 1.9464061260223389,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "The main attraction of Brannock Falls, Ohio is Brannock Falls State Park",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 1.7262890338897705,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "You can reach Tolle Observatory on Pellin by taking a boat from the mainland.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 1.6763849258422852,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "The tallest building in Ravenna Sands is not specified in the provided data.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.0660390853881836,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "Paris",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.5510199069976807,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "William Shakespeare",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.290395975112915,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "Au",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 0.9594907760620117,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "8",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.1039376258850098,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "Jupiter",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.0995519161224365,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "Giraffe",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.2174248695373535,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "1989",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 1.1099450588226318,
+     "expected": "answer",
+     "got": "refuse",
+     "ok": false,
+     "answer": "carbon dioxide",
+     "confidence": "low"
+    }
+   ],
+   "p50": 1.342475414276123,
+   "p95": 2.8254199028015137
   }
  }
 }

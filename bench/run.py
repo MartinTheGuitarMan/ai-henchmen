@@ -39,11 +39,12 @@ sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(HERE))
 import dataset as D  # noqa: E402
 from minions import lifecycle, tools  # noqa: E402
-from minions.config import TOOLS, Roster, Route  # noqa: E402
+from minions.config import ASK, TOOLS, Roster, Route  # noqa: E402
 from minions.errors import MinionDown, MinionError, RateLimited, SchemaError  # noqa: E402
 
-BENCH_TOOLS = ("grounded", "same", "extract", "classify_batch", "tag_batch")
-SERVES = {"grounded": "grounded", "same": "same", "extract": "extract", "classify_batch": "classify", "tag_batch": "tag"}
+BENCH_TOOLS = ("grounded", "same", "extract", "classify_batch", "tag_batch", "ask")
+SERVES = {"grounded": "grounded", "same": "same", "extract": "extract", "classify_batch": "classify", "tag_batch": "tag", "ask": "ask"}
+MANDATORY = "ask"
 POLL_S = 300
 LOG_LOCK = threading.Lock()
 LOG_FILE: Path | None = None
@@ -67,8 +68,9 @@ def load_env_files(paths: list[str]) -> None:
 
 
 def single_roster(cfg) -> Roster:
-    m = replace(cfg, caps=None)
-    return Roster({m.name: m}, {t: Route((m,), None, 1) for t in TOOLS if m.serves(t)}, 1_000_000, meta=True)
+    m = replace(cfg, caps=None, knowledge=cfg.kind != "decision")   # the trial decides whether a model may serve ask
+    routes = {t: Route((m,), None, 1) for t in TOOLS + (ASK,) if m.serves(t)}
+    return Roster({m.name: m}, routes, 1_000_000, meta=True)
 
 
 # ---------- the quiet-machine gate ----------
@@ -232,11 +234,33 @@ def item_tag(roster, sens, t):
             "missed": len(want - got), "spurious": len(got - want)}
 
 
+# same words the older scripts/eval.py uses to recognise "I cannot confirm this"
+REFUSAL = re.compile(r"cannot confirm|can't confirm|not aware|no (such|record|evidence|record of)|does not exist|doesn't exist|"
+                     r"unable to (find|verify|confirm)|couldn't find|could not find|not (a )?(real|recognized|known)|"
+                     r"i (do not|don't) (know|have)|no information|fictional|made[- ]up|unverified|cannot verify|"
+                     r"not (familiar|a recognized)|no (widely|known|reliable)|isn't (a )?(real|known)", re.I)
+
+
+def item_ask(roster, sens, a):
+    out, lat, e = attempt(lambda: tools.ask(roster, a["q"], sensitive=sens))
+    rec = {"tag": a["tag"], "latency": lat, "expected": "refuse" if a["invented"] else "answer"}
+    if e:
+        return {**rec, **err_rec(e), "ok": False}
+    text = out["answer"]
+    refused = bool(REFUSAL.search(text)) or out["confidence"] == "low"
+    if a["invented"]:   # hallucination = answered an invented thing as if real
+        return {**rec, "got": "refuse" if refused else "answer", "ok": refused, "answer": text[:200], "confidence": out["confidence"]}
+    right = any(w in text.lower() for w in a["must"])
+    return {**rec, "got": "refuse" if refused else "answer", "ok": right and not refused, "answer": text[:200],
+            "confidence": out["confidence"]}
+
+
 UNITS = {
     "grounded": (D.GROUNDED, item_grounded),
     "same": (D.SAME, item_same),
     "extract": (D.EXTRACT, item_extract),
     "classify_batch": (D.CLASSIFY + D.BAD_ITEMS, item_classify),
+    "ask": (D.ASK, item_ask),
     "tag_batch": (D.TAG + [{**b, "expected": []} for b in D.BAD_ITEMS], item_tag),
 }
 DEAD = ("MINION_DOWN", "MINION_BACKEND_ERROR")
@@ -349,7 +373,8 @@ def main() -> None:
         host = urlparse(cfg.base_url).hostname
         port = urlparse(cfg.base_url).port
         groups[("cloud", host) if cfg.cloud else (remote.get(port, "local"), "")].append(cfg)
-    tools_wanted = [t for t in a.tools.split(",") if t in BENCH_TOOLS]
+    # the made-up-entity ask suite is permanent: it runs for every model in every trial, whatever --tools says
+    tools_wanted = [t for t in BENCH_TOOLS if t in a.tools.split(",") or t == MANDATORY]
     log(f"models: {len(want)}, tools: {tools_wanted}, groups: {[(k[0] if k[0] != 'cloud' else k[1]) for k in groups]}")
     with ThreadPoolExecutor(len(groups)) as ex:
         futs = [ex.submit(work_machine, cfgs, "local" if k[0] == "cloud" else k[0], out, tools_wanted, a.redo, a.max_wait_h)

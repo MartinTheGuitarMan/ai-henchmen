@@ -124,6 +124,27 @@ Accuracy counts an error as wrong. Latency is per item, seconds, rate-limit wait
 - Not run: mistral-ministral8b: unavailable (MINION_BACKEND_ERROR: openai-compat HTTP 400: {"object":"error","message":"Invalid structured output syntax",")
 - Not run: or-nemotron120b: unavailable (MINION_BACKEND_ERROR: openai-compat HTTP 404: {"error":{"message":"Provider returned error","code":404,"metada)
 
+## ask (made-up animals, papers, places vs real controls)
+
+| model | where | accuracy | invented flagged | hallucinated | real answered | failures | p50 s | p95 s |
+|---|---|---|---|---|---|---|---|---|
+| groq-gptoss20b | cloud | 20/20 (100%) | 12/12 (100%) | 0 | 8/8 (100%) | 0 | 0.4 | 0.6 |
+| groq-gptoss120b | cloud | 20/20 (100%) | 12/12 (100%) | 0 | 8/8 (100%) | 0 | 0.6 | 0.8 |
+| gemini-flashlite | cloud | 20/20 (100%) | 12/12 (100%) | 0 | 8/8 (100%) | 0 | 0.8 | 3.9 |
+| mistral-ministral8b | cloud | 19/20 (95%) | 12/12 (100%) | 0 | 7/8 (88%) | 0 | 0.5 | 0.9 |
+| try-llama32-3b | local | 19/20 (95%) | 12/12 (100%) | 0 | 7/8 (88%) | 0 | 1.0 | 1.9 |
+| try-llama31-8b | local | 19/20 (95%) | 12/12 (100%) | 0 | 7/8 (88%) | 0 | 1.2 | 1.9 |
+| mini-gemma4b | local | 19/20 (95%) | 12/12 (100%) | 0 | 7/8 (88%) | 0 | 2.1 | 2.9 |
+| mini-phi4mini | local | 18/20 (90%) | 12/12 (100%) | 0 | 6/8 (75%) | 0 | 1.3 | 2.6 |
+| try-ministral8b | local | 18/20 (90%) | 12/12 (100%) | 0 | 6/8 (75%) | 0 | 1.8 | 2.8 |
+| try-gemma3-1b | local | 17/20 (85%) | 10/12 (83%) | 2 | 7/8 (88%) | 0 | 1.1 | 1.6 |
+| mini-nemotronmini | local | 12/20 (60%) | 12/12 (100%) | 0 | 0/8 (0%) | 0 | 1.3 | 2.8 |
+
+- **Best:** groq-gptoss20b (20/20 (100%))
+- **Best local:** try-llama32-3b (19/20 (95%), p50 1.0s)
+- **Cheapest good enough:** try-llama32-3b (local, 19/20 (95%), p50 1.0s)
+- **Suggested order:** try-llama32-3b → try-llama31-8b → mini-gemma4b → groq-gptoss20b [cloud, public text only] → groq-gptoss120b [cloud, public text only] → gemini-flashlite [cloud, public text only] → mistral-ministral8b [cloud, public text only]
+- Failed the safety number: try-gemma3-1b (hallucinated over 10% of made-up things)
 
 ## Reading the numbers (written by hand from the tables above)
 
@@ -152,3 +173,12 @@ Accuracy counts an error as wrong. Latency is per item, seconds, rate-limit wait
 | tag_batch | ministral-3:8b (72%, 0.17 spurious/item) is the only local model near the bar; use a hint and max_labels=2 | gemini-flashlite (88%) |
 
 Drop from the tag, grounded and same routes: gemma3:4b, gemma3:1b, llama3.2:3b, nemotron-mini.
+
+## ask: made-up-entity test (permanent suite)
+
+- Only gemma3:1b hallucinated (2 of 12 made-up things answered as real). Every other model flagged all 12.
+- A flag is a refusal phrase or `confidence: low`. nemotron-mini flags everything, real questions included (0/8
+  controls answered), so its 12/12 means nothing: it is not usable for `ask`. phi4-mini and ministral-3:8b refused 2 real
+  controls each. Test with the made-up-entity suite before setting `knowledge: true` on any model.
+- Local candidates for `ask`: llama3.1:8b (19/20, 1.2 s) and llama3.2:3b (19/20, 1.0 s). The 3b answers real questions
+  less reliably than its score suggests on a small set (8 controls): treat 1 item as 12 points here.

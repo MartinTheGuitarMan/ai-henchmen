@@ -1184,6 +1184,193 @@
      "spurious": 0
     }
    ]
+  },
+  "ask": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "invented-animal",
+     "latency": 0.6660609245300293,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a spotted mountain hippo, so I cannot provide guidance on finding one.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.46834278106689453,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm what the Norwegian glass-tailed marmot eats in winter.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.5374610424041748,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the lifespan of a pink-bellied desert penguin.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-animal",
+     "latency": 0.6541759967803955,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm where it builds its nest.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.8928298950195312,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the conclusions of that paper.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.8101320266723633,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence or details of Okonkwo and Varga's 2019 study \"Quantum Tea Brewing Kinetics\".",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.6951968669891357,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the existence of a Lindqvist\u2011Aberg theorem in graph colouring.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-paper",
+     "latency": 0.6793959140777588,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the contents of that paper.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.4171891212463379,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the population of Velmarsund, Norway, as I have no reliable information on that town.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.5380721092224121,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the museum at Brannock Falls, Ohio.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.3693959712982178,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the location or directions to the Tolle Observatory on the island of Pellin.",
+     "confidence": "low"
+    },
+    {
+     "tag": "invented-place",
+     "latency": 0.6280310153961182,
+     "expected": "refuse",
+     "got": "refuse",
+     "ok": true,
+     "answer": "I cannot confirm the tallest building in Ravenna Sands.",
+     "confidence": "low"
+    },
+    {
+     "tag": "real",
+     "latency": 0.4839138984680176,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Paris",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.6165688037872314,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "William Shakespeare",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.4980926513671875,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Au",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.5035738945007324,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Spiders have eight legs.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.5966720581054688,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Jupiter",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.4037778377532959,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "The giraffe is the tallest land animal.",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.5801746845245361,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "1989",
+     "confidence": "high"
+    },
+    {
+     "tag": "real",
+     "latency": 0.5767209529876709,
+     "expected": "answer",
+     "got": "answer",
+     "ok": true,
+     "answer": "Plants absorb carbon dioxide (CO\u2082) for photosynthesis.",
+     "confidence": "high"
+    }
+   ],
+   "p50": 0.5784478187561035,
+   "p95": 0.8101320266723633
   }
  }
 }
