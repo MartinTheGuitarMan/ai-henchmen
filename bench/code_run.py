@@ -208,7 +208,7 @@ def work_group(cfgs: list, machine: str, out: Path, tasks: list, args, deadline:
     for cfg in cfgs:
         cfg = replace(cfg, timeout=max(cfg.timeout, MIN_TIMEOUT_S))
         path = gen_path(out, cfg.name)
-        doc = load_doc(path, cfg, machine, args.redo)
+        doc = load_doc(path, cfg, "cloud" if cfg.cloud else "night-host" if is_night else "day-host", args.redo)
         todo = [t for t in tasks if t["id"] not in doc["tasks"] or doc["tasks"][t["id"]].get("error") in DEAD]
         if not todo:
             continue
@@ -382,7 +382,7 @@ def main() -> None:
         port = urlparse(cfg.base_url).port
         groups[("cloud", urlparse(cfg.base_url).hostname) if cfg.cloud else (remote.get(port, "local"), "")].append(cfg)
     args.night_ssh = args.docker_host or ""
-    log(f"models: {[m.name for m in models]}; tasks: {len(tasks)}; groups: {[k[0] if k[0] != 'cloud' else k[1] for k in groups]}")
+    log(f"models: {[m.name for m in models]}; tasks: {len(tasks)}; groups: {['cloud' if k[0] == 'cloud' else 'night-host' if k[0] == args.night_ssh else 'day-host' for k in groups]}")
     with ThreadPoolExecutor(len(groups) + 1) as ex:
         ex_f = ex.submit(execute_loop, sb, out, tasks, args, deadline)
         futs = [ex.submit(work_group, cfgs, "local" if k[0] == "cloud" else k[0], out, tasks, args, deadline)

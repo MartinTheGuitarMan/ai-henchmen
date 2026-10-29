@@ -1,0 +1,161 @@
+{
+ "model": "groq-gptoss20b",
+ "backend_model": "openai/gpt-oss-20b",
+ "cloud": true,
+ "machine": "local",
+ "tasks": {
+  "merge_intervals": {
+   "raw": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals.\n\n    Parameters\n    ----------\n    intervals : list of tuple[int, int]\n        List of (start, end) tuples where start <= end.\n\n    Returns\n    -------\n    list of tuple[int, int]\n        Sorted list of merged intervals.\n    \"\"\"\n    if not intervals:\n        return []\n\n    # Create a sorted copy of the intervals by start time\n    sorted_ints = sorted(intervals, key=lambda x: x[0])\n\n    merged = [sorted_ints[0]]\n    for start, end in sorted_ints[1:]:\n        last_start, last_end = merged[-1]\n        if start <= last_end:  # Overlap or touch\n            merged[-1] = (last_start, max(last_end, end))\n        else:\n            merged.append((start, end))\n\n    return merged\n```",
+   "finish": "stop",
+   "latency": 1.35,
+   "code": "def merge_intervals(intervals):\n    \"\"\"\n    Merge overlapping or touching intervals.\n\n    Parameters\n    ----------\n    intervals : list of tuple[int, int]\n        List of (start, end) tuples where start <= end.\n\n    Returns\n    -------\n    list of tuple[int, int]\n        Sorted list of merged intervals.\n    \"\"\"\n    if not intervals:\n        return []\n\n    # Create a sorted copy of the intervals by start time\n    sorted_ints = sorted(intervals, key=lambda x: x[0])\n\n    merged = [sorted_ints[0]]\n    for start, end in sorted_ints[1:]:\n        last_start, last_end = merged[-1]\n        if start <= last_end:  # Overlap or touch\n            merged[-1] = (last_start, max(last_end, end))\n        else:\n            merged.append((start, end))\n\n    return merged\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "parse_duration": {
+   "raw": "```python\nimport re\n\ndef parse_duration(text: str) -> int:\n    \"\"\"\n    Convert a duration string into a whole number of seconds.\n\n    The string must consist of one or more <integer><unit> parts with no spaces,\n    where the unit is one of:\n        d - days   (86400 seconds)\n        h - hours  (3600 seconds)\n        m - minutes(60 seconds)\n        s - seconds(1 second)\n\n    Units must appear in the order d, h, m, s and each at most once.\n    Examples of valid strings: \"1h30m\", \"2d\", \"1d2h3m4s\", \"0s\".\n    Any other format raises ValueError.\n    \"\"\"\n    if not text:\n        raise ValueError(\"Empty duration string\")\n\n    # Regex matches optional groups in the correct order.\n    pattern = re.compile(r'(?:(\\d+)d)?(?:(\\d+)h)?(?:(\\d+)m)?(?:(\\d+)s)?$')\n    match = pattern.fullmatch(text)\n    if not match:\n        raise ValueError(f\"Invalid duration format: {text!r}\")\n\n    groups = match.groups()\n    if not any(groups):\n        raise ValueError(f\"Invalid duration format: {text!r}\")\n\n    total_seconds = 0\n    unit_factors = [86400, 3600, 60, 1]  # d, h, m, s\n    for value, factor in zip(groups, unit_factors):\n        if value is not None:\n            total_seconds += int(value) * factor\n\n    return total_seconds\n```",
+   "finish": "stop",
+   "latency": 3.0,
+   "code": "import re\n\ndef parse_duration(text: str) -> int:\n    \"\"\"\n    Convert a duration string into a whole number of seconds.\n\n    The string must consist of one or more <integer><unit> parts with no spaces,\n    where the unit is one of:\n        d - days   (86400 seconds)\n        h - hours  (3600 seconds)\n        m - minutes(60 seconds)\n        s - seconds(1 second)\n\n    Units must appear in the order d, h, m, s and each at most once.\n    Examples of valid strings: \"1h30m\", \"2d\", \"1d2h3m4s\", \"0s\".\n    Any other format raises ValueError.\n    \"\"\"\n    if not text:\n        raise ValueError(\"Empty duration string\")\n\n    # Regex matches optional groups in the correct order.\n    pattern = re.compile(r'(?:(\\d+)d)?(?:(\\d+)h)?(?:(\\d+)m)?(?:(\\d+)s)?$')\n    match = pattern.fullmatch(text)\n    if not match:\n        raise ValueError(f\"Invalid duration format: {text!r}\")\n\n    groups = match.groups()\n    if not any(groups):\n        raise ValueError(f\"Invalid duration format: {text!r}\")\n\n    total_seconds = 0\n    unit_factors = [86400, 3600, 60, 1]  # d, h, m, s\n    for value, factor in zip(groups, unit_factors):\n        if value is not None:\n            total_seconds += int(value) * factor\n\n    return total_seconds\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "slugify": {
+   "raw": "```python\nimport re\nimport unicodedata\n\ndef slugify(text):\n    \"\"\"Convert a title into a URL slug.\"\"\"\n    if not isinstance(text, str):\n        text = str(text)\n    # Normalize accented characters to ASCII\n    text = unicodedata.normalize('NFKD', text)\n    text = text.encode('ascii', 'ignore').decode('ascii')\n    # Lowercase\n    text = text.lower()\n    # Replace runs of non-alphanumeric characters with a single hyphen\n    text = re.sub(r'[^a-z0-9]+', '-', text)\n    # Strip leading/trailing hyphens\n    return text.strip('-')\n```",
+   "finish": "stop",
+   "latency": 0.71,
+   "code": "import re\nimport unicodedata\n\ndef slugify(text):\n    \"\"\"Convert a title into a URL slug.\"\"\"\n    if not isinstance(text, str):\n        text = str(text)\n    # Normalize accented characters to ASCII\n    text = unicodedata.normalize('NFKD', text)\n    text = text.encode('ascii', 'ignore').decode('ascii')\n    # Lowercase\n    text = text.lower()\n    # Replace runs of non-alphanumeric characters with a single hyphen\n    text = re.sub(r'[^a-z0-9]+', '-', text)\n    # Strip leading/trailing hyphens\n    return text.strip('-')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "business_days": {
+   "raw": "```python\nfrom datetime import date, timedelta\n\ndef business_days(start: date, end: date) -> int:\n    \"\"\"\n    Return the number of weekdays (Monday to Friday) from `start` (inclusive)\n    up to `end` (exclusive). If `end` is on or before `start`, return 0.\n    \"\"\"\n    if end <= start:\n        return 0\n\n    delta_days = (end - start).days\n    full_weeks, remainder = divmod(delta_days, 7)\n    weekdays = full_weeks * 5\n\n    start_weekday = start.weekday()  # 0 = Monday, 6 = Sunday\n    for i in range(remainder):\n        if (start_weekday + i) % 7 < 5:\n            weekdays += 1\n\n    return weekdays\n```",
+   "finish": "stop",
+   "latency": 0.82,
+   "code": "from datetime import date, timedelta\n\ndef business_days(start: date, end: date) -> int:\n    \"\"\"\n    Return the number of weekdays (Monday to Friday) from `start` (inclusive)\n    up to `end` (exclusive). If `end` is on or before `start`, return 0.\n    \"\"\"\n    if end <= start:\n        return 0\n\n    delta_days = (end - start).days\n    full_weeks, remainder = divmod(delta_days, 7)\n    weekdays = full_weeks * 5\n\n    start_weekday = start.weekday()  # 0 = Monday, 6 = Sunday\n    for i in range(remainder):\n        if (start_weekday + i) % 7 < 5:\n            weekdays += 1\n\n    return weekdays\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "parse_csv_line": {
+   "raw": "```python\ndef parse_csv_line(line):\n    \"\"\"\n    Split a single CSV line into a list of field strings.\n\n    Parameters\n    ----------\n    line : str\n        A single line of CSV text (no newlines).\n\n    Returns\n    -------\n    list[str]\n        List of field strings.\n\n    Raises\n    ------\n    ValueError\n        If a quoted field is not properly closed.\n    \"\"\"\n    if line == \"\":\n        return [\"\"]\n\n    fields = []\n    field = []\n    i = 0\n    n = len(line)\n    in_quotes = False\n\n    while i < n:\n        ch = line[i]\n        if in_quotes:\n            if ch == '\"':\n                # Check for doubled quote\n                if i + 1 < n and line[i + 1] == '\"':\n                    field.append('\"')\n                    i += 1  # Skip the escaped quote\n                else:\n                    in_quotes = False\n            else:\n                field.append(ch)\n        else:\n            if ch == ',':\n                fields.append(''.join(field))\n                field = []\n            elif ch == '\"':\n                in_quotes = True\n            else:\n                field.append(ch)\n        i += 1\n\n    if in_quotes:\n        raise ValueError(\"Unclosed quote in CSV line\")\n\n    fields.append(''.join(field))\n    return fields\n```",
+   "finish": "stop",
+   "latency": 2.92,
+   "code": "def parse_csv_line(line):\n    \"\"\"\n    Split a single CSV line into a list of field strings.\n\n    Parameters\n    ----------\n    line : str\n        A single line of CSV text (no newlines).\n\n    Returns\n    -------\n    list[str]\n        List of field strings.\n\n    Raises\n    ------\n    ValueError\n        If a quoted field is not properly closed.\n    \"\"\"\n    if line == \"\":\n        return [\"\"]\n\n    fields = []\n    field = []\n    i = 0\n    n = len(line)\n    in_quotes = False\n\n    while i < n:\n        ch = line[i]\n        if in_quotes:\n            if ch == '\"':\n                # Check for doubled quote\n                if i + 1 < n and line[i + 1] == '\"':\n                    field.append('\"')\n                    i += 1  # Skip the escaped quote\n                else:\n                    in_quotes = False\n            else:\n                field.append(ch)\n        else:\n            if ch == ',':\n                fields.append(''.join(field))\n                field = []\n            elif ch == '\"':\n                in_quotes = True\n            else:\n                field.append(ch)\n        i += 1\n\n    if in_quotes:\n        raise ValueError(\"Unclosed quote in CSV line\")\n\n    fields.append(''.join(field))\n    return fields\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "wrap_text": {
+   "raw": "```python\ndef wrap_text(text, width):\n    \"\"\"\n    Wraps the given text into lines of at most `width` characters, greedily packing words.\n    Words are split on any whitespace. Lines are joined with a single space.\n    A line may exceed `width` only if it contains a single word longer than `width`.\n    Returns a list of lines. Empty or whitespace-only text yields an empty list.\n    \"\"\"\n    if not text or not text.strip():\n        return []\n\n    words = text.split()\n    lines = []\n    current_line = []\n    current_len = 0\n\n    for word in words:\n        word_len = len(word)\n        if not current_line:\n            # Start a new line with this word\n            current_line.append(word)\n            current_len = word_len\n        else:\n            # Check if adding this word would exceed width\n            new_len = current_len + 1 + word_len  # +1 for the space\n            if new_len <= width:\n                current_line.append(word)\n                current_len = new_len\n            else:\n                # Finish the current line and start a new one\n                lines.append(' '.join(current_line))\n                current_line = [word]\n                current_len = word_len\n\n    if current_line:\n        lines.append(' '.join(current_line))\n\n    return lines\n```",
+   "finish": "stop",
+   "latency": 1.3,
+   "code": "def wrap_text(text, width):\n    \"\"\"\n    Wraps the given text into lines of at most `width` characters, greedily packing words.\n    Words are split on any whitespace. Lines are joined with a single space.\n    A line may exceed `width` only if it contains a single word longer than `width`.\n    Returns a list of lines. Empty or whitespace-only text yields an empty list.\n    \"\"\"\n    if not text or not text.strip():\n        return []\n\n    words = text.split()\n    lines = []\n    current_line = []\n    current_len = 0\n\n    for word in words:\n        word_len = len(word)\n        if not current_line:\n            # Start a new line with this word\n            current_line.append(word)\n            current_len = word_len\n        else:\n            # Check if adding this word would exceed width\n            new_len = current_len + 1 + word_len  # +1 for the space\n            if new_len <= width:\n                current_line.append(word)\n                current_len = new_len\n            else:\n                # Finish the current line and start a new one\n                lines.append(' '.join(current_line))\n                current_line = [word]\n                current_len = word_len\n\n    if current_line:\n        lines.append(' '.join(current_line))\n\n    return lines\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "compare_versions": {
+   "raw": "```python\ndef compare_versions(a, b):\n    \"\"\"\n    Compare two semantic version strings.\n\n    Returns:\n        -1 if a < b\n         0 if a == b\n         1 if a > b\n    \"\"\"\n    def parse(v):\n        core, _, rest = v.partition('+')          # ignore build metadata\n        core, _, pre = core.partition('-')       # separate pre-release\n        major, minor, patch = map(int, core.split('.'))\n        pre_ids = pre.split('.') if pre else []\n        return major, minor, patch, pre_ids\n\n    def compare_id(id1, id2):\n        num1 = id1.isdigit()\n        num2 = id2.isdigit()\n        if num1 and num2:\n            n1, n2 = int(id1), int(id2)\n            if n1 < n2:\n                return -1\n            if n1 > n2:\n                return 1\n            return 0\n        if num1 and not num2:\n            return -1\n        if not num1 and num2:\n            return 1\n        # both non-numeric\n        if id1 < id2:\n            return -1\n        if id1 > id2:\n            return 1\n        return 0\n\n    maj_a, min_a, pat_a, pre_a = parse(a)\n    maj_b, min_b, pat_b, pre_b = parse(b)\n\n    # Compare major, minor, patch\n    if maj_a != maj_b:\n        return -1 if maj_a < maj_b else 1\n    if min_a != min_b:\n        return -1 if min_a < min_b else 1\n    if pat_a != pat_b:\n        return -1 if pat_a < pat_b else 1\n\n    # Compare pre-release\n    if not pre_a and not pre_b:\n        return 0\n    if not pre_a:\n        return 1\n    if not pre_b:\n        return -1\n\n    for id_a, id_b in zip(pre_a, pre_b):\n        cmp = compare_id(id_a, id_b)\n        if cmp != 0:\n            return cmp\n\n    # All shared identifiers equal; shorter list is lower\n    if len(pre_a) < len(pre_b):\n        return -1\n    if len(pre_a) > len(pre_b):\n        return 1\n    return 0\n```",
+   "finish": "stop",
+   "latency": 1.63,
+   "code": "def compare_versions(a, b):\n    \"\"\"\n    Compare two semantic version strings.\n\n    Returns:\n        -1 if a < b\n         0 if a == b\n         1 if a > b\n    \"\"\"\n    def parse(v):\n        core, _, rest = v.partition('+')          # ignore build metadata\n        core, _, pre = core.partition('-')       # separate pre-release\n        major, minor, patch = map(int, core.split('.'))\n        pre_ids = pre.split('.') if pre else []\n        return major, minor, patch, pre_ids\n\n    def compare_id(id1, id2):\n        num1 = id1.isdigit()\n        num2 = id2.isdigit()\n        if num1 and num2:\n            n1, n2 = int(id1), int(id2)\n            if n1 < n2:\n                return -1\n            if n1 > n2:\n                return 1\n            return 0\n        if num1 and not num2:\n            return -1\n        if not num1 and num2:\n            return 1\n        # both non-numeric\n        if id1 < id2:\n            return -1\n        if id1 > id2:\n            return 1\n        return 0\n\n    maj_a, min_a, pat_a, pre_a = parse(a)\n    maj_b, min_b, pat_b, pre_b = parse(b)\n\n    # Compare major, minor, patch\n    if maj_a != maj_b:\n        return -1 if maj_a < maj_b else 1\n    if min_a != min_b:\n        return -1 if min_a < min_b else 1\n    if pat_a != pat_b:\n        return -1 if pat_a < pat_b else 1\n\n    # Compare pre-release\n    if not pre_a and not pre_b:\n        return 0\n    if not pre_a:\n        return 1\n    if not pre_b:\n        return -1\n\n    for id_a, id_b in zip(pre_a, pre_b):\n        cmp = compare_id(id_a, id_b)\n        if cmp != 0:\n            return cmp\n\n    # All shared identifiers equal; shorter list is lower\n    if len(pre_a) < len(pre_b):\n        return -1\n    if len(pre_a) > len(pre_b):\n        return 1\n    return 0\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "toposort": {
+   "raw": "```python\nimport heapq\nfrom collections import defaultdict\n\ndef toposort(deps):\n    \"\"\"\n    Return a topological ordering of all names in `deps` and any names that appear only\n    in dependency lists.  The ordering is deterministic: when multiple names are\n    ready, the alphabetically smallest is chosen first.\n\n    Raises ValueError if the dependency graph contains a cycle.\n    \"\"\"\n    # All nodes: keys plus any names that appear only in dependency lists\n    nodes = set(deps.keys())\n    for deps_list in deps.values():\n        nodes.update(deps_list)\n\n    # Build indegree counts and adjacency list\n    indegree = {node: 0 for node in nodes}\n    adjacency = defaultdict(list)\n\n    for node, deps_list in deps.items():\n        # Treat duplicate dependencies as a single edge\n        for dep in set(deps_list):\n            if dep not in nodes:\n                # Add missing nodes that appear only in dependency lists\n                indegree[dep] = 0\n            indegree[node] += 1\n            adjacency[dep].append(node)\n\n    # Initialize priority queue with nodes that have indegree 0\n    heap = [node for node in nodes if indegree[node] == 0]\n    heapq.heapify(heap)\n\n    result = []\n    while heap:\n        current = heapq.heappop(heap)\n        result.append(current)\n        for neighbor in adjacency[current]:\n            indegree[neighbor] -= 1\n            if indegree[neighbor] == 0:\n                heapq.heappush(heap, neighbor)\n\n    if len(result) != len(nodes):\n        raise ValueError(\"Cycle detected in dependencies\")\n\n    return result\n```",
+   "finish": "stop",
+   "latency": 8.48,
+   "code": "import heapq\nfrom collections import defaultdict\n\ndef toposort(deps):\n    \"\"\"\n    Return a topological ordering of all names in `deps` and any names that appear only\n    in dependency lists.  The ordering is deterministic: when multiple names are\n    ready, the alphabetically smallest is chosen first.\n\n    Raises ValueError if the dependency graph contains a cycle.\n    \"\"\"\n    # All nodes: keys plus any names that appear only in dependency lists\n    nodes = set(deps.keys())\n    for deps_list in deps.values():\n        nodes.update(deps_list)\n\n    # Build indegree counts and adjacency list\n    indegree = {node: 0 for node in nodes}\n    adjacency = defaultdict(list)\n\n    for node, deps_list in deps.items():\n        # Treat duplicate dependencies as a single edge\n        for dep in set(deps_list):\n            if dep not in nodes:\n                # Add missing nodes that appear only in dependency lists\n                indegree[dep] = 0\n            indegree[node] += 1\n            adjacency[dep].append(node)\n\n    # Initialize priority queue with nodes that have indegree 0\n    heap = [node for node in nodes if indegree[node] == 0]\n    heapq.heapify(heap)\n\n    result = []\n    while heap:\n        current = heapq.heappop(heap)\n        result.append(current)\n        for neighbor in adjacency[current]:\n            indegree[neighbor] -= 1\n            if indegree[neighbor] == 0:\n                heapq.heappush(heap, neighbor)\n\n    if len(result) != len(nodes):\n        raise ValueError(\"Cycle detected in dependencies\")\n\n    return result\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "lru_cache": {
+   "raw": "```python\nfrom collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        self._capacity = capacity\n        self._cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self._cache:\n            return None\n        value = self._cache.pop(key)\n        self._cache[key] = value  # re-insert to mark as most recent\n        return value\n\n    def put(self, key, value):\n        if key in self._cache:\n            self._cache.pop(key)\n        self._cache[key] = value\n        if len(self._cache) > self._capacity:\n            self._cache.popitem(last=False)\n\n    def __len__(self):\n        return len(self._cache)\n\n    def keys(self):\n        return list(self._cache.keys())\n```",
+   "finish": "stop",
+   "latency": 13.01,
+   "code": "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        self._capacity = capacity\n        self._cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self._cache:\n            return None\n        value = self._cache.pop(key)\n        self._cache[key] = value  # re-insert to mark as most recent\n        return value\n\n    def put(self, key, value):\n        if key in self._cache:\n            self._cache.pop(key)\n        self._cache[key] = value\n        if len(self._cache) > self._capacity:\n            self._cache.popitem(last=False)\n\n    def __len__(self):\n        return len(self._cache)\n\n    def keys(self):\n        return list(self._cache.keys())\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "flatten_dict": {
+   "raw": "```python\ndef flatten_dict(d, sep=\".\"):\n    \"\"\"\n    Return a new dictionary with nested dictionaries flattened into a single level.\n    Keys are joined by `sep`. Only dictionaries are descended into; other values\n    (including lists) are kept as they are. Empty nested dictionaries are kept\n    as empty dictionaries under their key. The input dictionary is not modified.\n    \"\"\"\n    if not isinstance(d, dict):\n        raise TypeError(\"flatten_dict expects a dictionary as input\")\n\n    result = {}\n\n    def _flatten(current, prefix):\n        for key, value in current.items():\n            if not isinstance(key, str):\n                raise TypeError(\"All keys must be strings\")\n            new_key = f\"{prefix}{sep}{key}\" if prefix else key\n            if isinstance(value, dict):\n                if value:\n                    _flatten(value, new_key)\n                else:\n                    result[new_key] = {}\n            else:\n                result[new_key] = value\n\n    _flatten(d, \"\")\n    return result\n```",
+   "finish": "stop",
+   "latency": 1.63,
+   "code": "def flatten_dict(d, sep=\".\"):\n    \"\"\"\n    Return a new dictionary with nested dictionaries flattened into a single level.\n    Keys are joined by `sep`. Only dictionaries are descended into; other values\n    (including lists) are kept as they are. Empty nested dictionaries are kept\n    as empty dictionaries under their key. The input dictionary is not modified.\n    \"\"\"\n    if not isinstance(d, dict):\n        raise TypeError(\"flatten_dict expects a dictionary as input\")\n\n    result = {}\n\n    def _flatten(current, prefix):\n        for key, value in current.items():\n            if not isinstance(key, str):\n                raise TypeError(\"All keys must be strings\")\n            new_key = f\"{prefix}{sep}{key}\" if prefix else key\n            if isinstance(value, dict):\n                if value:\n                    _flatten(value, new_key)\n                else:\n                    result[new_key] = {}\n            else:\n                result[new_key] = value\n\n    _flatten(d, \"\")\n    return result\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_median": {
+   "raw": "```python\ndef median(values):\n    \"\"\"Return the median of a list of numbers.\n\n    The median is the middle value for an odd number of values, and the\n    average of the two middle values for an even number. The function\n    does not modify its argument and raises ValueError for an empty list.\n    \"\"\"\n    if not values:\n        raise ValueError(\"median requires at least one value\")\n\n    s = sorted(values)\n    n = len(s)\n    mid = n // 2\n\n    if n % 2 == 1:\n        return s[mid]\n    else:\n        return (s[mid - 1] + s[mid]) / 2\n```",
+   "finish": "stop",
+   "latency": 5.73,
+   "code": "def median(values):\n    \"\"\"Return the median of a list of numbers.\n\n    The median is the middle value for an odd number of values, and the\n    average of the two middle values for an even number. The function\n    does not modify its argument and raises ValueError for an empty list.\n    \"\"\"\n    if not values:\n        raise ValueError(\"median requires at least one value\")\n\n    s = sorted(values)\n    n = len(s)\n    mid = n // 2\n\n    if n % 2 == 1:\n        return s[mid]\n    else:\n        return (s[mid - 1] + s[mid]) / 2\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_chunked": {
+   "raw": "```python\ndef chunked(items, size):\n    \"\"\"\n    Split a list into consecutive chunks of `size` items.\n    The last chunk may be shorter if the total number of items\n    is not a multiple of `size`.\n\n    Parameters\n    ----------\n    items : list\n        The list to split into chunks.\n    size : int\n        The maximum size of each chunk. Must be >= 1.\n\n    Returns\n    -------\n    list[list]\n        A list of chunks, each a list of items.\n\n    Raises\n    ------\n    ValueError\n        If `size` is less than 1.\n    \"\"\"\n    if size < 1:\n        raise ValueError(\"size must be >= 1\")\n\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n```",
+   "finish": "stop",
+   "latency": 7.97,
+   "code": "def chunked(items, size):\n    \"\"\"\n    Split a list into consecutive chunks of `size` items.\n    The last chunk may be shorter if the total number of items\n    is not a multiple of `size`.\n\n    Parameters\n    ----------\n    items : list\n        The list to split into chunks.\n    size : int\n        The maximum size of each chunk. Must be >= 1.\n\n    Returns\n    -------\n    list[list]\n        A list of chunks, each a list of items.\n\n    Raises\n    ------\n    ValueError\n        If `size` is less than 1.\n    \"\"\"\n    if size < 1:\n        raise ValueError(\"size must be >= 1\")\n\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_unique_bucket": {
+   "raw": "```python\ndef append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n```\n",
+   "finish": "stop",
+   "latency": 0.32,
+   "code": "def append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_top_words": {
+   "raw": "```python\ndef top_words(text, n):\n    counts = {}\n    for w in text.split():\n        cleaned = w.strip('.,;:!?').lower()\n        if cleaned:\n            counts[cleaned] = counts.get(cleaned, 0) + 1\n    sorted_words = sorted(counts.items(), key=lambda item: (-item[1], item[0]))\n    return [word for word, _ in sorted_words[:n]]\n```",
+   "finish": "stop",
+   "latency": 7.21,
+   "code": "def top_words(text, n):\n    counts = {}\n    for w in text.split():\n        cleaned = w.strip('.,;:!?').lower()\n        if cleaned:\n            counts[cleaned] = counts.get(cleaned, 0) + 1\n    sorted_words = sorted(counts.items(), key=lambda item: (-item[1], item[0]))\n    return [word for word, _ in sorted_words[:n]]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_hex_color": {
+   "raw": "```python\nimport re\n\nPATTERN = re.compile(r'#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})')\n```",
+   "finish": "stop",
+   "latency": 1.2,
+   "code": "import re\n\nPATTERN = re.compile(r'#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_dates_in_text": {
+   "raw": "```python\nimport re\n\nPATTERN = re.compile(r'(?<![0-9-])\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])(?![0-9-])')\n```\n",
+   "finish": "stop",
+   "latency": 10.94,
+   "code": "import re\n\nPATTERN = re.compile(r'(?<![0-9-])\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])(?![0-9-])')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_ipv4": {
+   "raw": "```python\nimport re\n\nPATTERN = re.compile(\n    r'^(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)'\n    r'\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)'\n    r'\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)'\n    r'\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)$'\n)\n```",
+   "finish": "stop",
+   "latency": 0.57,
+   "code": "import re\n\nPATTERN = re.compile(\n    r'^(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)'\n    r'\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)'\n    r'\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)'\n    r'\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)$'\n)\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  }
+ }
+}
