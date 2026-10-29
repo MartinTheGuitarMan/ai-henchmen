@@ -35,7 +35,7 @@ def load(out: Path) -> list[dict]:
         e = json.loads(ep.read_text()) if ep.exists() else {"tasks": {}}
         per, lat = {}, []
         for t in code_tasks.TASKS:
-            rec = g["tasks"].get(t["id"])
+            rec = None if g.get("unavailable") else g["tasks"].get(t["id"])   # an unavailable model is "not run", not "all wrong"
             if rec is None:
                 continue
             if rec.get("error"):

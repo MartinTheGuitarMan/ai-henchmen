@@ -93,6 +93,51 @@
    "failure": null,
    "blocks": 1,
    "detail": ""
+  },
+  "fix_median": {
+   "raw": "```python\ndef median(values):\n    \"\"\"\n    Return the median of a list of numbers.\n\n    For an odd number of elements, returns the middle value.\n    For an even number of elements, returns the average of the two middle values.\n    Raises ValueError if the input list is empty.\n\n    The input sequence is not modified.\n    \"\"\"\n    if not values:\n        raise ValueError(\"median() arg is an empty sequence\")\n    s = sorted(values)\n    n = len(s)\n    mid = n // 2\n    if n % 2:  # odd length\n        return s[mid]\n    else:      # even length\n        return (s[mid - 1] + s[mid]) / 2\n```",
+   "finish": "stop",
+   "latency": 5.92,
+   "code": "def median(values):\n    \"\"\"\n    Return the median of a list of numbers.\n\n    For an odd number of elements, returns the middle value.\n    For an even number of elements, returns the average of the two middle values.\n    Raises ValueError if the input list is empty.\n\n    The input sequence is not modified.\n    \"\"\"\n    if not values:\n        raise ValueError(\"median() arg is an empty sequence\")\n    s = sorted(values)\n    n = len(s)\n    mid = n // 2\n    if n % 2:  # odd length\n        return s[mid]\n    else:      # even length\n        return (s[mid - 1] + s[mid]) / 2\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_chunked": {
+   "raw": "```python\n\"\"\"Utility functions for sequence manipulation.\"\"\"\n\n__all__ = [\"chunked\"]\n\n\ndef chunked(items, size):\n    \"\"\"\n    Split *items* into consecutive chunks of *size* elements.\n\n    The final chunk may contain fewer than *size* elements.\n    Raises ValueError if *size* is less than 1.\n\n    Parameters\n    ----------\n    items : iterable\n        The collection to be chunked.\n    size : int\n        Desired chunk size; must be >= 1.\n\n    Returns\n    -------\n    list[list]\n        A list of chunks, each a list of up to *size* elements.\n    \"\"\"\n    if size < 1:\n        raise ValueError(\"size must be at least 1\")\n    seq = list(items)\n    return [seq[i:i + size] for i in range(0, len(seq), size)]\n```",
+   "finish": "stop",
+   "latency": 1.12,
+   "code": "\"\"\"Utility functions for sequence manipulation.\"\"\"\n\n__all__ = [\"chunked\"]\n\n\ndef chunked(items, size):\n    \"\"\"\n    Split *items* into consecutive chunks of *size* elements.\n\n    The final chunk may contain fewer than *size* elements.\n    Raises ValueError if *size* is less than 1.\n\n    Parameters\n    ----------\n    items : iterable\n        The collection to be chunked.\n    size : int\n        Desired chunk size; must be >= 1.\n\n    Returns\n    -------\n    list[list]\n        A list of chunks, each a list of up to *size* elements.\n    \"\"\"\n    if size < 1:\n        raise ValueError(\"size must be at least 1\")\n    seq = list(items)\n    return [seq[i:i + size] for i in range(0, len(seq), size)]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_unique_bucket": {
+   "raw": "```python\ndef append_unique(item, bucket=None):\n    \"\"\"\n    Append `item` to `bucket` if it is not already present.\n\n    If `bucket` is None, a new empty list is created for each call,\n    ensuring that calls without an explicit bucket do not share state.\n    \"\"\"\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n```",
+   "finish": "stop",
+   "latency": 7.56,
+   "code": "def append_unique(item, bucket=None):\n    \"\"\"\n    Append `item` to `bucket` if it is not already present.\n\n    If `bucket` is None, a new empty list is created for each call,\n    ensuring that calls without an explicit bucket do not share state.\n    \"\"\"\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_top_words": {
+   "raw": "```python\nimport re\nfrom collections import Counter\n\n_PUNCTUATION = \".,;:!?\"\n\n\ndef _clean_word(word: str) -> str:\n    \"\"\"\n    Strip leading/trailing punctuation defined in _PUNCTUATION and convert to lowercase.\n    Returns an empty string if the word contains no alphanumeric characters after cleaning.\n    \"\"\"\n    cleaned = word.strip(_PUNCTUATION).lower()\n    # Ensure the word still contains at least one alphabetic character\n    return cleaned if cleaned and any(ch.isalpha() for ch in cleaned) else \"\"\n\n\ndef top_words(text: str, n: int):\n    \"\"\"\n    Return the `n` most frequent words in `text` as a list of lowercase words.\n    Words are separated by whitespace, case\u2011insensitive, and leading/trailing\n    punctuation characters . , ; : ! ? are ignored.\n    Ties in frequency are resolved alphabetically.\n    \"\"\"\n    if n <= 0:\n        return []\n\n    # Count cleaned words\n    counter = Counter()\n    for raw_word in text.split():\n        word = _clean_word(raw_word)\n        if word:\n            counter[word] += 1\n\n    # Sort by count descending, then alphabetically\n    most_common = sorted(counter.items(), key=lambda kv: (-kv[1], kv[0]))\n    return [word for word, _ in most_common[:n]]\n```",
+   "finish": "stop",
+   "latency": 1.27,
+   "code": "import re\nfrom collections import Counter\n\n_PUNCTUATION = \".,;:!?\"\n\n\ndef _clean_word(word: str) -> str:\n    \"\"\"\n    Strip leading/trailing punctuation defined in _PUNCTUATION and convert to lowercase.\n    Returns an empty string if the word contains no alphanumeric characters after cleaning.\n    \"\"\"\n    cleaned = word.strip(_PUNCTUATION).lower()\n    # Ensure the word still contains at least one alphabetic character\n    return cleaned if cleaned and any(ch.isalpha() for ch in cleaned) else \"\"\n\n\ndef top_words(text: str, n: int):\n    \"\"\"\n    Return the `n` most frequent words in `text` as a list of lowercase words.\n    Words are separated by whitespace, case\u2011insensitive, and leading/trailing\n    punctuation characters . , ; : ! ? are ignored.\n    Ties in frequency are resolved alphabetically.\n    \"\"\"\n    if n <= 0:\n        return []\n\n    # Count cleaned words\n    counter = Counter()\n    for raw_word in text.split():\n        word = _clean_word(raw_word)\n        if word:\n            counter[word] += 1\n\n    # Sort by count descending, then alphabetically\n    most_common = sorted(counter.items(), key=lambda kv: (-kv[1], kv[0]))\n    return [word for word, _ in most_common[:n]]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_hex_color": {
+   "raw": "```python\nimport re\n\nPATTERN = re.compile(r'^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$')\n```",
+   "finish": "stop",
+   "latency": 2.75,
+   "code": "import re\n\nPATTERN = re.compile(r'^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
   }
  }
 }
