@@ -34,12 +34,16 @@ def pytest_run(tmp_path: Path, code: str, tests: str) -> subprocess.CompletedPro
 
 # ---------------------------------------------------------------- the tasks
 def test_task_set_shape():
-    assert 15 <= len(TASKS) <= 18
+    basic = [t for t in TASKS if t["level"] != "complex"]
+    complex_ = [t for t in TASKS if t["level"] == "complex"]
+    assert 15 <= len(basic) <= 18 and 6 <= len(complex_) <= 8
     assert len(set(IDS)) == len(IDS)
-    kinds = [t["kind"] for t in TASKS]
+    kinds = [t["kind"] for t in basic]
     assert kinds.count("fix") in (3, 4) and 2 <= kinds.count("regex") <= 3
-    assert {t["level"] for t in TASKS} == {"easy", "medium", "hard"}
-    assert 2 <= sum(t["level"] == "hard" for t in TASKS) <= 4
+    assert {t["level"] for t in basic} == {"easy", "medium", "hard"}
+    assert 2 <= sum(t["level"] == "hard" for t in basic) <= 4
+    assert any(t["kind"] == "fix" for t in complex_)
+    assert max(len(t["prompt"].splitlines()) for t in complex_) >= 30      # at least one task is a 30+ line spec
 
 
 @pytest.mark.parametrize("t", TASKS, ids=IDS)
@@ -61,7 +65,7 @@ def test_buggy_code_fails_some_tests_but_not_all(t, tmp_path):
     r = pytest_run(tmp_path, t["buggy"], t["tests"])
     m = re.search(r"(\d+) failed", r.stdout)
     assert m and 0 < int(m[1]) <= t["n_tests"], r.stdout[-500:]
-    assert t["buggy"].strip() in t["prompt"]
+    assert t["level"] == "complex" or t["buggy"].strip() in t["prompt"]
 
 
 def test_wrong_solution_scores_partial(tmp_path):

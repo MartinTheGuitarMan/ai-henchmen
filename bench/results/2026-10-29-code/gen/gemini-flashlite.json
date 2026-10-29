@@ -75,6 +75,87 @@
    "failure": null,
    "blocks": 1,
    "detail": ""
+  },
+  "lru_cache": {
+   "raw": "```python\nfrom collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self.cache:\n            return None\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.capacity:\n            self.cache.popitem(last=False)\n\n    def __len__(self) -> int:\n        return len(self.cache)\n\n    def keys(self) -> list:\n        return list(self.cache.keys())\n```",
+   "finish": "stop",
+   "latency": 19.82,
+   "code": "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self.cache:\n            return None\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.capacity:\n            self.cache.popitem(last=False)\n\n    def __len__(self) -> int:\n        return len(self.cache)\n\n    def keys(self) -> list:\n        return list(self.cache.keys())\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "flatten_dict": {
+   "raw": "```python\ndef flatten_dict(d, sep=\".\"):\n    \"\"\"Flattens a nested dictionary into a single-level dictionary.\n\n    Only dictionaries are descended into; lists and other values are kept as they are.\n    An empty nested dictionary is kept as an empty dictionary under its key.\n    The input dictionary is not modified.\n    \"\"\"\n    result = {}\n\n    def _flatten(current, prefix=\"\"):\n        if not isinstance(current, dict):\n            return\n\n        if not current and prefix:\n            result[prefix] = {}\n            return\n\n        for k, v in current.items():\n            new_key = f\"{prefix}{sep}{k}\" if prefix else k\n            if isinstance(v, dict):\n                if not v:\n                    result[new_key] = {}\n                else:\n                    _flatten(v, new_key)\n            else:\n                result[new_key] = v\n\n    _flatten(d)\n    return result\n```",
+   "finish": "stop",
+   "latency": 17.6,
+   "code": "def flatten_dict(d, sep=\".\"):\n    \"\"\"Flattens a nested dictionary into a single-level dictionary.\n\n    Only dictionaries are descended into; lists and other values are kept as they are.\n    An empty nested dictionary is kept as an empty dictionary under its key.\n    The input dictionary is not modified.\n    \"\"\"\n    result = {}\n\n    def _flatten(current, prefix=\"\"):\n        if not isinstance(current, dict):\n            return\n\n        if not current and prefix:\n            result[prefix] = {}\n            return\n\n        for k, v in current.items():\n            new_key = f\"{prefix}{sep}{k}\" if prefix else k\n            if isinstance(v, dict):\n                if not v:\n                    result[new_key] = {}\n                else:\n                    _flatten(v, new_key)\n            else:\n                result[new_key] = v\n\n    _flatten(d)\n    return result\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_median": {
+   "raw": "```python\ndef median(values):\n    if not values:\n        raise ValueError(\"median() arg is an empty sequence\")\n    s = sorted(values)\n    n = len(s)\n    if n % 2 == 1:\n        return s[n // 2]\n    else:\n        return (s[n // 2 - 1] + s[n // 2]) / 2.0\n```",
+   "finish": "stop",
+   "latency": 14.14,
+   "code": "def median(values):\n    if not values:\n        raise ValueError(\"median() arg is an empty sequence\")\n    s = sorted(values)\n    n = len(s)\n    if n % 2 == 1:\n        return s[n // 2]\n    else:\n        return (s[n // 2 - 1] + s[n // 2]) / 2.0\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_chunked": {
+   "raw": "```python\ndef chunked(items, size):\n    if size < 1:\n        raise ValueError(\"size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n```",
+   "finish": "stop",
+   "latency": 20.28,
+   "code": "def chunked(items, size):\n    if size < 1:\n        raise ValueError(\"size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_unique_bucket": {
+   "raw": "```python\ndef append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n```",
+   "finish": "stop",
+   "latency": 20.76,
+   "code": "def append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_top_words": {
+   "raw": "```python\nfrom collections import Counter\nimport string\n\ndef top_words(text, n):\n    # Strip specified punctuation from start and end, and convert to lowercase\n    punctuation_to_strip = \".,;:!?\"\n    words = []\n    for raw_word in text.split():\n        cleaned_word = raw_word.strip(punctuation_to_strip).lower()\n        if cleaned_word:\n            words.append(cleaned_word)\n            \n    # Count frequencies\n    counts = Counter(words)\n    \n    # Sort by frequency descending, then alphabetically ascending\n    # sorted() with a tuple key: (-count, word)\n    sorted_words = sorted(counts.keys(), key=lambda w: (-counts[w], w))\n    \n    return sorted_words[:n]\n```",
+   "finish": "stop",
+   "latency": 26.32,
+   "code": "from collections import Counter\nimport string\n\ndef top_words(text, n):\n    # Strip specified punctuation from start and end, and convert to lowercase\n    punctuation_to_strip = \".,;:!?\"\n    words = []\n    for raw_word in text.split():\n        cleaned_word = raw_word.strip(punctuation_to_strip).lower()\n        if cleaned_word:\n            words.append(cleaned_word)\n            \n    # Count frequencies\n    counts = Counter(words)\n    \n    # Sort by frequency descending, then alphabetically ascending\n    # sorted() with a tuple key: (-count, word)\n    sorted_words = sorted(counts.keys(), key=lambda w: (-counts[w], w))\n    \n    return sorted_words[:n]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_hex_color": {
+   "raw": "```python\nimport re\n\nPATTERN = re.compile(r\"#(?:[0-9a-fA-F]{3}){1,2}\")\n```",
+   "finish": "stop",
+   "latency": 17.74,
+   "code": "import re\n\nPATTERN = re.compile(r\"#(?:[0-9a-fA-F]{3}){1,2}\")\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_dates_in_text": {
+   "raw": "```python\nimport re\n\n# PATTERN matches YYYY-MM-DD ensuring it is not preceded or followed by digits or hyphens.\n# YYYY: \\d{4}\n# MM: (0[1-9]|1[0-2])\n# DD: (0[1-9]|[12]\\d|3[01])\nPATTERN = re.compile(r'(?<![d-])(?<!\\d)(?<!-)\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])(?![d-])(?!\\d)(?!-)')\n```",
+   "finish": "stop",
+   "latency": 32.55,
+   "code": "import re\n\n# PATTERN matches YYYY-MM-DD ensuring it is not preceded or followed by digits or hyphens.\n# YYYY: \\d{4}\n# MM: (0[1-9]|1[0-2])\n# DD: (0[1-9]|[12]\\d|3[01])\nPATTERN = re.compile(r'(?<![d-])(?<!\\d)(?<!-)\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])(?![d-])(?!\\d)(?!-)')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_ipv4": {
+   "raw": "```python\nimport re\n\n# Each octet can be:\n# - '0'\n# - '1-9' followed by 0 to 1 digit ('[1-9]\\d{0,1}' -> 1 to 99)\n# - '1' followed by two digits ('1\\d{2}' -> 100 to 199)\n# - '2' followed by '0-4' followed by 1 digit ('2[0-4]\\d' -> 200 to 249)\n# - '25' followed by '0-5' ('25[0-5]' -> 250 to 255)\n_OCTET = r\"(?:0|[1-9]\\d{0,1}|1\\d{2}|2[0-4]\\d|25[0-5])\"\n\nPATTERN = re.compile(rf\"{_OCTET}\\.{_OCTET}\\.{_OCTET}\\.{_OCTET}\")\n```",
+   "finish": "stop",
+   "latency": 17.16,
+   "code": "import re\n\n# Each octet can be:\n# - '0'\n# - '1-9' followed by 0 to 1 digit ('[1-9]\\d{0,1}' -> 1 to 99)\n# - '1' followed by two digits ('1\\d{2}' -> 100 to 199)\n# - '2' followed by '0-4' followed by 1 digit ('2[0-4]\\d' -> 200 to 249)\n# - '25' followed by '0-5' ('25[0-5]' -> 250 to 255)\n_OCTET = r\"(?:0|[1-9]\\d{0,1}|1\\d{2}|2[0-4]\\d|25[0-5])\"\n\nPATTERN = re.compile(rf\"{_OCTET}\\.{_OCTET}\\.{_OCTET}\\.{_OCTET}\")\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
   }
  }
 }

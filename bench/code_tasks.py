@@ -19,7 +19,7 @@ TASKS: list[dict] = []
 
 def task(id: str, kind: str, level: str, prompt: str, tests: str, reference: str, buggy: str | None = None) -> None:
     body = prompt.strip()
-    if kind == "fix":
+    if kind == "fix" and "```python" not in body:
         body += f"\n\n```python\n{buggy.strip()}\n```"
     TASKS.append({"id": id, "kind": kind, "level": level, "prompt": body + "\n\n" + FENCE_RULE,
                   "tests": tests.strip() + "\n", "reference": reference.strip() + "\n",
@@ -899,6 +899,1200 @@ import re
 OCTET = r"(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])"
 PATTERN = re.compile(rf"{OCTET}(?:\\.{OCTET}){{3}}")
 """)
+
+
+# ---------------------------------------------------------------- complex tier
+# Longer, stateful or multi-part tasks. Same scoring and sandbox. Level "complex" is reported as its own tier.
+# For the multi-module task both modules are merged into one file (the sandbox runs one solution file).
+
+task("cx_ttl_cache", "write", "complex", r"""
+Write a class `TTLCache` for a cache whose entries expire. Constructor: `TTLCache(capacity, ttl, clock=time.monotonic)`.
+`capacity` must be at least 1 and `ttl` greater than 0, otherwise `ValueError`. `clock` is a function returning the
+current time in seconds; the tests pass a fake one.
+
+- `put(key, value)` stores the value; it expires `ttl` seconds after this call (a second `put` of the same key
+  replaces the value and restarts the expiry). The key becomes the most recently used one.
+- `get(key)` returns the value, or `None` if the key is missing or expired. An entry is expired when
+  `clock() >= expiry time`. Reading does not extend the expiry, but it makes the key the most recently used one.
+  An expired entry is removed when it is found.
+- `__len__` counts only entries that are not expired.
+- `keys()` returns the keys of entries that are not expired, from least to most recently used.
+- When a `put` makes the cache hold more than `capacity` entries, expired entries are dropped first; if it is still
+  over capacity, the least recently used entries are dropped until it fits.
+""", r"""
+import pytest
+from solution import TTLCache
+
+class Clock:
+    def __init__(self):
+        self.t = 0.0
+    def __call__(self):
+        return self.t
+
+def make(cap=3, ttl=10):
+    c = Clock()
+    return TTLCache(cap, ttl, clock=c), c
+
+def test_basic_get_put():
+    cache, _ = make()
+    cache.put("a", 1)
+    assert cache.get("a") == 1
+    assert cache.get("zz") is None
+
+def test_expiry_boundary():
+    cache, clk = make(ttl=10)
+    cache.put("a", 1)
+    clk.t = 9.99
+    assert cache.get("a") == 1
+    clk.t = 10.0
+    assert cache.get("a") is None
+
+def test_len_counts_only_live_entries():
+    cache, clk = make()
+    cache.put("a", 1)
+    clk.t = 5
+    cache.put("b", 2)
+    clk.t = 12
+    assert len(cache) == 1
+    assert cache.keys() == ["b"]
+
+def test_put_again_restarts_expiry():
+    cache, clk = make(ttl=10)
+    cache.put("a", 1)
+    clk.t = 8
+    cache.put("a", 2)
+    clk.t = 15
+    assert cache.get("a") == 2
+
+def test_get_does_not_extend_expiry():
+    cache, clk = make(ttl=10)
+    cache.put("a", 1)
+    clk.t = 9
+    assert cache.get("a") == 1
+    clk.t = 10
+    assert cache.get("a") is None
+
+def test_lru_eviction_when_full():
+    cache, _ = make(cap=2)
+    cache.put("a", 1)
+    cache.put("b", 2)
+    cache.get("a")
+    cache.put("c", 3)
+    assert cache.get("b") is None
+    assert cache.keys() == ["a", "c"]
+
+def test_expired_entries_dropped_before_live_lru():
+    cache, clk = make(cap=2, ttl=10)
+    cache.put("old", 1)
+    clk.t = 6
+    cache.put("live", 2)
+    clk.t = 11          # "old" expired, "live" alive
+    cache.get("live")
+    cache.put("new", 3)
+    assert cache.get("live") == 2 and cache.get("new") == 3
+
+def test_keys_order_is_recency():
+    cache, _ = make(cap=3)
+    for k in "abc":
+        cache.put(k, k)
+    cache.get("a")
+    cache.put("b", "B")
+    assert cache.keys() == ["c", "a", "b"]
+
+def test_bad_arguments():
+    with pytest.raises(ValueError):
+        TTLCache(0, 5)
+    with pytest.raises(ValueError):
+        TTLCache(2, 0)
+    with pytest.raises(ValueError):
+        TTLCache(2, -1)
+
+def test_falsy_value_is_stored():
+    cache, _ = make()
+    cache.put("z", 0)
+    assert cache.get("z") == 0 and len(cache) == 1
+""", r"""
+import time
+from collections import OrderedDict
+
+class TTLCache:
+    def __init__(self, capacity, ttl, clock=time.monotonic):
+        if capacity < 1 or ttl <= 0:
+            raise ValueError("bad arguments")
+        self.capacity, self.ttl, self.clock = capacity, ttl, clock
+        self._d = OrderedDict()   # key -> (value, expires_at)
+
+    def _purge(self):
+        now = self.clock()
+        for k in [k for k, (_, e) in self._d.items() if now >= e]:
+            del self._d[k]
+
+    def put(self, key, value):
+        self._d[key] = (value, self.clock() + self.ttl)
+        self._d.move_to_end(key)
+        if len(self._d) > self.capacity:
+            self._purge()
+        while len(self._d) > self.capacity:
+            self._d.popitem(last=False)
+
+    def get(self, key):
+        item = self._d.get(key)
+        if item is None:
+            return None
+        if self.clock() >= item[1]:
+            del self._d[key]
+            return None
+        self._d.move_to_end(key)
+        return item[0]
+
+    def __len__(self):
+        self._purge()
+        return len(self._d)
+
+    def keys(self):
+        self._purge()
+        return list(self._d)
+""")
+
+task("cx_scheduler", "write", "complex", r"""
+Write a class `Scheduler` that runs callbacks at given times. Time is passed in by the caller as plain numbers.
+
+- `schedule(name, run_at, callback, every=None)`: add a task. `name` is unique among pending tasks, otherwise
+  `ValueError`. `callback` takes no arguments. If `every` is given it must be greater than 0 (else `ValueError`) and
+  the task repeats.
+- `cancel(name)`: remove a pending task; return `True` if it existed, `False` otherwise.
+- `pending()`: list of `(run_at, name)` for all pending tasks, sorted by `run_at` and then by the order in which the
+  tasks were first scheduled.
+- `run_due(now)`: run every task whose `run_at <= now`, one after the other, ordered by `run_at` and then by the order
+  in which they were first scheduled, and return the list of the names that were run, in that order.
+  - A one-time task is removed after it ran.
+  - A repeating task runs at most once per `run_due` call. Afterwards its `run_at` moves forward in steps of `every`
+    until it is greater than `now`; runs that were missed in between are skipped, not made up.
+  - If a callback raises an exception, it is caught, `(name, exception)` is appended to the list `self.errors`, the task
+    still counts as run (and is rescheduled or removed as above), and the other tasks continue.
+  - Tasks that a callback adds during `run_due` are not run in the same call. A task cancelled by an earlier callback
+    in the same call is not run.
+""", r"""
+import pytest
+from solution import Scheduler
+
+def collector():
+    log = []
+    return log, (lambda n: (lambda: log.append(n)))
+
+def test_runs_due_tasks_in_time_then_insertion_order():
+    s = Scheduler()
+    log, cb = collector()
+    s.schedule("late", 5, cb("late"))
+    s.schedule("b", 2, cb("b"))
+    s.schedule("a", 2, cb("a"))
+    assert s.run_due(3) == ["b", "a"]
+    assert log == ["b", "a"]
+    assert [n for _, n in s.pending()] == ["late"]
+
+def test_boundary_inclusive():
+    s = Scheduler()
+    log, cb = collector()
+    s.schedule("x", 5, cb("x"))
+    assert s.run_due(4.99) == []
+    assert s.run_due(5) == ["x"]
+    assert s.run_due(100) == []
+
+def test_duplicate_name_and_bad_every():
+    s = Scheduler()
+    s.schedule("x", 1, lambda: None)
+    with pytest.raises(ValueError):
+        s.schedule("x", 2, lambda: None)
+    with pytest.raises(ValueError):
+        s.schedule("y", 2, lambda: None, every=0)
+
+def test_cancel():
+    s = Scheduler()
+    s.schedule("x", 1, lambda: None)
+    assert s.cancel("x") is True
+    assert s.cancel("x") is False
+    assert s.run_due(10) == []
+
+def test_repeating_runs_once_per_call_and_skips_missed():
+    s = Scheduler()
+    log, cb = collector()
+    s.schedule("tick", 10, cb("tick"), every=10)
+    assert s.run_due(45) == ["tick"]
+    assert s.pending() == [(50, "tick")]
+    assert s.run_due(45) == []
+    assert s.run_due(50) == ["tick"]
+    assert s.pending() == [(60, "tick")]
+    assert len(log) == 2
+
+def test_repeating_exact_boundary_moves_strictly_past_now():
+    s = Scheduler()
+    s.schedule("t", 0, lambda: None, every=5)
+    s.run_due(10)
+    assert s.pending() == [(15, "t")]
+
+def test_exception_is_recorded_and_others_continue():
+    s = Scheduler()
+    log, cb = collector()
+    def boom():
+        raise RuntimeError("bad")
+    s.schedule("boom", 1, boom)
+    s.schedule("ok", 2, cb("ok"))
+    assert s.run_due(5) == ["boom", "ok"]
+    assert log == ["ok"]
+    assert len(s.errors) == 1 and s.errors[0][0] == "boom" and isinstance(s.errors[0][1], RuntimeError)
+    assert s.pending() == []
+
+def test_repeating_task_that_raises_is_rescheduled():
+    s = Scheduler()
+    def boom():
+        raise ValueError("x")
+    s.schedule("r", 1, boom, every=2)
+    assert s.run_due(1) == ["r"]
+    assert s.pending() == [(3, "r")]
+
+def test_task_added_by_callback_waits_for_next_call():
+    s = Scheduler()
+    log, cb = collector()
+    def spawn():
+        s.schedule("child", 0, cb("child"))
+    s.schedule("parent", 1, spawn)
+    assert s.run_due(5) == ["parent"]
+    assert s.run_due(5) == ["child"]
+
+def test_cancel_by_earlier_callback():
+    s = Scheduler()
+    log, cb = collector()
+    s.schedule("killer", 1, lambda: s.cancel("victim"))
+    s.schedule("victim", 2, cb("victim"))
+    assert s.run_due(5) == ["killer"]
+    assert log == []
+
+def test_pending_order_uses_first_scheduled_for_ties():
+    s = Scheduler()
+    s.schedule("second", 3, lambda: None)
+    s.schedule("first", 3, lambda: None)
+    assert s.pending() == [(3, "second"), (3, "first")]
+""", r"""
+class Scheduler:
+    def __init__(self):
+        self._tasks = {}      # name -> [run_at, seq, callback, every]
+        self._seq = 0
+        self.errors = []
+
+    def schedule(self, name, run_at, callback, every=None):
+        if name in self._tasks:
+            raise ValueError("duplicate name")
+        if every is not None and every <= 0:
+            raise ValueError("every")
+        self._tasks[name] = [run_at, self._seq, callback, every]
+        self._seq += 1
+
+    def cancel(self, name):
+        return self._tasks.pop(name, None) is not None
+
+    def pending(self):
+        return [(t[0], n) for n, t in sorted(self._tasks.items(), key=lambda kv: (kv[1][0], kv[1][1]))]
+
+    def run_due(self, now):
+        due = sorted((n for n, t in self._tasks.items() if t[0] <= now), key=lambda n: (self._tasks[n][0], self._tasks[n][1]))
+        ran = []
+        for n in due:
+            t = self._tasks.get(n)
+            if t is None:
+                continue
+            try:
+                t[2]()
+            except Exception as e:
+                self.errors.append((n, e))
+            ran.append(n)
+            if n in self._tasks:
+                if t[3] is None:
+                    del self._tasks[n]
+                else:
+                    while t[0] <= now:
+                        t[0] += t[3]
+        return ran
+""")
+
+task("cx_expression", "write", "complex", r"""
+Write a function `evaluate(expr, variables=None)` that evaluates an arithmetic expression given as a string and
+returns the result as a `float`.
+
+Grammar and rules:
+- Numbers are written with digits and an optional decimal point (`3`, `2.5`, `.5` is not allowed, `5.` is not allowed).
+- Operators: `+`, `-`, `*`, `/`, `^` (power) and parentheses. Spaces are ignored.
+- `^` binds tighter than everything else and is right-associative: `2^3^2` is 512. Unary minus binds tighter than `*`
+  and `/` but looser than `^`: `-2^2` is -4, and `2^-1` is 0.5. A unary plus is not allowed.
+- Names (letters and underscores) are looked up in the `variables` dict. An unknown name is an error.
+- Functions: `min(a, b, ...)` and `max(a, b, ...)` with at least one argument, and `abs(x)` with exactly one. Arguments
+  are expressions separated by commas.
+- Every problem raises `ValueError`: an empty expression, unbalanced parentheses, two operators in a row (except a unary
+  minus), a missing operand, trailing garbage, an unknown character, an unknown function or name, a wrong number of
+  arguments, implicit multiplication such as `2(3)` or `2 3`, and division by zero.
+""", r"""
+import pytest
+from solution import evaluate
+
+def test_basic_arithmetic_and_precedence():
+    assert evaluate("1 + 2 * 3") == 7
+    assert evaluate("(1 + 2) * 3") == 9
+    assert evaluate("10 - 4 - 3") == 3
+    assert evaluate("8 / 4 / 2") == 1
+
+def test_returns_float():
+    assert type(evaluate("2 + 3")) is float
+
+def test_power_rules():
+    assert evaluate("2^3^2") == 512
+    assert evaluate("-2^2") == -4
+    assert evaluate("2^-1") == 0.5
+    assert evaluate("2 * 3^2") == 18
+
+def test_unary_minus():
+    assert evaluate("-3 + 5") == 2
+    assert evaluate("--3") == 3
+    assert evaluate("4 * -2") == -8
+    assert evaluate("-(2 + 3)") == -5
+
+def test_decimals():
+    assert evaluate("1.5 * 4") == 6.0
+    assert abs(evaluate("0.1 + 0.2") - 0.3) < 1e-9
+
+def test_variables():
+    assert evaluate("x * y + 1", {"x": 3, "y": 4}) == 13
+    assert evaluate("_a1b", {"_a1b": 2.5}) == 2.5
+
+def test_functions():
+    assert evaluate("max(1, 5, 3)") == 5
+    assert evaluate("min(4)") == 4
+    assert evaluate("abs(-7) + min(2, 1+0)") == 8
+    assert evaluate("max(min(5, 9), 2) * 2") == 10
+
+@pytest.mark.parametrize("bad", ["", "   ", "1 +", "* 2", "1 2", "2(3)", "(1", "1)", "1 ++ 2", "+3", "3 $ 4", "foo",
+                                 "sin(1)", "abs(1, 2)", "abs()", "max()", "1 / 0", "5.", ".5", "2 ^", "min(1,)", "()"])
+def test_invalid(bad):
+    with pytest.raises(ValueError):
+        evaluate(bad)
+
+def test_division_by_zero_in_subexpression():
+    with pytest.raises(ValueError):
+        evaluate("1 / (2 - 2)")
+
+def test_unknown_variable_with_other_variables():
+    with pytest.raises(ValueError):
+        evaluate("x + z", {"x": 1})
+""", r"""
+import re
+
+TOKEN = re.compile(r"\s*(?:(\d+\.\d+|\d+)|([A-Za-z_][A-Za-z_0-9]*)|(.))")
+
+def evaluate(expr, variables=None):
+    variables = variables or {}
+    toks = []
+    pos = 0
+    expr = expr.rstrip()
+    while pos < len(expr):
+        m = TOKEN.match(expr, pos)
+        if not m:
+            break
+        if m[1]:
+            if expr[m.end():m.end() + 1] == "." or False:
+                raise ValueError("number")
+            toks.append(("num", float(m[1])))
+        elif m[2]:
+            toks.append(("name", m[2]))
+        else:
+            if m[3] not in "+-*/^(),":
+                raise ValueError("char")
+            toks.append(("op", m[3]))
+        pos = m.end()
+    if not toks:
+        raise ValueError("empty")
+    i = [0]
+
+    def peek():
+        return toks[i[0]] if i[0] < len(toks) else (None, None)
+
+    def take():
+        t = peek()
+        i[0] += 1
+        return t
+
+    def expect(op):
+        if take() != ("op", op):
+            raise ValueError("expected " + op)
+
+    def expression():
+        v = term()
+        while peek() in (("op", "+"), ("op", "-")):
+            op = take()[1]
+            r = term()
+            v = v + r if op == "+" else v - r
+        return v
+
+    def term():
+        v = unary()
+        while peek() in (("op", "*"), ("op", "/")):
+            op = take()[1]
+            r = unary()
+            if op == "*":
+                v *= r
+            else:
+                if r == 0:
+                    raise ValueError("division by zero")
+                v /= r
+        return v
+
+    def unary():
+        if peek() == ("op", "-"):
+            take()
+            return -unary()
+        return power()
+
+    def power():
+        base = atom()
+        if peek() == ("op", "^"):
+            take()
+            return base ** unary()
+        return base
+
+    def atom():
+        kind, val = take()
+        if kind == "num":
+            return val
+        if kind == "name":
+            if peek() == ("op", "("):
+                take()
+                args = []
+                if peek() != ("op", ")"):
+                    args.append(expression())
+                    while peek() == ("op", ","):
+                        take()
+                        args.append(expression())
+                expect(")")
+                if val in ("min", "max") and args:
+                    return float((min if val == "min" else max)(args))
+                if val == "abs" and len(args) == 1:
+                    return abs(args[0])
+                raise ValueError("function")
+            if val not in variables:
+                raise ValueError("unknown name")
+            return float(variables[val])
+        if (kind, val) == ("op", "("):
+            v = expression()
+            expect(")")
+            return v
+        raise ValueError("operand")
+
+    result = expression()
+    if i[0] != len(toks):
+        raise ValueError("trailing")
+    return float(result)
+""")
+
+task("cx_ini_parser", "write", "complex", r"""
+Write a function `parse_ini(text)` for a small INI dialect, specified here. It returns a dict that maps each section
+name to a dict that maps keys to string values.
+
+1. The text is processed line by line (lines are separated by `\n`; the first line is line 1). Leading and trailing
+   whitespace of a line is ignored. Empty lines are skipped.
+2. A line whose first character (after the whitespace) is `;` or `#` is a comment and is skipped.
+3. `[name]` starts a section. The name is trimmed and must not be empty, and the line must end with `]` (after
+   trimming). A section that is repeated continues the earlier one. A section with no keys still appears, as `{}`.
+4. Every other line must be `key = value`. It is split at the first `=`. The key is trimmed and must not be empty.
+   Keys before the first section go into the section named `""`, which appears in the result only if it has keys.
+   If a key appears twice in a section, the later value wins.
+5. The value (the text after the `=`, trimmed) is either quoted or unquoted.
+   - Unquoted: an inline comment starts at the first `;` or `#` that has whitespace in front of it; the comment is cut
+     off and the rest is trimmed. A `;` or `#` without whitespace in front of it belongs to the value
+     (`color=#fff` has the value `#fff`). Backslashes are kept as they are. An empty value is allowed.
+   - Quoted: the value starts with `"` and ends at the next `"` that is not escaped. Inside, `\"` is a double
+     quote, `\\` is a backslash, `\n` is a newline and `\t` is a tab; any other backslash sequence is an error. After
+     the closing quote only whitespace, or whitespace followed by a comment (`;` or `#`), may follow, otherwise it is an
+     error. A quoted value keeps its inner spaces exactly.
+6. Every error raises `ValueError`, and the message contains `line N` with the number of the offending line (for
+   example `line 3`). Errors: a section header that is malformed or empty, a line without `=`, an empty key, an
+   unterminated quoted value, a bad escape, text after a closing quote.
+""", r"""
+import pytest
+from solution import parse_ini
+
+def test_basic_sections():
+    text = "[a]\nx = 1\ny=two words\n[b]\nz = 3\n"
+    assert parse_ini(text) == {"a": {"x": "1", "y": "two words"}, "b": {"z": "3"}}
+
+def test_comments_and_blank_lines():
+    text = "; top\n\n# another\n[a]\n  ; indented\nx = 1\n"
+    assert parse_ini(text) == {"a": {"x": "1"}}
+
+def test_global_keys_go_to_empty_section_only_if_present():
+    assert parse_ini("k = v\n[a]\nx=1") == {"": {"k": "v"}, "a": {"x": "1"}}
+    assert "" not in parse_ini("[a]\nx=1")
+
+def test_empty_section_kept():
+    assert parse_ini("[empty]\n[a]\nx=1") == {"empty": {}, "a": {"x": "1"}}
+
+def test_repeated_section_merges_and_later_key_wins():
+    text = "[a]\nx=1\ny=2\n[b]\nq=1\n[a]\nx=9\n"
+    assert parse_ini(text) == {"a": {"x": "9", "y": "2"}, "b": {"q": "1"}}
+
+def test_inline_comments():
+    text = "[a]\nx = 5 ; five\ny = 6 # six\ncolor=#fff\nurl = a;b\n"
+    assert parse_ini(text) == {"a": {"x": "5", "y": "6", "color": "#fff", "url": "a;b"}}
+
+def test_first_equals_splits():
+    assert parse_ini("[a]\nformula = a=b+c\n") == {"a": {"formula": "a=b+c"}}
+
+def test_empty_value():
+    assert parse_ini("[a]\nx =\ny = ; just a comment\n") == {"a": {"x": "", "y": ""}}
+
+def test_quoted_values_keep_spaces_and_comment_chars():
+    text = '[a]\nx = "  padded ; not a comment  "\ny = "# also kept"\n'
+    assert parse_ini(text) == {"a": {"x": "  padded ; not a comment  ", "y": "# also kept"}}
+
+def test_quoted_escapes():
+    text = r'[a]' + "\n" + r'x = "q\"uote \\ back\nline\ttab"' + "\n"
+    assert parse_ini(text) == {"a": {"x": 'q"uote \\ back\nline\ttab'}}
+
+def test_comment_after_quoted_value_allowed():
+    assert parse_ini('[a]\nx = "v"   ; note\n') == {"a": {"x": "v"}}
+
+def test_unquoted_backslash_kept():
+    assert parse_ini("[a]\npath = C:\\temp\\new\n") == {"a": {"path": "C:\\temp\\new"}}
+
+def test_section_name_trimmed():
+    assert parse_ini("[  my section  ]\nx=1") == {"my section": {"x": "1"}}
+
+def test_crlf_not_required_but_trailing_space_ok():
+    assert parse_ini("[a]  \nx = 1   \n") == {"a": {"x": "1"}}
+
+@pytest.mark.parametrize("text,line", [
+    ("[a]\nx=1\nnovalue\n", 3),
+    ("[a\nx=1\n", 1),
+    ("[]\n", 1),
+    ("[a]\n= 5\n", 2),
+    ('[a]\nx = "open\n', 2),
+    ('[a]\nx = "bad \\q escape"\n', 2),
+    ('[a]\nx = "done" trailing\n', 2),
+    ("\n\n[a]\nok=1\n[b] junk\n", 5),
+])
+def test_errors_name_the_line(text, line):
+    with pytest.raises(ValueError) as e:
+        parse_ini(text)
+    assert f"line {line}" in str(e.value)
+""", r"""
+ESC = {'"': '"', "\\": "\\", "n": "\n", "t": "\t"}
+
+def _quoted(rest, n):
+    out, i = [], 1
+    while i < len(rest):
+        c = rest[i]
+        if c == "\\":
+            if i + 1 >= len(rest) or rest[i + 1] not in ESC:
+                raise ValueError(f"line {n}: bad escape")
+            out.append(ESC[rest[i + 1]])
+            i += 2
+        elif c == '"':
+            tail = rest[i + 1:]
+            if tail.strip() and not (tail[0] in " \t" and tail.strip()[0] in ";#"):
+                raise ValueError(f"line {n}: text after closing quote")
+            return "".join(out)
+        else:
+            out.append(c)
+            i += 1
+    raise ValueError(f"line {n}: unterminated quote")
+
+def parse_ini(text):
+    result, section = {}, ""
+    for n, raw in enumerate(text.split("\n"), 1):
+        line = raw.strip()
+        if not line or line[0] in ";#":
+            continue
+        if line[0] == "[":
+            if not line.endswith("]") or not line[1:-1].strip():
+                raise ValueError(f"line {n}: bad section")
+            section = line[1:-1].strip()
+            result.setdefault(section, {})
+            continue
+        if "=" not in line:
+            raise ValueError(f"line {n}: no '='")
+        key, _, raw_rest = line.partition("=")
+        key, rest = key.strip(), raw_rest.strip()
+        if not key:
+            raise ValueError(f"line {n}: empty key")
+        if rest.startswith('"'):
+            value = _quoted(rest, n)
+        else:
+            value = rest
+            for i, c in enumerate(raw_rest):
+                if c in ";#" and raw_rest[i - 1:i] in (" ", "\t"):
+                    value = raw_rest[:i].strip()
+                    break
+        result.setdefault(section, {})[key] = value
+    return result
+""")
+
+task("cx_shortest_path", "write", "complex", r"""
+Write a function `shortest_path(graph, src, dst)` that finds the cheapest route in a directed weighted graph. `graph`
+is a dict that maps a node to a dict of `{neighbour: weight}`. Weights are numbers greater than 0. A node may appear
+only as a neighbour, with no entry of its own (it has no outgoing edges).
+
+Return `(distance, path)` where `path` is the list of nodes from `src` to `dst`. If `src == dst` the result is
+`(0, [src])`. If `dst` cannot be reached, return `None`. If several cheapest paths have the same distance, return the
+one that comes first when the paths are compared as lists of node names (lexicographically). Raise `ValueError` if
+`src` or `dst` appears nowhere in the graph (neither as a key nor as a neighbour), or if any weight is zero or
+negative anywhere in the graph (even on an edge that is not used). The graph must not be modified.
+""", r"""
+import pytest
+from solution import shortest_path
+
+G = {"a": {"b": 7, "c": 9, "f": 14}, "b": {"a": 7, "c": 10, "d": 15}, "c": {"a": 9, "b": 10, "d": 11, "f": 2},
+     "d": {"b": 15, "c": 11, "e": 6}, "e": {"d": 6, "f": 9}, "f": {"a": 14, "c": 2, "e": 9}}
+
+def test_classic():
+    assert shortest_path(G, "a", "e") == (20, ["a", "c", "f", "e"])
+
+def test_same_node():
+    assert shortest_path(G, "c", "c") == (0, ["c"])
+
+def test_unreachable():
+    g = {"a": {"b": 1}, "c": {"d": 1}}
+    assert shortest_path(g, "a", "d") is None
+
+def test_directed():
+    g = {"a": {"b": 1}}
+    assert shortest_path(g, "a", "b") == (1, ["a", "b"])
+    assert shortest_path(g, "b", "a") is None
+
+def test_node_only_as_neighbour():
+    g = {"a": {"z": 4}}
+    assert shortest_path(g, "a", "z") == (4, ["a", "z"])
+    assert shortest_path(g, "z", "z") == (0, ["z"])
+
+def test_tie_prefers_lexicographically_smaller_path():
+    g = {"s": {"b": 1, "a": 1}, "a": {"t": 1}, "b": {"t": 1}}
+    assert shortest_path(g, "s", "t") == (2, ["s", "a", "t"])
+
+def test_tie_decided_late_in_the_path():
+    g = {"s": {"m": 1}, "m": {"y": 1, "x": 1}, "x": {"t": 1}, "y": {"t": 1}}
+    assert shortest_path(g, "s", "t") == (3, ["s", "m", "x", "t"])
+
+def test_tie_between_different_lengths_in_hops():
+    g = {"s": {"t": 4, "a": 1}, "a": {"b": 1}, "b": {"t": 2}}
+    assert shortest_path(g, "s", "t") == (4, ["s", "a", "b", "t"])
+
+def test_prefers_cheaper_over_fewer_hops():
+    g = {"s": {"t": 10, "a": 1}, "a": {"t": 1}}
+    assert shortest_path(g, "s", "t") == (2, ["s", "a", "t"])
+
+def test_float_weights():
+    g = {"a": {"b": 0.5, "c": 0.25}, "c": {"b": 0.125}}
+    d, path = shortest_path(g, "a", "b")
+    assert abs(d - 0.375) < 1e-12 and path == ["a", "c", "b"]
+
+def test_cycles_do_not_hang():
+    g = {"a": {"b": 1}, "b": {"a": 1, "c": 1}}
+    assert shortest_path(g, "a", "c") == (2, ["a", "b", "c"])
+
+def test_unknown_nodes():
+    with pytest.raises(ValueError):
+        shortest_path(G, "a", "nope")
+    with pytest.raises(ValueError):
+        shortest_path(G, "nope", "a")
+
+def test_bad_weights_even_when_unused():
+    with pytest.raises(ValueError):
+        shortest_path({"a": {"b": 1}, "x": {"y": 0}}, "a", "b")
+    with pytest.raises(ValueError):
+        shortest_path({"a": {"b": -1}}, "a", "b")
+
+def test_graph_not_modified():
+    import copy
+    g = copy.deepcopy(G)
+    shortest_path(g, "a", "e")
+    assert g == G
+""", r"""
+import heapq
+
+def shortest_path(graph, src, dst):
+    nodes = set(graph)
+    for u, nb in graph.items():
+        for v, w in nb.items():
+            if w <= 0:
+                raise ValueError("weight")
+            nodes.add(v)
+    if src not in nodes or dst not in nodes:
+        raise ValueError("unknown node")
+    heap = [(0, [src])]
+    done = set()
+    while heap:
+        d, path = heapq.heappop(heap)
+        u = path[-1]
+        if u in done:
+            continue
+        done.add(u)
+        if u == dst:
+            return d, path
+        for v, w in graph.get(u, {}).items():
+            if v not in done:
+                heapq.heappush(heap, (d + w, path + [v]))
+    return None
+""")
+
+task("cx_schedule_algos", "write", "complex", r"""
+Write two functions in one module.
+
+1. `max_profit(jobs)`: `jobs` is a list of `(start, end, profit)` tuples with `start < end` and `profit >= 0`. Choose
+   a set of jobs that do not overlap in time and have the largest total profit; return that total. Two jobs do not
+   overlap if one ends at the same time as the other starts. An empty list gives 0. The input is not modified.
+2. `min_rooms(meetings)`: `meetings` is a list of `(start, end)` tuples with `start < end`. Return the smallest number
+   of rooms so that no two meetings in the same room overlap (a meeting ending at 10 and one starting at 10 can share a
+   room). An empty list gives 0.
+""", r"""
+from solution import max_profit, min_rooms
+
+def test_profit_basic():
+    assert max_profit([(1, 3, 5), (2, 5, 6), (4, 6, 5), (6, 7, 4), (5, 8, 11), (7, 9, 2)]) == 17
+
+def test_profit_touching_jobs_are_compatible():
+    assert max_profit([(0, 5, 3), (5, 10, 4)]) == 7
+
+def test_profit_prefers_one_big_job():
+    assert max_profit([(0, 10, 100), (0, 5, 30), (5, 10, 30)]) == 100
+
+def test_profit_empty_single_zero():
+    assert max_profit([]) == 0
+    assert max_profit([(1, 2, 9)]) == 9
+    assert max_profit([(1, 2, 0), (2, 3, 0)]) == 0
+
+def test_profit_unsorted_input_and_not_modified():
+    jobs = [(6, 7, 4), (1, 3, 5), (5, 8, 11)]
+    copy = list(jobs)
+    assert max_profit(jobs) == 16
+    assert jobs == copy
+
+def test_profit_equal_ends_and_nested():
+    assert max_profit([(1, 4, 5), (2, 4, 7), (4, 6, 2), (3, 5, 1)]) == 9
+
+def test_rooms_basic():
+    assert min_rooms([(0, 30), (5, 10), (15, 20)]) == 2
+
+def test_rooms_touching_share_a_room():
+    assert min_rooms([(0, 10), (10, 20), (20, 30)]) == 1
+
+def test_rooms_all_overlap():
+    assert min_rooms([(0, 10), (1, 9), (2, 8), (3, 7)]) == 4
+
+def test_rooms_empty_and_unsorted():
+    assert min_rooms([]) == 0
+    assert min_rooms([(15, 20), (0, 30), (5, 10)]) == 2
+
+def test_rooms_many_small_between_a_long_one():
+    assert min_rooms([(0, 100), (1, 2), (2, 3), (3, 4)]) == 2
+""", r"""
+import bisect
+
+def max_profit(jobs):
+    js = sorted(jobs, key=lambda j: j[1])
+    ends = [j[1] for j in js]
+    best = [0] * (len(js) + 1)
+    for i, (s, e, p) in enumerate(js, 1):
+        k = bisect.bisect_right(ends, s, 0, i - 1)
+        best[i] = max(best[i - 1], best[k] + p)
+    return best[-1]
+
+def min_rooms(meetings):
+    events = []
+    for s, e in meetings:
+        events.append((s, 1))
+        events.append((e, -1))
+    events.sort()
+    cur = top = 0
+    for _, d in events:
+        cur += d
+        top = max(top, cur)
+    return top
+""")
+
+task("cx_inventory_fix", "fix", "complex", r"""
+Below are two modules of a small shop program, `inventory.py` and `orders.py`. For this exercise they must be merged:
+return ONE module that defines `OutOfStock`, `Inventory` and `fulfil` (no imports between them).
+
+The behaviour that is wrong, in words:
+- `Inventory.remove(item, qty)` lets the stock become negative. It should raise `OutOfStock` when `qty` is more than the
+  current stock, and then change nothing.
+- `fulfil(inventory, order)` takes an order (a dict of item to quantity) and removes everything from the inventory. If
+  one line cannot be served, the lines before it have already been removed. It must be all or nothing: on `OutOfStock`
+  the inventory must be exactly as before the call.
+- A quantity that is zero or negative, in `add`, `remove` or in an order, must raise `ValueError` (for an order, before
+  anything is removed).
+- `fulfil` returns the total number of items removed. An empty order returns 0.
+- `Inventory.stock(item)` of an item never seen is 0. The inventory dict passed to the constructor must not be modified
+  by later `add` or `remove` calls (copy it).
+
+```python
+# inventory.py
+class OutOfStock(Exception):
+    pass
+
+
+class Inventory:
+    def __init__(self, stock=None):
+        self._stock = stock if stock is not None else {}
+
+    def stock(self, item):
+        return self._stock.get(item, 0)
+
+    def add(self, item, qty):
+        self._stock[item] = self.stock(item) + qty
+
+    def remove(self, item, qty):
+        self._stock[item] = self.stock(item) - qty
+```
+
+```python
+# orders.py
+from inventory import Inventory, OutOfStock
+
+
+def fulfil(inventory, order):
+    total = 0
+    for item, qty in order.items():
+        inventory.remove(item, qty)
+        total += qty
+    return total
+```
+""", r"""
+import pytest
+from solution import Inventory, OutOfStock, fulfil
+
+def test_stock_of_unknown_item_is_zero():
+    assert Inventory().stock("x") == 0
+
+def test_add_and_remove():
+    inv = Inventory({"a": 5})
+    inv.add("a", 2)
+    inv.add("b", 1)
+    inv.remove("a", 7)
+    assert inv.stock("a") == 0 and inv.stock("b") == 1
+
+def test_remove_too_much_raises_and_changes_nothing():
+    inv = Inventory({"a": 2})
+    with pytest.raises(OutOfStock):
+        inv.remove("a", 3)
+    assert inv.stock("a") == 2
+
+def test_remove_unknown_item_raises():
+    with pytest.raises(OutOfStock):
+        Inventory().remove("ghost", 1)
+
+def test_constructor_dict_is_copied():
+    base = {"a": 1}
+    inv = Inventory(base)
+    inv.add("a", 5)
+    assert base == {"a": 1}
+
+def test_bad_quantities_in_inventory():
+    inv = Inventory({"a": 5})
+    for bad in (0, -1):
+        with pytest.raises(ValueError):
+            inv.add("a", bad)
+        with pytest.raises(ValueError):
+            inv.remove("a", bad)
+    assert inv.stock("a") == 5
+
+def test_fulfil_success_returns_total():
+    inv = Inventory({"apple": 5, "pear": 3})
+    assert fulfil(inv, {"apple": 2, "pear": 3}) == 5
+    assert inv.stock("apple") == 3 and inv.stock("pear") == 0
+
+def test_fulfil_is_all_or_nothing():
+    inv = Inventory({"apple": 5, "pear": 1})
+    with pytest.raises(OutOfStock):
+        fulfil(inv, {"apple": 2, "pear": 5})
+    assert inv.stock("apple") == 5 and inv.stock("pear") == 1
+
+def test_fulfil_failure_when_the_failing_line_is_first():
+    inv = Inventory({"apple": 5})
+    with pytest.raises(OutOfStock):
+        fulfil(inv, {"pear": 1, "apple": 1})
+    assert inv.stock("apple") == 5
+
+def test_fulfil_bad_quantity_removes_nothing():
+    inv = Inventory({"apple": 5, "pear": 5})
+    with pytest.raises(ValueError):
+        fulfil(inv, {"apple": 1, "pear": 0})
+    assert inv.stock("apple") == 5
+
+def test_fulfil_empty_order():
+    inv = Inventory({"a": 1})
+    assert fulfil(inv, {}) == 0
+    assert inv.stock("a") == 1
+
+def test_out_of_stock_is_an_exception_class():
+    assert issubclass(OutOfStock, Exception)
+""", r"""
+class OutOfStock(Exception):
+    pass
+
+
+class Inventory:
+    def __init__(self, stock=None):
+        self._stock = dict(stock) if stock is not None else {}
+
+    def stock(self, item):
+        return self._stock.get(item, 0)
+
+    def add(self, item, qty):
+        if qty <= 0:
+            raise ValueError("qty")
+        self._stock[item] = self.stock(item) + qty
+
+    def remove(self, item, qty):
+        if qty <= 0:
+            raise ValueError("qty")
+        if qty > self.stock(item):
+            raise OutOfStock(item)
+        self._stock[item] = self.stock(item) - qty
+
+
+def fulfil(inventory, order):
+    for qty in order.values():
+        if qty <= 0:
+            raise ValueError("qty")
+    for item, qty in order.items():
+        if qty > inventory.stock(item):
+            raise OutOfStock(item)
+    total = 0
+    for item, qty in order.items():
+        inventory.remove(item, qty)
+        total += qty
+    return total
+""", buggy=r"""
+# inventory.py
+class OutOfStock(Exception):
+    pass
+
+
+class Inventory:
+    def __init__(self, stock=None):
+        self._stock = stock if stock is not None else {}
+
+    def stock(self, item):
+        return self._stock.get(item, 0)
+
+    def add(self, item, qty):
+        self._stock[item] = self.stock(item) + qty
+
+    def remove(self, item, qty):
+        self._stock[item] = self.stock(item) - qty
+
+
+# orders.py (merged: no import)
+def fulfil(inventory, order):
+    total = 0
+    for item, qty in order.items():
+        inventory.remove(item, qty)
+        total += qty
+    return total
+""")
+
+task("cx_template", "write", "complex", r"""
+Write a function `render(template, context)` for a tiny template language, specified here. `context` is a dict.
+
+1. Text outside tags is copied exactly as it is, whitespace included.
+2. `{{ path }}` inserts a value. A path is names joined by dots, like `user.name` or `items.0`. The first name is looked
+   up in `context`. Each further name is looked up in the current value: in a dict by key, in a list by index when the
+   name is all digits. A name that cannot be found makes the whole value missing; a missing value renders as an empty
+   string, and so does `None`. Any other value is converted with `str()`. Spaces inside the braces are ignored.
+3. `{{ path | filter }}` applies one filter to the value. Filters: `upper`, `lower`, `title` (all work on `str(value)`;
+   a missing value counts as an empty string) and `length` (the `len()` of the value, `0` when missing). An unknown filter
+   raises `ValueError`.
+4. `{% if path %}...{% endif %}` renders the body when the value is truthy (Python truthiness; missing is falsy). With
+   `{% if not path %}` the test is reversed. An optional `{% else %}` starts the other branch.
+5. `{% for name in path %}...{% endfor %}` renders the body once per item of the list found at `path` (nothing when it is
+   missing). Inside the body, `name` is bound to the current item, and everything else in the context stays visible. After
+   the loop, the context is as it was before.
+6. Blocks can be nested in each other. A tag that is not closed, an `endif`, `else` or `endfor` without its opener, a
+   mismatched closer, or a `{% %}` tag that is not one of the above, raises `ValueError`.
+7. `{{` or `{%` that is never closed with `}}` or `%}` is plain text.
+""", r"""
+import pytest
+from solution import render
+
+def test_plain_text_exact():
+    assert render("  hello\n world  ", {}) == "  hello\n world  "
+
+def test_variable_and_spacing():
+    assert render("Hi {{name}} and {{  name  }}!", {"name": "Ann"}) == "Hi Ann and Ann!"
+
+def test_dotted_lookup_dict_and_list():
+    ctx = {"user": {"name": "Bo", "tags": ["x", "y"]}}
+    assert render("{{ user.name }} {{ user.tags.1 }}", ctx) == "Bo y"
+
+def test_missing_and_none_render_empty():
+    assert render("[{{ nope }}][{{ a.b.c }}][{{ n }}]", {"a": {}, "n": None}) == "[][][]"
+
+def test_numbers_and_falsy_values_render():
+    assert render("{{ n }}/{{ z }}/{{ f }}", {"n": 3, "z": 0, "f": False}) == "3/0/False"
+
+def test_filters():
+    assert render("{{ s | upper }} {{ s | lower }} {{ s | title }}", {"s": "hello World"}) == "HELLO WORLD hello world Hello World"
+    assert render("{{ items | length }} {{ missing | length }} {{ s|length }}", {"items": [1, 2, 3], "s": "ab"}) == "3 0 2"
+    assert render("[{{ nope | upper }}]", {}) == "[]"
+
+def test_unknown_filter():
+    with pytest.raises(ValueError):
+        render("{{ x | reverse }}", {"x": "a"})
+
+def test_if_else():
+    t = "{% if flag %}yes{% else %}no{% endif %}"
+    assert render(t, {"flag": 1}) == "yes"
+    assert render(t, {"flag": 0}) == "no"
+    assert render(t, {}) == "no"
+    assert render(t, {"flag": [1]}) == "yes"
+
+def test_if_not():
+    t = "{% if not items %}empty{% endif %}"
+    assert render(t, {"items": []}) == "empty"
+    assert render(t, {"items": [1]}) == ""
+
+def test_for_loop():
+    assert render("{% for x in xs %}<{{ x }}>{% endfor %}", {"xs": [1, 2, 3]}) == "<1><2><3>"
+    assert render("{% for x in xs %}<{{ x }}>{% endfor %}", {}) == ""
+
+def test_for_sees_outer_context_and_restores_it():
+    ctx = {"x": "outer", "sep": "-", "xs": ["a", "b"]}
+    assert render("{% for x in xs %}{{ x }}{{ sep }}{% endfor %}{{ x }}", ctx) == "a-b-outer"
+    assert ctx["x"] == "outer"
+
+def test_for_over_dicts_with_paths():
+    ctx = {"people": [{"n": "A", "ok": True}, {"n": "B", "ok": False}]}
+    t = "{% for p in people %}{{ p.n }}{% if p.ok %}+{% else %}-{% endif %} {% endfor %}"
+    assert render(t, ctx) == "A+ B- "
+
+def test_nested_loops():
+    t = "{% for r in rows %}[{% for c in r %}{{ c }}{% endfor %}]{% endfor %}"
+    assert render(t, {"rows": [[1, 2], [3]]}) == "[12][3]"
+
+def test_if_inside_for_inside_if():
+    t = "{% if show %}{% for n in ns %}{% if n %}{{ n }}{% endif %}{% endfor %}{% endif %}"
+    assert render(t, {"show": True, "ns": [0, 1, 2]}) == "12"
+    assert render(t, {"show": False, "ns": [1]}) == ""
+
+def test_unclosed_braces_are_text():
+    assert render("a {{ b", {"b": 1}) == "a {{ b"
+    assert render("a {% if", {}) == "a {% if"
+
+@pytest.mark.parametrize("bad", ["{% if x %}a", "{% for i in xs %}a", "{% endif %}", "{% else %}", "{% endfor %}",
+                                 "{% if x %}a{% endfor %}", "{% for i in xs %}a{% endif %}", "{% while x %}{% endwhile %}",
+                                 "{% if x %}{% else %}{% else %}{% endif %}"])
+def test_structure_errors(bad):
+    with pytest.raises(ValueError):
+        render(bad, {"x": 1, "xs": [1]})
+""", r"""
+import re
+
+TAG = re.compile(r"(\{\{.*?\}\}|\{%.*?%\})", re.S)
+
+def _lookup(path, ctx):
+    cur = ctx
+    for i, name in enumerate(path.split(".")):
+        if i == 0 or isinstance(cur, dict):
+            if isinstance(cur, dict) and name in cur:
+                cur = cur[name]
+                continue
+            return None, False
+        if isinstance(cur, list) and name.isdigit() and int(name) < len(cur):
+            cur = cur[int(name)]
+            continue
+        return None, False
+    return cur, True
+
+def render(template, context):
+    toks = [t for t in TAG.split(template) if t != ""]
+    pos = [0]
+
+    def block(ctx, stop):
+        out = []
+        while pos[0] < len(toks):
+            t = toks[pos[0]]
+            if t.startswith("{{"):
+                pos[0] += 1
+                body = t[2:-2].strip()
+                filt = None
+                if "|" in body:
+                    body, _, filt = (x.strip() for x in body.partition("|"))
+                v, ok = _lookup(body, ctx)
+                if filt is not None:
+                    if filt not in ("upper", "lower", "title", "length"):
+                        raise ValueError("filter")
+                    if filt == "length":
+                        out.append(str(len(v) if ok and v is not None else 0))
+                        continue
+                    s = "" if not ok or v is None else str(v)
+                    out.append(getattr(s, filt)())
+                else:
+                    out.append("" if not ok or v is None else str(v))
+            elif t.startswith("{%"):
+                words = t[2:-2].split()
+                if not words:
+                    raise ValueError("empty tag")
+                if words[0] in ("endif", "else", "endfor"):
+                    if words[0] in stop and len(words) == 1:
+                        pos[0] += 1
+                        return "".join(out), words[0]
+                    raise ValueError("unexpected " + words[0])
+                pos[0] += 1
+                if words[0] == "if":
+                    neg = len(words) == 3 and words[1] == "not"
+                    if not (len(words) == 2 or neg):
+                        raise ValueError("if")
+                    v, ok = _lookup(words[-1], ctx)
+                    truth = bool(v) if ok else False
+                    if neg:
+                        truth = not truth
+                    yes, end = block(ctx, ("else", "endif"))
+                    no = ""
+                    if end == "else":
+                        no, end = block(ctx, ("endif",))
+                    if end != "endif":
+                        raise ValueError("unclosed if")
+                    out.append(yes if truth else no)
+                elif words[0] == "for":
+                    if len(words) != 4 or words[2] != "in":
+                        raise ValueError("for")
+                    v, ok = _lookup(words[3], ctx)
+                    start = pos[0]
+                    items = v if ok and isinstance(v, list) else []
+                    if not items:
+                        _, end = block(ctx, ("endfor",))
+                        if end != "endfor":
+                            raise ValueError("unclosed for")
+                    for item in items:
+                        pos[0] = start
+                        body, end = block({**ctx, words[1]: item}, ("endfor",))
+                        if end != "endfor":
+                            raise ValueError("unclosed for")
+                        out.append(body)
+                else:
+                    raise ValueError("unknown tag")
+            else:
+                pos[0] += 1
+                out.append(t)
+        return "".join(out), None
+
+    result, end = block(dict(context), ())
+    if end is not None:
+        raise ValueError("stray tag")
+    return result
+""")
+
+
+# tests with parametrize or loops count by what pytest collects (checked against the reference solutions in the unit tests)
+for _id, _n in {"cx_expression": 31, "cx_ini_parser": 22, "cx_template": 24, "parse_duration": 8}.items():
+    by_id_ = next(t for t in TASKS if t["id"] == _id)
+    by_id_["n_tests"] = _n
 
 
 def by_id(task_id: str) -> dict:

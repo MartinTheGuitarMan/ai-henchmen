@@ -138,6 +138,24 @@
    "failure": null,
    "blocks": 1,
    "detail": ""
+  },
+  "re_dates_in_text": {
+   "raw": "```python\nimport re\n\n# Matches ISO dates (YYYY-MM-DD) that are not part of a longer digit/hyphen sequence.\nPATTERN = re.compile(\n    r'(?<![\\d-])'                     # not preceded by a digit or hyphen\n    r'(?:\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01]))'  # the date itself\n    r'(?![\\d-])'                      # not followed by a digit or hyphen\n)\n```",
+   "finish": "stop",
+   "latency": 1.24,
+   "code": "import re\n\n# Matches ISO dates (YYYY-MM-DD) that are not part of a longer digit/hyphen sequence.\nPATTERN = re.compile(\n    r'(?<![\\d-])'                     # not preceded by a digit or hyphen\n    r'(?:\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01]))'  # the date itself\n    r'(?![\\d-])'                      # not followed by a digit or hyphen\n)\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_ipv4": {
+   "raw": "```python\nimport re\n\n_OCTET = r'(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)'\nPATTERN = re.compile(rf'^(?:{_OCTET}\\.){{3}}{_OCTET}$')\n```",
+   "finish": "stop",
+   "latency": 1.5,
+   "code": "import re\n\n_OCTET = r'(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)'\nPATTERN = re.compile(rf'^(?:{_OCTET}\\.){{3}}{_OCTET}$')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
   }
  }
 }
