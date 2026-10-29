@@ -60,7 +60,7 @@ JOB_PATTERN = "[n]ightly.sh|[a]gent_proposals.py|[a]gent_eval.py|[s]kylink-sim r
 POLL_S = 300
 DEAD = ("MINION_DOWN", "MINION_BACKEND_ERROR")
 NIGHT_LOCK = threading.Lock()          # one thing at a time on the night host: a model call or a sandbox run
-STATE = {"gen_done": False}
+STATE = {"gen_done": False, "sandbox_ok": None}   # sandbox_ok: None = self-test not done yet
 log = modelfit.log
 
 
@@ -213,6 +213,13 @@ def work_group(cfgs: list, machine: str, out: Path, tasks: list, args, deadline:
         if not todo:
             continue
         cleanup = None
+        if is_night:
+            while STATE["sandbox_ok"] is None and time.time() < deadline:
+                time.sleep(15)
+            if not STATE["sandbox_ok"]:
+                doc["skipped"] = "sandbox not usable (self-test not passed), so no code could be run"
+                modelfit.save(path, doc)
+                continue
         if not cfg.cloud:
             cleanup, skip = prepare_local(cfg, machine, env, deadline)
             if cleanup is None:
@@ -255,6 +262,28 @@ def work_group(cfgs: list, machine: str, out: Path, tasks: list, args, deadline:
 def execute_loop(sb: sandbox.Sandbox, out: Path, tasks: list, args, deadline: float) -> None:
     by_id = {t["id"]: t for t in tasks}
     (out / "exec").mkdir(exist_ok=True)
+    if not wait_until(lambda: night_quiet(args.docker_host, args.night_windows), "sandbox self-test", deadline):
+        STATE["sandbox_ok"] = False
+        log("sandbox self-test never got a quiet night host before the deadline: nothing was run")
+        return
+    try:
+        st_path = out / "selftest.json"
+        st = json.loads(st_path.read_text()) if st_path.exists() else None
+        if st is None:
+            with NIGHT_LOCK:
+                st = sandbox.selftest(sb)
+            modelfit.save(st_path, st)
+            log(f"sandbox self-test: {st}")
+        if st["ok"]:
+            sb.stage({t["id"]: t["tests"] for t in tasks})
+    except sandbox.SandboxUnavailable as e:
+        log(f"STOP: sandbox unavailable ({e}); nothing will be run")
+        STATE["sandbox_ok"] = False
+        return
+    STATE["sandbox_ok"] = bool(st["ok"])
+    if not st["ok"]:
+        log("STOP: the sandbox self-test failed; no model output will be run. See selftest.json")
+        return
     while True:
         pending = []
         for gp in sorted((out / "gen").glob("*.json")):
@@ -329,26 +358,17 @@ def main() -> None:
     deadline = time.time() + args.deadline_h * 3600
 
     tasks = [t for t in code_tasks.TASKS if not args.tasks or t["id"] in args.tasks.split(",")]
-    # 1. the sandbox first: no Docker, no run. Never a fallback to the host.
+    # 1. Docker must answer before any model is called. The self-test and the copy of the test files wait for a quiet
+    #    night host and run first in the execution thread; until they pass nothing is run, and models on the night host wait.
     sb = sandbox.Sandbox(args.docker_host)
     try:
         sb.check()
-        st_path = out / "selftest.json"
-        if args.redo_exec:
-            for f in (out / "exec").glob("*.json"):
-                f.unlink()
-            st_path.unlink(missing_ok=True)
-        if not st_path.exists():
-            if not wait_until(lambda: night_quiet(args.docker_host, args.night_windows), "sandbox self-test", deadline):
-                sys.exit("STOP: the night host was not quiet before the deadline; nothing was run")
-            st = sandbox.selftest(sb)
-            modelfit.save(st_path, st)
-            log(f"sandbox self-test: {st}")
-            if not st["ok"]:
-                sys.exit("STOP: the sandbox self-test failed; no model output will be run. See selftest.json")
-        sb.stage({t["id"]: t["tests"] for t in tasks})
     except sandbox.SandboxUnavailable as e:
         sys.exit(f"STOP: no usable Docker sandbox ({e}). Nothing was run and no model was called.")
+    if args.redo_exec:
+        for f in (out / "exec").glob("*.json"):
+            f.unlink()
+        (out / "selftest.json").unlink(missing_ok=True)
 
     raw = json.loads(Path(args.roster).expanduser().read_text())
     roster = Roster.from_dict({"models": raw["models"]})

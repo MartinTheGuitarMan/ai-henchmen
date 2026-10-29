@@ -203,6 +203,9 @@ class FakeSandbox:
     def __init__(self):
         self.calls = []
 
+    def stage(self, tests):
+        self.staged = list(tests)
+
     def run(self, task_id, code):
         self.calls.append((task_id, code))
         n = code_tasks.by_id(task_id)["n_tests"]
@@ -220,9 +223,11 @@ def test_whole_pipeline_with_fakes_and_report(monkeypatch, tmp_path):
     gen = json.loads((out / "gen" / "fake-cloud.json").read_text())
     assert set(gen["tasks"]) == {"slugify", "flatten_dict"} and gen["cloud"] is True
     code_run.STATE["gen_done"] = True
+    monkeypatch.setattr(code_run.sandbox, "selftest", lambda sb: {"ok": True})
     sb = FakeSandbox()
     code_run.execute_loop(sb, out, tasks, args, deadline=1e12)
-    assert [c[0] for c in sb.calls] == ["slugify", "flatten_dict"]
+    assert [c[0] for c in sb.calls] == ["slugify", "flatten_dict"] and sb.staged == ["slugify", "flatten_dict"]
+    assert code_run.STATE["sandbox_ok"] is True
     # a rerun neither generates nor executes again (resume)
     code_run.work_group([fake_cfg()], "local", out, tasks, args, deadline=1e12)
     code_run.execute_loop(sb, out, tasks, args, deadline=1e12)
@@ -232,6 +237,17 @@ def test_whole_pipeline_with_fakes_and_report(monkeypatch, tmp_path):
     (out / "notes.json").write_text(json.dumps({"notes": ["x: decision model"], "models": ["fake-cloud"]}))
     (out / "HYPOTHESIS.md").write_text("We guessed before.")
     code_report.main(out)
+
+
+def test_failed_selftest_runs_nothing(monkeypatch, tmp_path):
+    out = tmp_path / "run"
+    (out / "gen").mkdir(parents=True)
+    (out / "gen" / "m.json").write_text(json.dumps({"model": "m", "tasks": {"slugify": {"code": "x = 1\n", "failure": None}}}))
+    monkeypatch.setattr(code_run.sandbox, "selftest", lambda sb: {"ok": False})
+    sb = FakeSandbox()
+    args = Namespace(redo=False, redo_exec=False, night_ssh="", night_windows="", docker_host=None)
+    code_run.execute_loop(sb, out, [code_tasks.by_id("slugify")], args, deadline=1e12)
+    assert sb.calls == [] and code_run.STATE["sandbox_ok"] is False
 
 
 def test_text_models_leaves_out_decision_models_and_duplicates():

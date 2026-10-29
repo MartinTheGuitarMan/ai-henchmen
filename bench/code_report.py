@@ -86,7 +86,7 @@ def main(out: Path) -> None:
     md.append("")
     md.append(f"**Reading the numbers:** one task is {100 / ntasks:.0f} points of 'solved', and a single run at temperature 0 is one sample, "
               "so differences of one or two tasks are noise. Test-level pass rate is finer but not independent of the task count.")
-    if st:
+    if st and "probes_passed" in st:
         md.append(f"\nSandbox self-test (a known-bad snippet that tries the network, writes outside its tmpfs, runs as root, forks without limit, "
                   f"fills the disk, hangs or eats memory): {st['probes_passed']} probes blocked, infinite loop {st['hang_kind']}, "
                   f"memory hog {st['mem_kind']}, good snippet passes: {st['good_snippet_passes']}.")
