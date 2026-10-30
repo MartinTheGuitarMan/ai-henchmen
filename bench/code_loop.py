@@ -132,11 +132,10 @@ class Ctx:
             self.release()
             return False
         if self.cleanup is None:
-            if self.is_night:
-                self.lock = cr.NightExclusive()
-                if not self.lock.acquire(120):
-                    self.lock = None
-                    return False
+            self.lock = cr.model_lock(self.cfg, self.is_night)
+            if self.lock and not self.lock.acquire(120):
+                self.lock = None
+                return False
             cleanup, skip = cr.prepare_local(self.cfg, self.machine, self.env, min(self.deadline, time.time() + 120),
                                              lambda: cr.floor_pct_now(self.is_night, self.args.night_windows))
             if cleanup is None:

@@ -62,6 +62,7 @@ JOB_PATTERN = "[n]ightly.sh|[a]gent_proposals.py|[a]gent_eval.py|[s]kylink-sim r
 POLL_S = 300
 DEAD = ("MINION_DOWN", "MINION_BACKEND_ERROR")
 NIGHT_LOCK = threading.Lock()          # one thing at a time on the night host: a model call or a sandbox run
+DAY_FLOCK = "/tmp/codebench-day-host.lock"        # across processes: one local model at a time on this machine
 NIGHT_FLOCK = "/tmp/codebench-night-host.lock"     # across processes: a model on the night host and a sandbox run never overlap
 NIGHT_FLOOR_PCT = 10        # free memory that must remain after loading, on the night host inside its windows (25 elsewhere)
 DEFAULT_FLOOR_PCT = 25
@@ -192,6 +193,13 @@ class NightExclusive:
             self.fd = None
 
 
+def model_lock(cfg, is_night: bool):
+    """The cross-process lock a local model session holds from load to unload, or None for cloud models."""
+    if cfg.cloud:
+        return None
+    return NightExclusive(NIGHT_FLOCK if is_night else DAY_FLOCK)
+
+
 @contextlib.contextmanager
 def sandbox_slot(host: str, timeout: float = 600.0):
     """Yields True once no night-host model is loaded by any bench process (and holds that for the body), else False."""
@@ -299,7 +307,7 @@ def work_model(cfg, machine: str, out: Path, tasks: list, args, deadline: float)
             return "done"
         if not night_model_ok(machine, args.night_windows)[0]:
             return "deferred"          # never load a model on the night host outside its window
-    lock = NightExclusive() if is_night and not cfg.cloud else None
+    lock = model_lock(cfg, is_night)
     if lock and not lock.acquire(120):
         return "deferred"              # a sandbox run is in progress: a model and a sandbox run never overlap on the night host
     cleanup = None
@@ -463,6 +471,8 @@ def main() -> None:
     ap.add_argument("--min-timeout", type=int, default=MIN_TIMEOUT_S, help="per-call timeout floor, seconds")
     ap.add_argument("--only-truncated-of", metavar="RUNDIR",
                     help="second protocol: only the (model, task) pairs that ended 'truncated' in RUNDIR (use with a larger --max-tokens and a new --out)")
+    ap.add_argument("--gen-only", action="store_true",
+                    help="generate only: leave running the code to the other process that works on the same --out folder (add models to a live run)")
     ap.add_argument("--redo", action="store_true", help="generate again")
     ap.add_argument("--redo-exec", action="store_true", help="run the sandbox again on stored code")
     ap.add_argument("--out", required=True)
@@ -502,7 +512,8 @@ def main() -> None:
     models, notes = text_models(roster)
     if args.models:
         models = [m for m in models if m.name in args.models.split(",")]
-    (out / "notes.json").write_text(json.dumps({"notes": notes, "models": [m.name for m in models]}, indent=1))
+    if not args.gen_only:
+        (out / "notes.json").write_text(json.dumps({"notes": notes, "models": [m.name for m in models]}, indent=1))
     remote = {int(p): h for p, h in (x.split("=") for x in args.remote)}
     groups = defaultdict(list)
     for cfg in models:
@@ -510,8 +521,10 @@ def main() -> None:
         groups[("cloud", urlparse(cfg.base_url).hostname) if cfg.cloud else (remote.get(port, "local"), "")].append(cfg)
     args.night_ssh = args.docker_host or ""
     log(f"models: {[m.name for m in models]}; tasks: {len(tasks)}; groups: {['cloud' if k[0] == 'cloud' else 'night-host' if k[0] == args.night_ssh else 'day-host' for k in groups]}")
+    if args.gen_only:
+        STATE["sandbox_ok"] = True     # the other process owns the sandbox; models on the night host are not meant for this mode
     with ThreadPoolExecutor(len(groups) + 1) as ex:
-        ex_f = ex.submit(execute_loop, sb, out, tasks, args, deadline)
+        ex_f = ex.submit(lambda: None) if args.gen_only else ex.submit(execute_loop, sb, out, tasks, args, deadline)
         futs = [ex.submit(work_group, cfgs, "local" if k[0] == "cloud" else k[0], out, tasks, args, deadline)
                 for k, cfgs in groups.items()]
         for f in futs:

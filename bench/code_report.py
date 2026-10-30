@@ -77,24 +77,41 @@ def tier(rows: list, name: str) -> list:
              "lat": [x for k, x in r["latd"].items() if k in ids]} for r in rows]
 
 
+STUB = "stub-do-nothing"
+
+
+def above_stub(r: dict, stub: dict | None) -> str:
+    """Share of the tests a model passes beyond what the do-nothing stub passes on the same tasks: (passed - stub passed) over
+    (total - stub passed), per task, summed. Tasks where the stub already passes everything cannot add to either side."""
+    if not stub or r["model"] == STUB:
+        return "-"
+    gain = room = 0
+    for tid, v in r["per"].items():
+        sp = stub["per"].get(tid, {"passed": 0})["passed"]
+        gain += max(0, v["passed"] - sp)
+        room += v["total"] - sp
+    return pct(gain, room)
+
+
 def tier_section(md: list, rows: list, name: str, title: str, levels: tuple) -> None:
     ids = [t for t in code_tasks.TASKS if (t["level"] == "complex") == (name == "complex")]
     n = len(ids)
     md += ["", f"## {title}", "",
            f"{n} tasks, {sum(t['n_tests'] for t in ids)} tests. One task is {100 / n:.0f} points of 'solved'.", "",
-           "| model | where | solved | tests passed | " + " | ".join(levels) + " | p50 s | p95 s |",
-           "|---|---|---|---|" + "---|" * len(levels) + "---|---|"]
+           "| model | where | solved | tests passed | above the do-nothing stub | " + " | ".join(levels) + " | p50 s | p95 s |",
+           "|---|---|---|---|---|" + "---|" * len(levels) + "---|---|"]
+    stub = next((r for r in rows if r["model"] == STUB and r["per"] and all(v["failure"] != "not_run" for v in r["per"].values())), None)
     ranked = sorted(rows, key=lambda r: (-summary(r)["rate"], -summary(r)["solved"]))
     ranked = [r for r in ranked if r["per"]]
     for r in ranked:
         s = summary(r)
         cells = [("{}/{}".format(*by(r, "level", l)[:2]) if l != "all" else "") for l in levels]
-        md.append(f"| {r['model']} | {'cloud' if r['cloud'] else 'local'} | {pct(s['solved'], s['n'])} | {pct(s['passed'], s['total'])} | "
+        md.append(f"| {r['model']} | {'baseline' if r['model'] == STUB else 'cloud' if r['cloud'] else 'local'} | {pct(s['solved'], s['n'])} | {pct(s['passed'], s['total'])} | {above_stub(r, stub)} | "
                   + " | ".join(cells) + " | " + (f"{statistics.median(r['lat']):.1f} | {p(r['lat'], .95):.1f} |" if r["lat"] else "- | - |"))
     short = [r for r in ranked if len(r["per"]) < n]
     if short:
         md.append("\nIncomplete: " + ", ".join(f"{r['model']} ({len(r['per'])}/{n} scored so far)" for r in short))
-    full = [r for r in ranked if len(r["per"]) == n]
+    full = [r for r in ranked if len(r["per"]) == n and r["model"] != STUB]
     if full:
         loc = [r for r in full if not r["cloud"]]
         f0 = summary(full[0])
