@@ -72,3 +72,326 @@
 18:18:55 gemini-flashlite/re_hex_color: code 17.74s
 18:19:28 gemini-flashlite/re_dates_in_text: code 32.55s
 18:19:45 gemini-flashlite/re_ipv4: code 17.16s
+18:21:24 models: ['groq-gptoss20b', 'groq-gptoss120b', 'mistral-ministral8b', 'air-qwen', 'mini-gemma4b', 'or-nemotron120b', 'mini-phi4mini', 'mini-gemma4e4b', 'mini-nemotronmini', 'gemini-flashlite', 'air-gemma4-26b']; tasks: 25; groups: ['cloud', 'cloud', 'day-host', 'night-host', 'cloud', 'cloud']
+18:21:24 sandbox self-test: waiting (outside the night host's allowed windows (22:00-23:00,06:00-07:00))
+18:21:24 air-qwen: waiting (free memory 34 percent, need 45; memory pressure is warn)
+18:21:24 or-nemotron120b/merge_intervals: MINION_BACKEND_ERROR 0.31s
+18:21:24 or-nemotron120b/parse_duration: MINION_BACKEND_ERROR 0.08s
+18:21:25 or-nemotron120b/slugify: MINION_BACKEND_ERROR 0.06s
+18:21:27 mistral-ministral8b/cx_ttl_cache: code 3.01s
+18:21:28 groq-gptoss20b/cx_ttl_cache: code 3.7s
+18:21:31 groq-gptoss20b/cx_scheduler: code 2.87s
+18:21:38 mistral-ministral8b/cx_scheduler: code 10.58s
+18:21:39 groq-gptoss20b/cx_expression: truncated 8.44s
+18:21:45 gemini-flashlite/cx_ttl_cache: code 21.19s
+18:21:52 mistral-ministral8b/cx_expression: code 14.01s
+18:22:03 mistral-ministral8b/cx_ini_parser: code 11.44s
+18:22:09 gemini-flashlite/cx_scheduler: code 24.12s
+18:22:11 mistral-ministral8b/cx_shortest_path: code 7.55s
+18:22:13 groq-gptoss20b/cx_ini_parser: truncated 7.58s
+18:22:15 mistral-ministral8b/cx_schedule_algos: code 4.56s
+18:22:19 mistral-ministral8b/cx_inventory_fix: code 4.17s
+18:22:32 gemini-flashlite/cx_expression: code 23.11s
+18:22:55 gemini-flashlite/cx_ini_parser: code 22.77s
+18:23:03 groq-gptoss20b/cx_shortest_path: code 1.49s
+18:23:04 groq-gptoss20b/cx_schedule_algos: code 1.13s
+18:23:07 gemini-flashlite/cx_shortest_path: code 11.46s
+18:23:20 gemini-flashlite/cx_schedule_algos: code 13.43s
+18:23:26 groq-gptoss20b/cx_inventory_fix: code 3.22s
+18:23:35 gemini-flashlite/cx_inventory_fix: code 15.1s
+18:23:41 mistral-ministral8b/cx_template: truncated 81.32s
+18:23:50 groq-gptoss20b/cx_template: truncated 6.64s
+18:23:52 groq-gptoss120b/cx_ttl_cache: code 2.28s
+18:23:56 groq-gptoss120b/cx_scheduler: code 3.59s
+18:24:02 groq-gptoss120b/cx_expression: code 6.23s
+18:24:08 groq-gptoss120b/cx_ini_parser: code 5.5s
+18:24:09 gemini-flashlite/cx_template: MINION_BACKEND_ERROR 33.27s
+18:24:30 groq-gptoss120b/cx_shortest_path: code 2.75s
+18:24:39 groq-gptoss120b/cx_schedule_algos: code 8.91s
+18:24:49 groq-gptoss120b/cx_inventory_fix: code 10.19s
+18:25:06 groq-gptoss120b/cx_template: code 17.07s
+18:41:24 air-qwen: waiting (free memory 37 percent, need 45; memory pressure is warn)
+18:46:24 air-qwen: waiting (free memory 36 percent, need 45; memory pressure is warn)
+18:51:24 air-qwen: waiting (free memory 35 percent, need 45; memory pressure is warn)
+18:56:39 air-qwen/merge_intervals: code 14.52s
+18:56:39 air-qwen: machine busy, pausing
+19:01:39 air-qwen: machine busy, pausing
+19:06:39 air-qwen: machine busy, pausing
+19:11:39 air-qwen: machine busy, pausing
+19:16:39 air-qwen: machine busy, pausing
+19:21:39 air-qwen: machine busy, pausing
+19:27:20 air-qwen/parse_duration: code 40.57s
+19:27:20 air-qwen: machine busy, pausing
+19:32:38 air-qwen/slugify: code 17.57s
+19:32:38 air-qwen: machine busy, pausing
+19:37:50 air-qwen/business_days: code 12.36s
+19:37:50 air-qwen: machine busy, pausing
+19:43:12 air-qwen/parse_csv_line: code 21.84s
+19:43:12 air-qwen: machine busy, pausing
+19:48:32 air-qwen/wrap_text: code 19.99s
+19:48:32 air-qwen: machine busy, pausing
+19:54:14 air-qwen/compare_versions: code 41.81s
+19:54:14 air-qwen: machine busy, pausing
+19:59:49 air-qwen/toposort: code 34.74s
+20:00:00 air-qwen/lru_cache: code 11.86s
+20:00:11 air-qwen/flatten_dict: code 10.85s
+20:00:16 air-qwen/fix_median: code 4.36s
+20:00:19 air-qwen/fix_chunked: code 2.94s
+20:00:21 air-qwen/fix_unique_bucket: code 2.51s
+20:00:30 air-qwen/fix_top_words: code 8.65s
+20:00:32 air-qwen/re_hex_color: code 2.39s
+20:00:38 air-qwen/re_dates_in_text: code 6.12s
+20:00:43 air-qwen/re_ipv4: code 4.61s
+20:01:15 air-qwen/cx_ttl_cache: code 31.98s
+20:01:52 air-qwen/cx_scheduler: code 36.76s
+20:04:53 air-qwen/cx_expression: truncated 180.91s
+20:05:44 air-qwen/cx_ini_parser: code 51.15s
+20:06:30 air-qwen/cx_shortest_path: code 46.04s
+20:07:51 air-qwen/cx_schedule_algos: code 80.84s
+20:08:04 air-qwen/cx_inventory_fix: code 13.52s
+20:11:18 air-qwen/cx_template: truncated 193.37s
+20:11:18 air-qwen: unloaded
+20:11:19 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+22:01:38 sandbox self-test: {'probes_blocked': True, 'probes_passed': '12/12', 'infinite_loop_killed': True, 'memory_hog_killed': True, 'good_snippet_passes': True, 'ok': True, 'mem_kind': 'killed', 'hang_kind': 'timeout'}
+22:01:45 exec air-qwen/merge_intervals: ok 8/8 0.5s
+22:01:46 exec air-qwen/parse_duration: ok 8/8 0.48s
+22:02:07 mini-gemma4b/merge_intervals: code 20.74s
+22:02:07 exec air-qwen/slugify: ok 7/7 0.66s
+22:02:35 mini-gemma4b/parse_duration: code 28.02s
+22:02:36 exec air-qwen/business_days: ok 7/7 0.61s
+22:02:40 mini-gemma4b/slugify: code 3.99s
+22:02:40 exec air-qwen/parse_csv_line: wrong_answer 7/8 0.52s
+22:02:51 mini-gemma4b/business_days: code 10.68s
+22:02:52 exec air-qwen/wrap_text: wrong_answer 7/8 0.55s
+22:03:09 mini-gemma4b/parse_csv_line: code 16.86s
+22:03:09 exec air-qwen/compare_versions: ok 7/7 0.63s
+22:03:24 mini-gemma4b/wrap_text: code 14.57s
+22:03:24 exec air-qwen/toposort: ok 10/10 0.54s
+22:03:43 mini-gemma4b/compare_versions: code 18.55s
+22:03:43 exec air-qwen/lru_cache: ok 8/8 0.6s
+22:04:03 mini-gemma4b/toposort: code 19.96s
+22:04:04 exec air-qwen/flatten_dict: ok 6/6 0.63s
+22:04:20 mini-gemma4b/lru_cache: code 16.28s
+22:04:21 exec air-qwen/fix_median: ok 6/6 0.52s
+22:04:28 mini-gemma4b/flatten_dict: code 7.06s
+22:04:28 exec air-qwen/fix_chunked: ok 6/6 0.53s
+22:04:38 mini-gemma4b/fix_median: code 9.6s
+22:04:39 exec air-qwen/fix_unique_bucket: ok 4/4 0.61s
+22:04:43 mini-gemma4b/fix_chunked: code 4.33s
+22:04:43 exec air-qwen/fix_top_words: wrong_answer 0/7 0.52s
+22:04:47 mini-gemma4b/fix_unique_bucket: code 3.07s
+22:04:47 exec air-qwen/re_hex_color: ok 4/4 0.52s
+22:04:53 mini-gemma4b/fix_top_words: code 6.1s
+22:04:54 exec air-qwen/re_dates_in_text: import_error 0/8 0.53s
+22:04:57 mini-gemma4b/re_hex_color: code 2.91s
+22:04:57 exec air-qwen/re_ipv4: wrong_answer 4/5 0.48s
+22:05:00 mini-gemma4b/re_dates_in_text: code 2.82s
+22:05:01 exec air-qwen/cx_ttl_cache: wrong_answer 9/10 0.63s
+22:05:07 mini-gemma4b/re_ipv4: code 5.99s
+22:05:17 exec air-qwen/cx_scheduler: timeout 6/11 10.46s
+22:05:47 mini-gemma4b/cx_ttl_cache: code 29.84s
+22:05:47 exec air-qwen/cx_ini_parser: wrong_answer 4/22 0.61s
+22:06:12 mini-gemma4b/cx_scheduler: code 24.89s
+22:06:13 exec air-qwen/cx_shortest_path: ok 14/14 0.6s
+22:06:55 mini-gemma4b/cx_expression: code 42.41s
+22:06:56 exec air-qwen/cx_schedule_algos: ok 11/11 0.71s
+22:07:27 mini-gemma4b/cx_ini_parser: code 31.19s
+22:07:28 exec air-qwen/cx_inventory_fix: wrong_answer 9/12 0.55s
+22:07:59 mini-gemma4b/cx_shortest_path: code 30.93s
+22:07:59 exec gemini-flashlite/merge_intervals: ok 8/8 0.6s
+22:08:27 mini-gemma4b/cx_schedule_algos: code 27.66s
+22:08:28 exec gemini-flashlite/parse_duration: ok 8/8 0.65s
+22:08:41 mini-gemma4b/cx_inventory_fix: code 13.78s
+22:08:42 exec gemini-flashlite/slugify: ok 7/7 0.52s
+22:09:30 mini-gemma4b/cx_template: code 48.01s
+22:09:30 mini-gemma4b: unloaded
+22:09:30 exec gemini-flashlite/business_days: ok 7/7 0.52s
+22:09:31 exec gemini-flashlite/parse_csv_line: ok 8/8 0.48s
+22:09:45 mini-phi4mini/merge_intervals: code 13.35s
+22:09:45 exec gemini-flashlite/wrap_text: ok 8/8 0.51s
+22:10:01 mini-phi4mini/parse_duration: code 15.81s
+22:10:01 exec gemini-flashlite/compare_versions: wrong_answer 5/7 0.51s
+22:10:07 mini-phi4mini/slugify: code 5.4s
+22:10:07 exec gemini-flashlite/toposort: ok 10/10 0.53s
+22:10:13 mini-phi4mini/business_days: code 5.38s
+22:10:13 exec gemini-flashlite/lru_cache: ok 8/8 0.52s
+22:10:21 mini-phi4mini/parse_csv_line: code 7.56s
+22:10:21 exec gemini-flashlite/flatten_dict: ok 6/6 0.52s
+22:10:30 mini-phi4mini/wrap_text: code 8.45s
+22:10:30 exec gemini-flashlite/fix_median: ok 6/6 0.52s
+22:15:30 mini-phi4mini/compare_versions: MINION_BACKEND_ERROR 300.02s
+22:15:31 exec gemini-flashlite/fix_chunked: ok 6/6 0.59s
+22:15:39 mini-phi4mini/toposort: code 8.12s
+22:15:40 exec gemini-flashlite/fix_unique_bucket: ok 4/4 0.52s
+22:15:52 mini-phi4mini/lru_cache: code 12.38s
+22:15:52 exec gemini-flashlite/fix_top_words: ok 7/7 0.53s
+22:15:59 mini-phi4mini/flatten_dict: code 6.13s
+22:15:59 exec gemini-flashlite/re_hex_color: ok 4/4 0.52s
+22:16:04 mini-phi4mini/fix_median: code 5.25s
+22:16:05 exec gemini-flashlite/re_dates_in_text: ok 8/8 0.58s
+22:16:09 mini-phi4mini/fix_chunked: code 3.89s
+22:16:09 exec gemini-flashlite/re_ipv4: ok 5/5 0.52s
+22:16:12 mini-phi4mini/fix_unique_bucket: code 2.86s
+22:16:13 exec gemini-flashlite/cx_ttl_cache: ok 10/10 0.52s
+22:16:18 mini-phi4mini/fix_top_words: code 5.13s
+22:16:18 exec gemini-flashlite/cx_scheduler: ok 11/11 0.54s
+22:16:21 mini-phi4mini/re_hex_color: code 2.83s
+22:16:22 exec gemini-flashlite/cx_expression: wrong_answer 8/31 0.54s
+22:16:25 mini-phi4mini/re_dates_in_text: code 2.8s
+22:16:25 exec gemini-flashlite/cx_ini_parser: ok 14/22 0.55s
+22:16:34 mini-phi4mini/re_ipv4: code 8.48s
+22:16:34 exec gemini-flashlite/cx_shortest_path: ok 14/14 0.53s
+22:16:50 mini-phi4mini/cx_ttl_cache: code 16.06s
+22:16:51 exec gemini-flashlite/cx_schedule_algos: ok 11/11 0.53s
+22:17:11 mini-phi4mini/cx_scheduler: code 20.15s
+22:17:11 exec gemini-flashlite/cx_inventory_fix: ok 12/12 0.52s
+22:17:41 mini-phi4mini/cx_expression: code 29.89s
+22:17:42 exec groq-gptoss120b/merge_intervals: ok 8/8 0.53s
+22:18:02 mini-phi4mini/cx_ini_parser: code 19.84s
+22:18:02 exec groq-gptoss120b/parse_duration: ok 8/8 0.51s
+22:18:18 mini-phi4mini/cx_shortest_path: syntax_error 15.46s
+22:18:18 exec groq-gptoss120b/slugify: ok 7/7 0.61s
+22:18:31 mini-phi4mini/cx_schedule_algos: code 12.29s
+22:18:31 exec groq-gptoss120b/business_days: ok 7/7 0.53s
+22:18:48 mini-phi4mini/cx_inventory_fix: code 17.06s
+22:18:49 exec groq-gptoss120b/parse_csv_line: ok 8/8 0.52s
+22:19:39 mini-phi4mini/cx_template: code 50.5s
+22:19:39 mini-phi4mini: unloaded
+22:19:40 exec groq-gptoss120b/wrap_text: ok 8/8 0.51s
+22:19:40 mini-gemma4e4b: waiting (free memory would fall below 25 percent after loading about 8.8 GB)
+22:19:40 exec groq-gptoss120b/compare_versions: ok 7/7 0.5s
+22:19:41 exec groq-gptoss120b/toposort: wrong_answer 9/10 0.51s
+22:19:42 exec groq-gptoss120b/lru_cache: ok 8/8 0.53s
+22:19:43 exec groq-gptoss120b/flatten_dict: ok 6/6 0.52s
+22:19:43 exec groq-gptoss120b/fix_median: ok 6/6 0.5s
+22:19:44 exec groq-gptoss120b/fix_chunked: ok 6/6 0.52s
+22:19:45 exec groq-gptoss120b/fix_unique_bucket: ok 4/4 0.5s
+22:19:46 exec groq-gptoss120b/fix_top_words: ok 7/7 0.51s
+22:19:46 exec groq-gptoss120b/re_hex_color: ok 4/4 0.5s
+22:19:47 exec groq-gptoss120b/re_dates_in_text: ok 8/8 0.52s
+22:19:48 exec groq-gptoss120b/re_ipv4: wrong_answer 4/5 0.52s
+22:19:49 exec groq-gptoss120b/cx_ttl_cache: ok 10/10 0.52s
+22:19:50 exec groq-gptoss120b/cx_scheduler: ok 11/11 0.53s
+22:19:50 exec groq-gptoss120b/cx_expression: wrong_answer 7/31 0.52s
+22:19:51 exec groq-gptoss120b/cx_ini_parser: wrong_answer 13/22 0.48s
+22:19:52 exec groq-gptoss120b/cx_shortest_path: ok 14/14 0.53s
+22:19:53 exec groq-gptoss120b/cx_schedule_algos: ok 11/11 0.51s
+22:19:53 exec groq-gptoss120b/cx_inventory_fix: ok 12/12 0.51s
+22:19:54 exec groq-gptoss120b/cx_template: ok 15/24 0.54s
+22:19:55 exec groq-gptoss20b/merge_intervals: ok 8/8 0.51s
+22:19:56 exec groq-gptoss20b/parse_duration: ok 8/8 0.52s
+22:19:56 exec groq-gptoss20b/slugify: ok 7/7 0.51s
+22:19:57 exec groq-gptoss20b/business_days: ok 7/7 0.51s
+22:19:58 exec groq-gptoss20b/parse_csv_line: ok 8/8 0.5s
+22:19:59 exec groq-gptoss20b/wrap_text: ok 8/8 0.52s
+22:19:59 exec groq-gptoss20b/compare_versions: ok 7/7 0.51s
+22:20:00 exec groq-gptoss20b/toposort: ok 10/10 0.47s
+22:20:01 exec groq-gptoss20b/lru_cache: ok 8/8 0.51s
+22:20:02 exec groq-gptoss20b/flatten_dict: ok 6/6 0.52s
+22:20:03 exec groq-gptoss20b/fix_median: ok 6/6 0.64s
+22:20:03 exec groq-gptoss20b/fix_chunked: ok 6/6 0.51s
+22:20:04 exec groq-gptoss20b/fix_unique_bucket: ok 4/4 0.6s
+22:20:05 exec groq-gptoss20b/fix_top_words: ok 7/7 0.51s
+22:20:06 exec groq-gptoss20b/re_hex_color: ok 4/4 0.56s
+22:20:07 exec groq-gptoss20b/re_dates_in_text: ok 8/8 0.57s
+22:20:08 exec groq-gptoss20b/re_ipv4: ok 5/5 0.52s
+22:20:08 exec groq-gptoss20b/cx_ttl_cache: ok 10/10 0.54s
+22:20:09 exec groq-gptoss20b/cx_scheduler: ok 11/11 0.66s
+22:20:10 exec groq-gptoss20b/cx_shortest_path: ok 14/14 0.56s
+22:20:11 exec groq-gptoss20b/cx_schedule_algos: ok 11/11 0.57s
+22:20:12 exec groq-gptoss20b/cx_inventory_fix: ok 12/12 0.57s
+22:20:13 exec mistral-ministral8b/merge_intervals: ok 8/8 0.58s
+22:20:13 exec mistral-ministral8b/parse_duration: wrong_answer 3/8 0.5s
+22:20:14 exec mistral-ministral8b/slugify: wrong_answer 5/7 0.55s
+22:20:15 exec mistral-ministral8b/business_days: ok 7/7 0.53s
+22:20:16 exec mistral-ministral8b/parse_csv_line: wrong_answer 3/8 0.51s
+22:20:16 exec mistral-ministral8b/wrap_text: ok 8/8 0.51s
+22:20:17 exec mistral-ministral8b/compare_versions: wrong_answer 1/7 0.52s
+22:20:18 exec mistral-ministral8b/toposort: ok 10/10 0.55s
+22:20:19 exec mistral-ministral8b/lru_cache: ok 8/8 0.51s
+22:20:19 exec mistral-ministral8b/flatten_dict: wrong_answer 5/6 0.51s
+22:20:20 exec mistral-ministral8b/fix_median: ok 6/6 0.5s
+22:20:21 exec mistral-ministral8b/fix_chunked: ok 6/6 0.51s
+22:20:22 exec mistral-ministral8b/fix_unique_bucket: ok 4/4 0.49s
+22:20:22 exec mistral-ministral8b/fix_top_words: ok 7/7 0.52s
+22:20:23 exec mistral-ministral8b/re_hex_color: ok 4/4 0.52s
+22:20:24 exec mistral-ministral8b/re_dates_in_text: wrong_answer 2/8 0.53s
+22:20:25 exec mistral-ministral8b/re_ipv4: wrong_answer 4/5 0.48s
+22:20:26 exec mistral-ministral8b/cx_ttl_cache: ok 10/10 0.53s
+22:20:26 exec mistral-ministral8b/cx_scheduler: wrong_answer 5/11 0.49s
+22:20:27 exec mistral-ministral8b/cx_expression: wrong_answer 5/31 0.52s
+22:20:28 exec mistral-ministral8b/cx_ini_parser: wrong_answer 4/22 0.53s
+22:20:29 exec mistral-ministral8b/cx_shortest_path: wrong_answer 11/14 0.53s
+22:20:29 exec mistral-ministral8b/cx_schedule_algos: wrong_answer 7/11 0.54s
+22:20:30 exec mistral-ministral8b/cx_inventory_fix: wrong_answer 10/12 0.49s
+22:20:31 exec mini-gemma4b/merge_intervals: wrong_answer 7/8 0.51s
+22:20:32 exec mini-gemma4b/parse_duration: wrong_answer 3/8 0.54s
+22:20:33 exec mini-gemma4b/slugify: wrong_answer 1/7 0.51s
+22:20:33 exec mini-gemma4b/business_days: ok 7/7 0.52s
+22:20:34 exec mini-gemma4b/parse_csv_line: wrong_answer 3/8 0.52s
+22:20:35 exec mini-gemma4b/wrap_text: ok 8/8 0.53s
+22:20:36 exec mini-gemma4b/compare_versions: wrong_answer 0/7 0.5s
+22:20:36 exec mini-gemma4b/toposort: wrong_answer 9/10 0.52s
+22:20:37 exec mini-gemma4b/lru_cache: wrong_answer 7/8 0.52s
+22:20:38 exec mini-gemma4b/flatten_dict: wrong_answer 5/6 0.51s
+22:20:39 exec mini-gemma4b/fix_median: ok 6/6 0.51s
+22:20:40 exec mini-gemma4b/fix_chunked: wrong_answer 5/6 0.51s
+22:20:40 exec mini-gemma4b/fix_unique_bucket: wrong_answer 2/4 0.53s
+22:20:41 exec mini-gemma4b/fix_top_words: wrong_answer 6/7 0.51s
+22:20:42 exec mini-gemma4b/re_hex_color: ok 4/4 0.51s
+22:20:43 exec mini-gemma4b/re_dates_in_text: wrong_answer 5/8 0.51s
+22:20:43 exec mini-gemma4b/re_ipv4: wrong_answer 4/5 0.49s
+22:20:44 exec mini-gemma4b/cx_ttl_cache: wrong_answer 1/10 0.53s
+22:20:45 exec mini-gemma4b/cx_scheduler: wrong_answer 4/11 0.52s
+22:20:46 exec mini-gemma4b/cx_expression: wrong_answer 2/31 0.53s
+22:20:46 exec mini-gemma4b/cx_ini_parser: wrong_answer 0/22 0.51s
+22:20:47 exec mini-gemma4b/cx_shortest_path: wrong_answer 5/14 0.52s
+22:20:48 exec mini-gemma4b/cx_schedule_algos: wrong_answer 10/11 0.52s
+22:20:49 exec mini-gemma4b/cx_inventory_fix: import_error 0/12 0.56s
+22:20:50 exec mini-gemma4b/cx_template: wrong_answer 2/24 0.53s
+22:20:50 exec mini-phi4mini/merge_intervals: wrong_answer 6/8 0.52s
+22:20:51 exec mini-phi4mini/parse_duration: wrong_answer 2/8 0.51s
+22:20:52 exec mini-phi4mini/slugify: wrong_answer 6/7 0.56s
+22:20:53 exec mini-phi4mini/business_days: wrong_answer 1/7 0.51s
+22:20:53 exec mini-phi4mini/parse_csv_line: wrong_answer 4/8 0.53s
+22:20:54 exec mini-phi4mini/wrap_text: ok 8/8 0.52s
+22:20:55 exec mini-phi4mini/toposort: wrong_answer 4/10 0.52s
+22:20:56 exec mini-phi4mini/lru_cache: ok 8/8 0.52s
+22:20:56 exec mini-phi4mini/flatten_dict: wrong_answer 5/6 0.48s
+22:20:57 exec mini-phi4mini/fix_median: ok 6/6 0.51s
+22:20:58 exec mini-phi4mini/fix_chunked: ok 6/6 0.52s
+22:20:59 exec mini-phi4mini/fix_unique_bucket: ok 4/4 0.52s
+22:21:00 exec mini-phi4mini/fix_top_words: wrong_answer 6/7 0.49s
+22:21:00 exec mini-phi4mini/re_hex_color: ok 4/4 0.46s
+22:21:01 exec mini-phi4mini/re_dates_in_text: wrong_answer 5/8 0.52s
+22:21:02 exec mini-phi4mini/re_ipv4: wrong_answer 4/5 0.52s
+22:21:03 exec mini-phi4mini/cx_ttl_cache: wrong_answer 6/10 0.52s
+22:21:03 exec mini-phi4mini/cx_scheduler: wrong_answer 3/11 0.53s
+22:21:04 exec mini-phi4mini/cx_expression: wrong_answer 1/31 0.53s
+22:21:05 exec mini-phi4mini/cx_ini_parser: wrong_answer 8/22 0.53s
+22:21:06 exec mini-phi4mini/cx_schedule_algos: wrong_answer 2/11 0.5s
+22:21:06 exec mini-phi4mini/cx_inventory_fix: import_error 0/12 0.57s
+22:21:07 exec mini-phi4mini/cx_template: wrong_answer 2/24 0.57s
+03:00:48 mini-gemma4e4b: waiting (free memory could not be read; memory pressure could not be read; power state could not be read)
+03:05:49 mini-gemma4e4b: waiting (free memory would fall below 25 percent after loading about 8.8 GB)
+09:32:07 air-gemma4-26b load: waiting (MINION_BUSY: free memory 41 percent, need 45)
+09:32:09 mini-gemma4e4b: waiting (free memory 36 percent, need 45)
+09:37:07 air-gemma4-26b load: waiting (MINION_BUSY: free memory 25 percent, need 45; memory pressure is warn)
+09:37:10 mini-gemma4e4b: waiting (free memory 37 percent, need 45)
+09:42:08 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:42:11 mini-gemma4e4b: waiting (free memory would fall below 25 percent after loading about 8.8 GB)
+09:57:09 air-gemma4-26b load: waiting (MINION_BUSY: free memory 32 percent, need 45)
+10:02:09 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:12:10 air-gemma4-26b load: waiting (MINION_BUSY: free memory 38 percent, need 45)
+10:12:17 mini-gemma4e4b: waiting (free memory 37 percent, need 45)
+10:17:10 air-gemma4-26b load: waiting (MINION_BUSY: free memory 25 percent, need 45; memory pressure is warn)
+10:22:11 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:22:19 mini-gemma4e4b: waiting (free memory 28 percent, need 45; memory pressure is warn)
+10:27:20 mini-gemma4e4b: waiting (free memory 26 percent, need 45; memory pressure is warn)
+10:32:21 mini-gemma4e4b: waiting (free memory 27 percent, need 45; memory pressure is warn)
+10:37:22 mini-gemma4e4b: waiting (free memory would fall below 25 percent after loading about 8.8 GB)
+11:22:26 models: ['groq-gptoss20b', 'groq-gptoss120b', 'mistral-ministral8b', 'air-qwen', 'mini-gemma4b', 'or-nemotron120b', 'mini-phi4mini', 'mini-gemma4e4b', 'mini-nemotronmini', 'gemini-flashlite', 'air-gemma4-26b']; tasks: 25; groups: ['cloud', 'cloud', 'day-host', 'night-host', 'cloud', 'cloud']
+11:22:26 sandbox self-test: waiting (outside the night host's allowed windows (22:00-23:00,06:00-07:00))
+11:22:27 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+11:22:32 gemini-flashlite/cx_template: code 5.69s
+11:24:27 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)

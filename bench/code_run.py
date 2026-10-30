@@ -202,60 +202,82 @@ def prepare_local(cfg, machine: str, env: dict, deadline: float):
     return (lambda: modelfit.http_json(f"{root}/api/generate", {"model": cfg.model, "keep_alive": 0})), None
 
 
-def work_group(cfgs: list, machine: str, out: Path, tasks: list, args, deadline: float) -> None:
+def work_model(cfg, machine: str, out: Path, tasks: list, args, deadline: float) -> str:
+    """Generate what is still missing for one model. Returns 'done', or 'deferred' when the gate, the night window or the
+    sandbox self-test did not allow it yet (nothing stays loaded then). A deferred model is tried again later."""
     is_night = machine == args.night_ssh
     env = {k: v for k, v in os.environ.items() if k != "MINION_QUIET_WINDOWS"}
-    for cfg in cfgs:
-        cfg = replace(cfg, timeout=max(cfg.timeout, MIN_TIMEOUT_S))
-        path = gen_path(out, cfg.name)
-        doc = load_doc(path, cfg, "cloud" if cfg.cloud else "night-host" if is_night else "day-host", args.redo)
-        todo = [t for t in tasks if t["id"] not in doc["tasks"] or doc["tasks"][t["id"]].get("error") in DEAD]
-        if not todo:
-            continue
-        cleanup = None
-        if is_night:
-            while STATE["sandbox_ok"] is None and time.time() < deadline:
-                time.sleep(15)
-            if not STATE["sandbox_ok"]:
-                doc["skipped"] = "sandbox not usable (self-test not passed), so no code could be run"
-                modelfit.save(path, doc)
-                continue
-        if not cfg.cloud:
-            cleanup, skip = prepare_local(cfg, machine, env, deadline)
-            if cleanup is None:
-                doc["skipped"] = skip or "gate never opened"
-                modelfit.save(path, doc)
-                log(f"{cfg.name}: skipped ({doc['skipped']})")
-                continue
-            doc.pop("skipped", None)
-        dead_run = 0
-        for t in todo:
-            if is_night and not wait_until(lambda: night_quiet(machine, args.night_windows), f"{cfg.name}/{t['id']}", deadline):
-                doc["note"] = "stopped at the deadline: the night host was not quiet"
-                break
-            if not cfg.cloud and not is_night:
-                while modelfit.busy_now(machine) and time.time() < deadline:
-                    log(f"{cfg.name}: machine busy, pausing")
-                    time.sleep(POLL_S)
-            if is_night:
-                with NIGHT_LOCK:
-                    rec = generate_one(cfg, t, args.max_tokens)
-            else:
-                rec = generate_one(cfg, t, args.max_tokens)
-            doc["tasks"][t["id"]] = rec
+    cfg = replace(cfg, timeout=max(cfg.timeout, args.min_timeout))
+    path = gen_path(out, cfg.name)
+    doc = load_doc(path, cfg, "cloud" if cfg.cloud else "night-host" if is_night else "day-host", args.redo)
+    todo = [t for t in tasks if t["id"] not in doc["tasks"] or doc["tasks"][t["id"]].get("error") in DEAD]
+    if args.only is not None:
+        todo = [t for t in todo if t["id"] in args.only.get(cfg.name, ())]
+    if not todo or doc.get("unavailable"):
+        return "done"
+    if is_night:
+        if STATE["sandbox_ok"] is None:
+            return "deferred"
+        if not STATE["sandbox_ok"]:
+            doc["skipped"] = "sandbox not usable (self-test not passed), so no code could be run"
             modelfit.save(path, doc)
-            log(f"{cfg.name}/{t['id']}: {rec.get('error') or rec.get('failure') or 'code'} {rec['latency']}s")
-            dead_run = dead_run + 1 if rec.get("error") in DEAD else 0
-            if dead_run >= 3 and all(r.get("error") in DEAD for r in doc["tasks"].values()):
-                doc["unavailable"] = rec.get("detail")
-                break
+            return "done"
+        if not night_quiet(machine, args.night_windows)[0]:
+            return "deferred"          # never load a model on the night host outside its window
+    cleanup = None
+    if not cfg.cloud:
+        cleanup, skip = prepare_local(cfg, machine, env, min(deadline, time.time() + 120))
+        if cleanup is None:
+            log(f"{cfg.name}: deferred ({skip or 'gate never opened'})")
+            return "deferred"
+        doc.pop("skipped", None)
+    dead_run, result = 0, "done"
+    for t in todo:
+        if is_night and not night_quiet(machine, args.night_windows)[0]:
+            result = "deferred"        # window closed or a job started: unload and come back later
+            break
+        if not cfg.cloud and not is_night:
+            while modelfit.busy_now(machine) and time.time() < deadline:
+                log(f"{cfg.name}: machine busy, pausing")
+                time.sleep(POLL_S)
+        if is_night:
+            with NIGHT_LOCK:
+                rec = generate_one(cfg, t, args.max_tokens)
+        else:
+            rec = generate_one(cfg, t, args.max_tokens)
+        doc["tasks"][t["id"]] = rec
         modelfit.save(path, doc)
-        if cleanup:
-            try:
-                cleanup()
-            except MinionError as e:
-                log(f"{cfg.name}: unload failed ({e})")
-            log(f"{cfg.name}: unloaded")
+        log(f"{cfg.name}/{t['id']}: {rec.get('error') or rec.get('failure') or 'code'} {rec['latency']}s")
+        dead_run = dead_run + 1 if rec.get("error") in DEAD else 0
+        if dead_run >= 3 and all(r.get("error") in DEAD for r in doc["tasks"].values()):
+            doc["unavailable"] = rec.get("detail")
+            break
+    modelfit.save(path, doc)
+    if cleanup:
+        try:
+            cleanup()
+        except MinionError as e:
+            log(f"{cfg.name}: unload failed ({e})")
+        log(f"{cfg.name}: unloaded")
+    return result
+
+
+def work_group(cfgs: list, machine: str, out: Path, tasks: list, args, deadline: float) -> None:
+    """One machine's models, one after another. A model that cannot start now (memory gate, night window) does not block
+    the others: it waits in the queue and is tried again every few minutes until the deadline, then recorded as not run."""
+    pending = list(cfgs)
+    while pending and time.time() < deadline:
+        for cfg in list(pending):
+            if work_model(cfg, machine, out, tasks, args, deadline) == "done":
+                pending.remove(cfg)
+        if pending:
+            time.sleep(min(POLL_S, max(1, deadline - time.time())))
+    for cfg in pending:
+        path = gen_path(out, cfg.name)
+        doc = load_doc(path, cfg, "night-host" if machine == args.night_ssh else "day-host", False)
+        doc["skipped"] = "gate or night window never allowed it before the deadline"
+        modelfit.save(path, doc)
+        log(f"{cfg.name}: not run ({doc['skipped']})")
 
 
 # ---------------------------------------------------------------- execution
@@ -345,6 +367,9 @@ def main() -> None:
     ap.add_argument("--night-windows", default=NIGHT_WINDOWS)
     ap.add_argument("--deadline-h", type=float, default=24.0)
     ap.add_argument("--max-tokens", type=int, default=MAX_TOKENS)
+    ap.add_argument("--min-timeout", type=int, default=MIN_TIMEOUT_S, help="per-call timeout floor, seconds")
+    ap.add_argument("--only-truncated-of", metavar="RUNDIR",
+                    help="second protocol: only the (model, task) pairs that ended 'truncated' in RUNDIR (use with a larger --max-tokens and a new --out)")
     ap.add_argument("--redo", action="store_true", help="generate again")
     ap.add_argument("--redo-exec", action="store_true", help="run the sandbox again on stored code")
     ap.add_argument("--out", required=True)
@@ -357,6 +382,15 @@ def main() -> None:
     modelfit.load_env_files(args.env_file)
     deadline = time.time() + args.deadline_h * 3600
 
+    args.only = None
+    if args.only_truncated_of:
+        args.only = {}
+        for gp in sorted((Path(args.only_truncated_of) / "gen").glob("*.json")):
+            g = json.loads(gp.read_text())
+            ids = {tid for tid, r in g["tasks"].items() if r.get("failure") == "truncated"}
+            if ids:
+                args.only[g["model"]] = ids
+        log(f"second protocol: max_tokens {args.max_tokens}, pairs {sum(map(len, args.only.values()))}: {sorted(args.only)}")
     tasks = [t for t in code_tasks.TASKS if not args.tasks or t["id"] in args.tasks.split(",")]
     # 1. Docker must answer before any model is called. The self-test and the copy of the test files wait for a quiet
     #    night host and run first in the execution thread; until they pass nothing is run, and models on the night host wait.

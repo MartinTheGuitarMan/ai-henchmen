@@ -35,7 +35,7 @@ WATCHDOG_S = 45
 REMOTE_PATH = "export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH; "
 REMOTE_TESTS_DIR = ".cache/minions-codebench/tests"      # relative to the docker host user's home
 CONTAINER_SCRIPT = ("cat > /work/solution.py && cd /work && "
-                    f"exec timeout -k 1 {RUN_TIMEOUT_S} python -u -m pytest -v --tb=no -p no:cacheprovider /tests/test_task.py")
+                    f"exec timeout -k 1 {RUN_TIMEOUT_S} python -u -m pytest -v --tb=${{PYTEST_TB:-no}} -p no:cacheprovider /tests/test_task.py")
 
 
 class SandboxUnavailable(RuntimeError):
@@ -48,15 +48,17 @@ def safe_id(name: str) -> str:
     return name
 
 
-def run_args(name: str, test_path: str, image: str = IMAGE) -> list[str]:
-    """The docker command (without the docker prefix) for one run. Constants plus two checked values."""
+def run_args(name: str, test_path: str, image: str = IMAGE, tb: str = "no") -> list[str]:
+    """The docker command (without the docker prefix) for one run. Constants plus checked values."""
+    if tb not in ("no", "short", "line"):
+        raise ValueError(f"unsafe traceback style {tb!r}")
     return ["run", "--rm", "-i", "--name", name,
             "--network", "none", "--read-only",
             "--tmpfs", "/work:rw,noexec,nosuid,size=16m,mode=1777", "--tmpfs", "/tmp:rw,noexec,nosuid,size=8m,mode=1777",
             "--user", "65534:65534", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
             "--cpus", "1", "--memory", "256m", "--memory-swap", "256m", "--pids-limit", "64",
             "--ulimit", "nofile=256", "--ulimit", "fsize=16777216",
-            "-e", "PYTHONDONTWRITEBYTECODE=1", "-e", "PYTHONUTF8=1", "-e", "HOME=/work", "-e", "PYTHONPATH=/work",
+            "-e", f"PYTEST_TB={tb}", "-e", "PYTHONDONTWRITEBYTECODE=1", "-e", "PYTHONUTF8=1", "-e", "HOME=/work", "-e", "PYTHONPATH=/work",
             "-v", f"{test_path}:/tests/test_task.py:ro",
             image, "sh", "-c", CONTAINER_SCRIPT]
 
@@ -140,14 +142,14 @@ class Sandbox:
         self._tests = dict(tests)
 
     # ---- one run
-    def run(self, task_id: str, code: str) -> dict:
+    def run(self, task_id: str, code: str, tb: str = "no") -> dict:
         safe_id(task_id)
         if task_id not in self._tests:
             raise KeyError(f"test file for {task_id} was not staged")
         name = "codebench-" + uuid.uuid4().hex[:12]
         t0 = time.time()
         try:
-            r = self.docker(run_args(name, f"{self._dir}/test_{task_id}.py", self.image), stdin=code.encode("utf-8"),
+            r = self.docker(run_args(name, f"{self._dir}/test_{task_id}.py", self.image, tb), stdin=code.encode("utf-8"),
                             timeout=WATCHDOG_S)
             rc, out = r.returncode, r.stdout.decode("utf-8", "replace")
             err = r.stderr.decode("utf-8", "replace")
@@ -161,7 +163,7 @@ class Sandbox:
         kind = classify(rc, elapsed, parsed, out)
         return {"kind": kind, "passed": parsed["passed"], "failed": parsed["failed"], "rc": rc, "elapsed": round(elapsed, 2),
                 "collection_error": parsed["collection_error"], "tail": (out if kind != "ok" else "")[-300:],
-                **({"stderr": err[-300:]} if kind == "sandbox_error" else {})}
+                **({"stderr": err[-300:]} if kind == "sandbox_error" else {}), **({"output": out[-6000:]} if tb != "no" else {})}
 
 
 # ---------------------------------------------------------------- self-test

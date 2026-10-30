@@ -222,7 +222,7 @@ def test_whole_pipeline_with_fakes_and_report(monkeypatch, tmp_path):
     out = tmp_path / "run"
     (out / "gen").mkdir(parents=True)
     tasks = [code_tasks.by_id("slugify"), code_tasks.by_id("flatten_dict")]
-    args = Namespace(redo=False, redo_exec=False, night_ssh="", night_windows="00:00-00:00", docker_host=None, max_tokens=100)
+    args = Namespace(redo=False, redo_exec=False, night_ssh="", night_windows="00:00-00:00", docker_host=None, max_tokens=100, min_timeout=180, only=None)
     code_run.work_group([fake_cfg()], "local", out, tasks, args, deadline=1e12)
     gen = json.loads((out / "gen" / "fake-cloud.json").read_text())
     assert set(gen["tasks"]) == {"slugify", "flatten_dict"} and gen["cloud"] is True

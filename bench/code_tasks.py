@@ -2097,3 +2097,18 @@ for _id, _n in {"cx_expression": 31, "cx_ini_parser": 22, "cx_template": 24, "pa
 
 def by_id(task_id: str) -> dict:
     return next(t for t in TASKS if t["id"] == task_id)
+
+
+def split_tests(src: str) -> tuple[str, str]:
+    """(visible, held-out) test files for the retry loop: the test functions are dealt out alternately, the first one to
+    the visible file. Imports, helpers and fixtures go to both. The visible tests are part of the hidden set, so the
+    held-out file is the honest check that code accepted by the visible tests is really right."""
+    import ast
+    tree = ast.parse(src)
+    tests = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name.startswith("test")]
+    drop = [{id(n) for n in tests[1::2]}, {id(n) for n in tests[0::2]}]
+    outs = []
+    for d in drop:
+        t = ast.Module(body=[n for n in tree.body if id(n) not in d], type_ignores=[])
+        outs.append(ast.unparse(ast.fix_missing_locations(t)) + "\n")
+    return outs[0], outs[1]

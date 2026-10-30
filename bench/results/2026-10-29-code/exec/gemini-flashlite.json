@@ -1,0 +1,221 @@
+{
+ "model": "gemini-flashlite",
+ "tasks": {
+  "merge_intervals": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.6,
+   "collection_error": false,
+   "tail": ""
+  },
+  "parse_duration": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.65,
+   "collection_error": false,
+   "tail": ""
+  },
+  "slugify": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "business_days": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "parse_csv_line": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.48,
+   "collection_error": false,
+   "tail": ""
+  },
+  "wrap_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "compare_versions": {
+   "kind": "wrong_answer",
+   "passed": 5,
+   "failed": 2,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_prerelease_lower_than_release - AssertionE...\nFAILED ../tests/test_task.py::test_semver_spec_chain - AssertionError: assert...\n========================= 2 failed, 5 passed in 0.01s ==========================\n"
+  },
+  "toposort": {
+   "kind": "ok",
+   "passed": 10,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "lru_cache": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "flatten_dict": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_median": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_chunked": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.59,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_unique_bucket": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_top_words": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_hex_color": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_dates_in_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.58,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_ipv4": {
+   "kind": "ok",
+   "passed": 5,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_ttl_cache": {
+   "kind": "ok",
+   "passed": 10,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_scheduler": {
+   "kind": "ok",
+   "passed": 11,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_expression": {
+   "kind": "wrong_answer",
+   "passed": 8,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": "est_unknown_variable_with_other_variables PASSED [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_variables - solution.ExprError: Unexpected...\n========================= 1 failed, 30 passed in 0.02s =========================\n"
+  },
+  "cx_ini_parser": {
+   "kind": "ok",
+   "passed": 14,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.55,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_shortest_path": {
+   "kind": "ok",
+   "passed": 14,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_schedule_algos": {
+   "kind": "ok",
+   "passed": 11,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_inventory_fix": {
+   "kind": "ok",
+   "passed": 12,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  }
+ }
+}

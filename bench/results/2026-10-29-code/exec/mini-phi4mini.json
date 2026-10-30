@@ -1,0 +1,212 @@
+{
+ "model": "mini-phi4mini",
+ "tasks": {
+  "merge_intervals": {
+   "kind": "wrong_answer",
+   "passed": 6,
+   "failed": 2,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_adjacent_but_apart - AssertionError: asser...\nFAILED ../tests/test_task.py::test_input_not_modified - AssertionError: asser...\n========================= 2 failed, 6 passed in 0.01s ==========================\n"
+  },
+  "parse_duration": {
+   "kind": "wrong_answer",
+   "passed": 2,
+   "failed": 6,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": "sk.py::test_big_numbers - ValueError: Number without u...\nFAILED ../tests/test_task.py::test_invalid_missing_or_unknown_unit - Failed: ...\nFAILED ../tests/test_task.py::test_returns_int - ValueError: Unknown unit found\n========================= 6 failed, 2 passed in 0.01s ==========================\n"
+  },
+  "slugify": {
+   "kind": "wrong_answer",
+   "passed": 6,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.56,
+   "collection_error": false,
+   "tail": "est_digits_kept PASSED                           [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_runs_and_edges - AssertionError: assert 'a...\n========================= 1 failed, 6 passed in 0.01s ==========================\n"
+  },
+  "business_days": {
+   "kind": "wrong_answer",
+   "passed": 1,
+   "failed": 6,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": " 0\nFAILED ../tests/test_task.py::test_end_excluded_start_included - assert 2 == 1\nFAILED ../tests/test_task.py::test_whole_leap_year - assert 263 == 262\nFAILED ../tests/test_task.py::test_partial_weeks - assert 10 == 9\n========================= 6 failed, 1 passed in 0.01s ==========================\n"
+  },
+  "parse_csv_line": {
+   "kind": "wrong_answer",
+   "passed": 4,
+   "failed": 4,
+   "rc": 1,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": "k.py::test_escaped_quote - assert ['\"say \"\"hi\"\" now\"'...\nFAILED ../tests/test_task.py::test_quoted_empty - assert ['\"\"', 'x'] == ['', ...\nFAILED ../tests/test_task.py::test_quote_only_field_with_escape_at_end - asse...\n========================= 4 failed, 4 passed in 0.01s ==========================\n"
+  },
+  "wrap_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "toposort": {
+   "kind": "wrong_answer",
+   "passed": 4,
+   "failed": 6,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "k.py::test_tie_break_with_dependencies - AssertionErr...\nFAILED ../tests/test_task.py::test_late_small_name_goes_first_when_ready - Ke...\nFAILED ../tests/test_task.py::test_duplicate_dependency_entries - AssertionEr...\n========================= 6 failed, 4 passed in 0.01s ==========================\n"
+  },
+  "lru_cache": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "flatten_dict": {
+   "kind": "wrong_answer",
+   "passed": 5,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.48,
+   "collection_error": false,
+   "tail": "est_input_not_modified PASSED                    [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_empty_nested_dict_kept - AssertionError: a...\n========================= 1 failed, 5 passed in 0.01s ==========================\n"
+  },
+  "fix_median": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_chunked": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_unique_bucket": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_top_words": {
+   "kind": "wrong_answer",
+   "passed": 6,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.49,
+   "collection_error": false,
+   "tail": "est_inner_punctuation_kept PASSED                [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_tie_break_alphabetical - AssertionError: a...\n========================= 1 failed, 6 passed in 0.01s ==========================\n"
+  },
+  "re_hex_color": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.46,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_dates_in_text": {
+   "kind": "wrong_answer",
+   "passed": 5,
+   "failed": 3,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "k.py::test_month_range - AssertionError: assert ['202...\nFAILED ../tests/test_task.py::test_day_range - AssertionError: assert ['2024-...\nFAILED ../tests/test_task.py::test_not_inside_longer_digits - AssertionError:...\n========================= 3 failed, 5 passed in 0.01s ==========================\n"
+  },
+  "re_ipv4": {
+   "kind": "wrong_answer",
+   "passed": 4,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "test_task.py::test_non_ascii_digits_rejected PASSED             [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_bad - AssertionError: 01.2.3.4\n========================= 1 failed, 4 passed in 0.01s ==========================\n"
+  },
+  "cx_ttl_cache": {
+   "kind": "wrong_answer",
+   "passed": 6,
+   "failed": 4,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "k.py::test_get_does_not_extend_expiry - AssertionErro...\nFAILED ../tests/test_task.py::test_lru_eviction_when_full - AssertionError: a...\nFAILED ../tests/test_task.py::test_keys_order_is_recency - AssertionError: as...\n========================= 4 failed, 6 passed in 0.01s ==========================\n"
+  },
+  "cx_scheduler": {
+   "kind": "wrong_answer",
+   "passed": 3,
+   "failed": 8,
+   "rc": 1,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": "t_task.py::test_task_added_by_callback_waits_for_next_call\nFAILED ../tests/test_task.py::test_cancel_by_earlier_callback - AssertionErro...\nFAILED ../tests/test_task.py::test_pending_order_uses_first_scheduled_for_ties\n========================= 8 failed, 3 passed in 0.02s ==========================\n"
+  },
+  "cx_expression": {
+   "kind": "wrong_answer",
+   "passed": 1,
+   "failed": 8,
+   "rc": 1,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": "k.py::test_invalid[min(1,)] - TypeError: 'float' obje...\nFAILED ../tests/test_task.py::test_division_by_zero_in_subexpression - Failed...\nFAILED ../tests/test_task.py::test_unknown_variable_with_other_variables - Na...\n======================== 21 failed, 10 passed in 0.03s =========================\n"
+  },
+  "cx_ini_parser": {
+   "kind": "wrong_answer",
+   "passed": 8,
+   "failed": 6,
+   "rc": 1,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": "k.py::test_comment_after_quoted_value_allowed - asser...\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"open\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2]\n========================= 8 failed, 14 passed in 0.02s =========================\n"
+  },
+  "cx_schedule_algos": {
+   "kind": "wrong_answer",
+   "passed": 2,
+   "failed": 9,
+   "rc": 1,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": "tests/test_task.py::test_rooms_touching_share_a_room - assert 3 == 1\nFAILED ../tests/test_task.py::test_rooms_all_overlap - assert 1 == 4\nFAILED ../tests/test_task.py::test_rooms_many_small_between_a_long_one - asse...\n========================= 9 failed, 2 passed in 0.01s ==========================\n"
+  },
+  "cx_inventory_fix": {
+   "kind": "import_error",
+   "passed": 0,
+   "failed": 0,
+   "rc": 2,
+   "elapsed": 0.57,
+   "collection_error": true,
+   "tail": "collected 0 items / 1 error\n\n=========================== short test summary info ============================\nERROR ../tests/test_task.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n=============================== 1 error in 0.05s ===============================\n"
+  },
+  "cx_template": {
+   "kind": "wrong_answer",
+   "passed": 2,
+   "failed": 13,
+   "rc": 1,
+   "elapsed": 0.57,
+   "collection_error": false,
+   "tail": "ture_errors[{% for i in xs %}a{% endif %}]\nFAILED ../tests/test_task.py::test_structure_errors[{% while x %}{% endwhile %}]\nFAILED ../tests/test_task.py::test_structure_errors[{% if x %}{% else %}{% else %}{% endif %}]\n========================= 22 failed, 2 passed in 0.07s =========================\n"
+  }
+ }
+}
