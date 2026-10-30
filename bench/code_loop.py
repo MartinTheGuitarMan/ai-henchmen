@@ -119,6 +119,7 @@ class Ctx:
         self.machine, self.args, self.deadline = machine, args, deadline
         self.is_night = machine == args.night_ssh
         self.cleanup = None
+        self.lock = None
         self.env = {k: v for k, v in os.environ.items() if k != "MINION_QUIET_WINDOWS"}
 
     def quiet(self) -> bool:
@@ -127,13 +128,20 @@ class Ctx:
     def ready(self) -> bool:
         if self.cfg.cloud:
             return True
-        if self.is_night and not self.quiet():
+        if self.is_night and not cr.night_model_ok(self.args.docker_host, self.args.night_windows)[0]:
             self.release()
             return False
         if self.cleanup is None:
-            cleanup, skip = cr.prepare_local(self.cfg, self.machine, self.env, min(self.deadline, time.time() + 120))
+            if self.is_night:
+                self.lock = cr.NightExclusive()
+                if not self.lock.acquire(120):
+                    self.lock = None
+                    return False
+            cleanup, skip = cr.prepare_local(self.cfg, self.machine, self.env, min(self.deadline, time.time() + 120),
+                                             lambda: cr.floor_pct_now(self.is_night, self.args.night_windows))
             if cleanup is None:
                 log(f"{self.cfg.name}: loop deferred ({skip})")
+                self.release()
                 return False
             self.cleanup = cleanup
         return True
@@ -145,6 +153,9 @@ class Ctx:
             except MinionError as e:
                 log(f"{self.cfg.name}: unload failed ({e})")
             self.cleanup = None
+        if self.lock:
+            self.lock.release()
+            self.lock = None
 
     def generate(self, msgs: list) -> dict:
         def call():
@@ -160,11 +171,10 @@ class Ctx:
 
 
 def sb_run(ctx: Ctx, sb, tid: str, code: str, tb: str = "no") -> dict | None:
-    """One sandbox run if the night host is quiet right now, else None (the caller defers; nothing stays loaded)."""
-    if not ctx.quiet():
-        ctx.release()
-        return None
-    with cr.NIGHT_LOCK:
+    """One sandbox run if the night host is quiet right now and no model of any bench process is loaded there, else None."""
+    with cr.NIGHT_LOCK, cr.sandbox_slot(ctx.args.docker_host, 60) as got:
+        if not got or not ctx.quiet():
+            return None
         res = sb.run(tid, code, tb)
     if res["kind"] == "sandbox_error":
         log(f"sandbox error for {ctx.cfg.name}/{tid}: {res.get('stderr') or res.get('tail')}; will retry later")
@@ -172,47 +182,97 @@ def sb_run(ctx: Ctx, sb, tid: str, code: str, tb: str = "no") -> dict | None:
     return res
 
 
-def process_task(ctx: Ctx, sb, task: dict, gen_rec: dict, entry: dict, save) -> str:
-    """Advance one task as far as possible. 'done', or 'deferred' (sandbox or model not available right now)."""
-    tid = task["id"]
-    atts = entry.setdefault("attempts", [])
-    if not atts:
-        atts.append({"n": 1, "code": gen_rec.get("code"), "failure": gen_rec.get("failure"), "detail": gen_rec.get("detail", ""),
-                     "latency": gen_rec.get("latency")})
-    while True:
+def pack(res: dict, keys: tuple) -> dict:
+    return {k: res.get(k) for k in keys}
+
+
+def sandbox_round(ctx: Ctx, sb, tasks: list, entries: dict, save) -> bool:
+    """All sandbox work that is due, with no model loaded: the visible run of every new attempt, and the final scoring of
+    every task that is finished (accepted, or out of attempts). False if the sandbox was not available for all of it."""
+    ok = True
+    for t in tasks:
+        e = entries[t["id"]]
+        if e.get("done"):
+            continue
+        atts, tid = e["attempts"], t["id"]
         a = atts[-1]
         if "vis" not in a and a.get("code") and not a.get("failure"):
             res = sb_run(ctx, sb, f"{tid}_vis", a["code"], "short")
             if res is None:
-                return "deferred"
-            a["vis"] = {k: res.get(k) for k in ("kind", "passed", "failed", "output", "tail")}
+                ok = False
+                continue
+            a["vis"] = pack(res, ("kind", "passed", "failed", "output", "tail"))
             save()
-        if vis_ok(a) or len(atts) >= MAX_ATTEMPTS:
-            break
-        if not ctx.ready():
-            return "deferred"
-        rec = ctx.generate(messages_for(task, atts))
-        if rec.get("error"):
-            if rec["error"] in cr.DEAD:
-                return "deferred"
-            rec = {"code": None, "failure": "generation_error", "detail": rec["error"], "latency": rec["latency"]}
-        atts.append({"n": len(atts) + 1, **{k: rec.get(k) for k in ("code", "failure", "detail", "latency")}})
-        save()
-    entry["accepted"] = vis_ok(atts[-1])
-    final = atts[-1]
-    if "final" not in entry:
-        if final.get("code") and not final.get("failure"):
-            full = sb_run(ctx, sb, tid, final["code"])
-            hold = sb_run(ctx, sb, f"{tid}_hold", final["code"]) if full else None
+        if not (vis_ok(a) or len(atts) >= MAX_ATTEMPTS):
+            continue                    # needs another model attempt
+        e["accepted"] = vis_ok(a)
+        if a.get("code") and not a.get("failure"):
+            full = sb_run(ctx, sb, tid, a["code"])
+            hold = sb_run(ctx, sb, f"{tid}_hold", a["code"]) if full else None
             if full is None or hold is None:
-                return "deferred"
-            entry["final"] = {"full": {k: full.get(k) for k in ("kind", "passed", "failed")},
-                              "hold": {k: hold.get(k) for k in ("kind", "passed", "failed")}}
+                ok = False
+                continue
+            e["final"] = {"full": pack(full, ("kind", "passed", "failed")), "hold": pack(hold, ("kind", "passed", "failed"))}
         else:
-            entry["final"] = {"full": None, "hold": None}
-    entry["done"] = True
-    save()
-    return "done"
+            e["final"] = {"full": None, "hold": None}
+        e["done"] = True
+        save()
+    return ok
+
+
+def generate_round(ctx: Ctx, tasks: list, entries: dict, save) -> bool:
+    """One more attempt for every task that needs one, in one model session (loaded once, released after). False if the
+    model or the night window did not allow all of them."""
+    def wants_attempt(t) -> bool:
+        e = entries[t["id"]]
+        last = e["attempts"][-1]
+        usable = bool(last.get("code")) and not last.get("failure")
+        return (not e.get("done") and len(e["attempts"]) < MAX_ATTEMPTS and not vis_ok(last) and (("vis" in last) or not usable))
+    need = [t for t in tasks if wants_attempt(t)]
+    if not need:
+        return True
+    ok = True
+    session_end = time.time() + cr.SESSION_MIN * 60
+    try:
+        for t in need:
+            if ctx.is_night and (not cr.night_model_ok(ctx.args.docker_host, ctx.args.night_windows)[0] or time.time() > session_end):
+                ok = False
+                break
+            if not ctx.ready():
+                ok = False
+                break
+            atts = entries[t["id"]]["attempts"]
+            rec = ctx.generate(messages_for(t, atts))
+            if rec.get("error"):
+                if rec["error"] in cr.DEAD:
+                    ok = False
+                    break
+                rec = {"code": None, "failure": "generation_error", "detail": rec["error"], "latency": rec["latency"]}
+            atts.append({"n": len(atts) + 1, **{k: rec.get(k) for k in ("code", "failure", "detail", "latency")}})
+            save()
+    finally:
+        ctx.release()
+    return ok
+
+
+def run_rounds(ctx: Ctx, sb, tasks: list, gen_tasks: dict, entries: dict, save) -> str:
+    """Alternate sandbox rounds and model rounds until every task is finished. 'done' or 'deferred'. On the night host a
+    model is only ever loaded while no sandbox run happens (and the reverse), so one retry round can take a window."""
+    for t in tasks:
+        e = entries.setdefault(t["id"], {})
+        if not e.get("attempts"):
+            g = gen_tasks[t["id"]]
+            e["attempts"] = [{"n": 1, "code": g.get("code"), "failure": g.get("failure"), "detail": g.get("detail", ""),
+                              "latency": g.get("latency")}]
+    for _ in range(MAX_ATTEMPTS + 1):
+        sandbox_ok = sandbox_round(ctx, sb, tasks, entries, save)
+        if all(entries[t["id"]].get("done") for t in tasks):
+            return "done"
+        if not sandbox_ok:
+            return "deferred"
+        if not generate_round(ctx, tasks, entries, save):
+            return "deferred"
+    return "deferred"
 
 
 def loop_model(cfg, machine: str, run: Path, loopdir: Path, tasks: list, sb, args, deadline: float) -> str:
@@ -227,19 +287,12 @@ def loop_model(cfg, machine: str, run: Path, loopdir: Path, tasks: list, sb, arg
     path = loopdir / f"{cfg.name}.json"
     doc = json.loads(path.read_text()) if path.exists() else {"model": cfg.name, "cloud": cfg.cloud, "tasks": {}}
     ctx = Ctx(cfg, machine, args, deadline)
-    result = "done"
     try:
-        for t in tasks:
-            entry = doc["tasks"].setdefault(t["id"], {})
-            if entry.get("done"):
-                continue
-            if process_task(ctx, sb, t, gen["tasks"][t["id"]], entry, lambda: modelfit.save(path, doc)) == "deferred":
-                result = "deferred"
-                break
-            log(f"loop {cfg.name}/{t['id']}: {len(entry['attempts'])} attempt(s), accepted={entry['accepted']}")
+        result = run_rounds(ctx, sb, tasks, gen["tasks"], doc["tasks"], lambda: modelfit.save(path, doc))
     finally:
         modelfit.save(path, doc)
         ctx.release()
+    log(f"loop {cfg.name}: {result} ({sum(1 for e in doc['tasks'].values() if e.get('done'))}/{len(tasks)} tasks finished)")
     return result
 
 

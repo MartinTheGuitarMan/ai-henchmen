@@ -27,6 +27,8 @@ from __future__ import annotations
 
 import argparse
 import ast
+import contextlib
+import fcntl
 import json
 import os
 import re
@@ -60,6 +62,11 @@ JOB_PATTERN = "[n]ightly.sh|[a]gent_proposals.py|[a]gent_eval.py|[s]kylink-sim r
 POLL_S = 300
 DEAD = ("MINION_DOWN", "MINION_BACKEND_ERROR")
 NIGHT_LOCK = threading.Lock()          # one thing at a time on the night host: a model call or a sandbox run
+NIGHT_FLOCK = "/tmp/codebench-night-host.lock"     # across processes: a model on the night host and a sandbox run never overlap
+NIGHT_FLOOR_PCT = 10        # free memory that must remain after loading, on the night host inside its windows (25 elsewhere)
+DEFAULT_FLOOR_PCT = 25
+SESSION_MIN = 20            # one model session on the night host is at most this long, so sandbox runs get turns between sessions
+UNLOAD_GUARD_MIN = 8        # no new night-host model call in the last minutes of a window, so the model is unloaded in time
 STATE = {"gen_done": False, "sandbox_ok": None}   # sandbox_ok: None = self-test not done yet
 log = modelfit.log
 
@@ -132,6 +139,74 @@ def night_quiet(host: str, windows: str) -> tuple[bool, str]:
     return True, ""
 
 
+def minutes_left(spec: str, now: datetime | None = None) -> float:
+    """Minutes until the end of the window (of HH:MM-HH:MM windows that do not cross midnight) that contains now; 0 if none."""
+    now = now or datetime.now()
+    cur = now.hour * 60 + now.minute + now.second / 60
+    for w in re.split(r"[,\s]+", spec):
+        m = re.fullmatch(r"(\d\d):(\d\d)-(\d\d):(\d\d)", w or "")
+        if m:
+            a, b = int(m[1]) * 60 + int(m[2]), int(m[3]) * 60 + int(m[4])
+            if a <= cur < b:
+                return b - cur
+    return 0.0
+
+
+def night_model_ok(host: str, windows: str) -> tuple[bool, str]:
+    """May a model on the night host be loaded or called now? Quiet, and not in the last minutes of the window."""
+    ok, why = night_quiet(host, windows)
+    if ok and host and minutes_left(windows) < UNLOAD_GUARD_MIN:
+        return False, "too close to the end of the window to start a model call"
+    return ok, why
+
+
+def floor_pct_now(machine_is_night: bool, windows: str) -> int:
+    """The memory margin after loading: 10 percent on the night host inside its windows, 25 otherwise."""
+    return NIGHT_FLOOR_PCT if machine_is_night and in_windows(windows) else DEFAULT_FLOOR_PCT
+
+
+class NightExclusive:
+    """Cross-process exclusion on the night host: held for a whole model session (load to unload) or one sandbox run."""
+
+    def __init__(self, path: str = NIGHT_FLOCK):
+        self.path, self.fd = path, None
+
+    def acquire(self, timeout: float) -> bool:
+        fd = os.open(self.path, os.O_CREAT | os.O_RDWR, 0o600)
+        end = time.time() + timeout
+        while True:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                self.fd = fd
+                return True
+            except OSError:
+                if time.time() >= end:
+                    os.close(fd)
+                    return False
+                time.sleep(2)
+
+    def release(self) -> None:
+        if self.fd is not None:
+            fcntl.flock(self.fd, fcntl.LOCK_UN)
+            os.close(self.fd)
+            self.fd = None
+
+
+@contextlib.contextmanager
+def sandbox_slot(host: str, timeout: float = 600.0):
+    """Yields True once no night-host model is loaded by any bench process (and holds that for the body), else False."""
+    if not host:
+        yield True
+        return
+    lock = NightExclusive()
+    got = lock.acquire(timeout)
+    try:
+        yield got
+    finally:
+        if got:
+            lock.release()
+
+
 def wait_until(ok_fn, what: str, deadline: float) -> bool:
     """Poll ok_fn() -> (ok, reason) every POLL_S until true or the deadline. Returns False at the deadline."""
     said = None
@@ -170,7 +245,7 @@ def load_doc(path: Path, cfg, machine: str, redo: bool) -> dict:
     return {"model": cfg.name, "backend_model": cfg.model, "cloud": cfg.cloud, "machine": machine, "tasks": {}}
 
 
-def prepare_local(cfg, machine: str, env: dict, deadline: float):
+def prepare_local(cfg, machine: str, env: dict, deadline: float, floor_fn=lambda: DEFAULT_FLOOR_PCT):
     """Wait for the quiet gate and load the model if minions manages it. Returns (cleanup, None) or (None, skip reason)."""
     if cfg.backend == "lmstudio" and cfg.manage:
         roster = modelfit.single_roster(replace(cfg, context=8192))
@@ -191,7 +266,7 @@ def prepare_local(cfg, machine: str, env: dict, deadline: float):
     reasons: list = []
 
     def gate_ok():
-        g = modelfit.gate(machine, size)
+        g = modelfit.gate(machine, size, floor_fn())
         reasons[:] = g["reasons"]
         return g["allowed"], "; ".join(g["reasons"])
     if not wait_until(gate_ok, cfg.name, deadline):
@@ -222,19 +297,33 @@ def work_model(cfg, machine: str, out: Path, tasks: list, args, deadline: float)
             doc["skipped"] = "sandbox not usable (self-test not passed), so no code could be run"
             modelfit.save(path, doc)
             return "done"
-        if not night_quiet(machine, args.night_windows)[0]:
+        if not night_model_ok(machine, args.night_windows)[0]:
             return "deferred"          # never load a model on the night host outside its window
+    lock = NightExclusive() if is_night and not cfg.cloud else None
+    if lock and not lock.acquire(120):
+        return "deferred"              # a sandbox run is in progress: a model and a sandbox run never overlap on the night host
+    cleanup = None
+    try:
+        return _work_model(cfg, machine, args, deadline, path, doc, todo, env, is_night)
+    finally:
+        if lock:
+            lock.release()
+
+
+def _work_model(cfg, machine, args, deadline, path, doc, todo, env, is_night) -> str:
     cleanup = None
     if not cfg.cloud:
-        cleanup, skip = prepare_local(cfg, machine, env, min(deadline, time.time() + 120))
+        cleanup, skip = prepare_local(cfg, machine, env, min(deadline, time.time() + 120),
+                                      lambda: floor_pct_now(is_night, args.night_windows))
         if cleanup is None:
             log(f"{cfg.name}: deferred ({skip or 'gate never opened'})")
             return "deferred"
         doc.pop("skipped", None)
     dead_run, result = 0, "done"
+    session_end = time.time() + SESSION_MIN * 60
     for t in todo:
-        if is_night and not night_quiet(machine, args.night_windows)[0]:
-            result = "deferred"        # window closed or a job started: unload and come back later
+        if is_night and (not night_model_ok(machine, args.night_windows)[0] or time.time() > session_end):
+            result = "deferred"        # window closing, a job started, or this session's slice is used up: unload, come back later
             break
         if not cfg.cloud and not is_night:
             while modelfit.busy_now(machine) and time.time() < deadline:
@@ -292,7 +381,9 @@ def execute_loop(sb: sandbox.Sandbox, out: Path, tasks: list, args, deadline: fl
         st_path = out / "selftest.json"
         st = json.loads(st_path.read_text()) if st_path.exists() else None
         if st is None:
-            with NIGHT_LOCK:
+            with NIGHT_LOCK, sandbox_slot(args.docker_host, 1800) as got:
+                if not got:
+                    raise sandbox.SandboxUnavailable("night host busy with a model for too long")
                 st = sandbox.selftest(sb)
             modelfit.save(st_path, st)
             log(f"sandbox self-test: {st}")
@@ -327,7 +418,9 @@ def execute_loop(sb: sandbox.Sandbox, out: Path, tasks: list, args, deadline: fl
             ok, why = night_quiet(args.docker_host, args.night_windows)
             if not ok:
                 break
-            with NIGHT_LOCK:
+            with NIGHT_LOCK, sandbox_slot(args.docker_host) as got:
+                if not got or not night_quiet(args.docker_host, args.night_windows)[0]:
+                    break
                 res = sb.run(tid, rec["code"])
             if res["kind"] == "sandbox_error":
                 log(f"sandbox error for {edoc['model']}/{tid}: {res.get('stderr') or res.get('tail')}; will retry later")

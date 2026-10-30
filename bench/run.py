@@ -87,13 +87,13 @@ def ssh_runner(host: str):
     return run
 
 
-def gate(machine: str, need_gb: float) -> dict:
+def gate(machine: str, need_gb: float, floor_pct: int = 25) -> dict:
     runner = ssh_runner(machine) if machine != "local" else None
     env = {k: v for k, v in os.environ.items() if k != "MINION_QUIET_WINDOWS"}   # the bench is a deliberate job
     probes = lifecycle.local_probes(env=env, runner=runner)
     mem = (runner or lifecycle.run_command)(("sysctl", "-n", "hw.memsize"))
     total = int(mem.strip()) / lifecycle.GB if mem and mem.strip().isdigit() else None
-    return lifecycle.gate(probes, need_gb=need_gb, total_gb=total, min_free_pct=int(env.get("MINION_MIN_FREE_PCT", "45")),
+    return lifecycle.gate(probes, need_gb=need_gb, total_gb=total, min_free_pct=int(env.get("MINION_MIN_FREE_PCT", "45")), floor_pct=floor_pct,
                           allow_battery=env.get("MINION_ALLOW_BATTERY") == "1")
 
 
