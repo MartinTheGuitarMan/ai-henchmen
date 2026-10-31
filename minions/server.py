@@ -5,7 +5,7 @@ import functools
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
-from . import route_task as route_task_mod, tools
+from . import privacy, route_task as route_task_mod, tools
 from .config import Roster
 from .errors import MinionError
 
@@ -27,43 +27,43 @@ def guarded(fn):
 @mcp.tool()
 @guarded
 def classify(text: str, labels: list[str], hint: str = "", sensitive: bool = True,
-             descriptions: dict[str, str] | None = None) -> dict:
+             descriptions: dict[str, str] | None = None, source_path: str = "") -> dict:
     """Classify text into exactly one of the given labels. Local models only, unless sensitive=false
     (public text), which also allows cloud minions. descriptions (label -> one line) tells the models what each label means."""
-    return tools.classify(Roster.from_env(), text, labels, hint, sensitive, descriptions)
+    return tools.classify(Roster.from_env(), text, labels, hint, privacy.tighten(sensitive, source_path), descriptions)
 
 
 @mcp.tool()
 @guarded
-def extract(text: str, schema: dict, hint: str = "", sensitive: bool = True) -> dict:
+def extract(text: str, schema: dict, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Extract fields from text into an object matching a JSON Schema (type: object). Required values must be
     non-empty and occur in the text (MINION_EMPTY, MINION_NOT_IN_SOURCE); optional values not found are listed in
     _unverified. sensitive=false (public text only) allows cloud minions."""
-    return tools.extract(Roster.from_env(), text, schema, hint, sensitive)
+    return tools.extract(Roster.from_env(), text, schema, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
-def summarize(text: str, max_words: int = 100, sensitive: bool = True) -> dict:
+def summarize(text: str, max_words: int = 100, sensitive: bool = True, source_path: str = "") -> dict:
     """Summarize text in at most max_words words. Numbers, dates and capitalised names in the summary must occur in
     the text (MINION_INVENTED) and it must keep to max_words plus 10% (MINION_TOO_LONG). sensitive=false (public text
     only) allows cloud minions."""
-    return tools.summarize(Roster.from_env(), text, max_words, sensitive)
+    return tools.summarize(Roster.from_env(), text, max_words, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
-def tag(text: str, labels: list[str], max_labels: int = 3, hint: str = "", sensitive: bool = True) -> dict:
+def tag(text: str, labels: list[str], max_labels: int = 3, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Pick every label that clearly applies to the text (none to max_labels). Returns {"labels": [...]}."""
-    return tools.tag(Roster.from_env(), text, labels, max_labels, hint, sensitive)
+    return tools.tag(Roster.from_env(), text, labels, max_labels, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
-def find_sensitive(text: str, sensitive: bool = True) -> dict:
+def find_sensitive(text: str, sensitive: bool = True, source_path: str = "") -> dict:
     """Find personal or secret-looking spans (names, emails, phones, ids, addresses, keys) before text leaves the
     machine. Patterns plus a local model; each span is checked to occur verbatim in the text."""
-    return tools.find_sensitive(Roster.from_env(), text, sensitive)
+    return tools.find_sensitive(Roster.from_env(), text, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
@@ -78,45 +78,45 @@ def scan_diff(folder: str, range: str, chunk_chars: int = 3000) -> dict:
 
 @mcp.tool()
 @guarded
-def same(a: str, b: str, hint: str = "", sensitive: bool = True) -> dict:
+def same(a: str, b: str, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Do two texts state the same facts? Returns verdict same, different or partly, plus a phrase quoted from
     one of the texts that shows the difference."""
-    return tools.same(Roster.from_env(), a, b, hint, sensitive)
+    return tools.same(Roster.from_env(), a, b, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
-def grounded(claim: str, source: str, hint: str = "", sensitive: bool = True) -> dict:
+def grounded(claim: str, source: str, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Is the claim backed by the source? Returns verdict supported, contradicted or unclear, plus a quote copied
     from the source. The quote is checked in code to occur in the source; a verdict without one becomes unclear."""
-    return tools.grounded(Roster.from_env(), claim, source, hint, sensitive)
+    return tools.grounded(Roster.from_env(), claim, source, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
-def check_claims(text: str, source: str, hint: str = "", sensitive: bool = True) -> dict:
+def check_claims(text: str, source: str, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Split text into factual claims and mark each supported or not against source. Returns {"claims": [{claim,
     supported, quote}]}. A supported claim carries a quote copied from the source (checked in code; one whose quote
     is not found is downgraded to unsupported with flag "quote_not_found") and may use only numbers and names the source has; a claim of the text that the model left out fails the call."""
-    return tools.check_claims(Roster.from_env(), text, source, hint, sensitive)
+    return tools.check_claims(Roster.from_env(), text, source, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
-def commit_message(diff: str, hint: str = "", sensitive: bool = True) -> dict:
+def commit_message(diff: str, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Draft a git commit message from a diff (at most 12000 characters). Returns {"subject", "body"}: the subject is
     at most 72 characters, imperative, without a final period, and every file the message names is in the diff."""
-    return tools.commit_message(Roster.from_env(), diff, hint, sensitive)
+    return tools.commit_message(Roster.from_env(), diff, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
-def commit_message_multi(diff: str, hint: str = "", sensitive: bool = True) -> dict:
+def commit_message_multi(diff: str, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Draft a git commit message from a large diff (up to 150000 characters, at most 30 files). The diff is split by
     file, each part is summarised in one step, and one subject and body are written from the summaries. Returns
     {"subject", "body", "files", "steps"}, checked like commit_message against the whole diff. A diff over the limits
     is refused, never cut short."""
-    return tools.commit_message_multi(Roster.from_env(), diff, hint, sensitive)
+    return tools.commit_message_multi(Roster.from_env(), diff, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
@@ -139,35 +139,35 @@ def route_task(task: str, sensitive: bool = True) -> dict:
 
 @mcp.tool()
 @guarded
-def score(text: str, criterion: str, hint: str = "", sensitive: bool = True) -> dict:
+def score(text: str, criterion: str, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Rate text from 1 to 5 on a criterion (1 = not at all, 5 = fully). Returns {"score": int, "quote": str}: the
     score is an integer in range and the quote, the passage that supports it, is checked in code to occur in the text."""
-    return tools.score(Roster.from_env(), text, criterion, hint, sensitive)
+    return tools.score(Roster.from_env(), text, criterion, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
-def translate(text: str, target: str = "en", hint: str = "", sensitive: bool = True) -> dict:
+def translate(text: str, target: str = "en", hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Translate Swedish to English (target "en") or English to Swedish (target "sv"). Returns {"translation": str}.
     Every number and capitalised name of the source must survive and none may be added; checked in code."""
-    return tools.translate(Roster.from_env(), text, target, hint, sensitive)
+    return tools.translate(Roster.from_env(), text, target, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
 @guarded
 def classify_batch(items: list[dict], labels: list[str], hint: str = "", sensitive: bool = True,
-                   descriptions: dict[str, str] | None = None) -> dict:
+                   descriptions: dict[str, str] | None = None, source_path: str = "") -> dict:
     """classify for up to 50 items [{id, text}]. Returns one result per id ({id, label} or {id, error: {code,
     message}}); one item failing does not fail the batch. Long texts are classified in chunks."""
-    return tools.classify_batch(Roster.from_env(), items, labels, hint, sensitive, descriptions)
+    return tools.classify_batch(Roster.from_env(), items, labels, hint, privacy.tighten(sensitive, source_path), descriptions)
 
 
 @mcp.tool()
 @guarded
-def tag_batch(items: list[dict], labels: list[str], max_labels: int = 3, hint: str = "", sensitive: bool = True) -> dict:
+def tag_batch(items: list[dict], labels: list[str], max_labels: int = 3, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """tag for up to 50 items [{id, text}]. Returns one result per id ({id, labels} or {id, error: {code,
     message}}); one item failing does not fail the batch. Long texts are tagged in chunks."""
-    return tools.tag_batch(Roster.from_env(), items, labels, max_labels, hint, sensitive)
+    return tools.tag_batch(Roster.from_env(), items, labels, max_labels, hint, privacy.tighten(sensitive, source_path))
 
 
 @mcp.tool()
@@ -192,7 +192,7 @@ def tag_files(folder: str, pattern: str, labels: list[str], max_labels: int = 3,
 def classify_file(path: str, labels: list[str], hint: str = "") -> dict:
     """Like classify, reading UTF-8 text from a local file (size-capped)."""
     cfg = Roster.from_env()
-    return tools.classify(cfg, tools.read_text_file(cfg, path), labels, hint)
+    return tools.classify(cfg, tools.read_text_file(cfg, path), labels, hint, privacy.tighten(True, path))
 
 
 @mcp.tool()
@@ -200,7 +200,7 @@ def classify_file(path: str, labels: list[str], hint: str = "") -> dict:
 def extract_file(path: str, schema: dict, hint: str = "") -> dict:
     """Like extract, reading UTF-8 text from a local file (size-capped)."""
     cfg = Roster.from_env()
-    return tools.extract(cfg, tools.read_text_file(cfg, path), schema, hint)
+    return tools.extract(cfg, tools.read_text_file(cfg, path), schema, hint, privacy.tighten(True, path))
 
 
 @mcp.tool()
@@ -218,16 +218,26 @@ def summarize_url(url: str, max_words: int = 100, sensitive: bool = True) -> dic
 def summarize_file(path: str, max_words: int = 100) -> dict:
     """Like summarize (with the same content check), reading UTF-8 text from a local file (size-capped)."""
     cfg = Roster.from_env()
-    return tools.summarize(cfg, tools.read_text_file(cfg, path), max_words)
+    return tools.summarize(cfg, tools.read_text_file(cfg, path), max_words, privacy.tighten(True, path))
 
 
 @mcp.tool()
 @guarded
-def ask(question: str, sensitive: bool = True) -> dict:
+def ask(question: str, sensitive: bool = True, source_path: str = "") -> dict:
     """Short answer to an open question from a model trusted with knowledge questions (it said no to a made-up
     paper). Never use for anything that must be exactly right. sensitive=false (nothing private in the question)
     allows cloud models."""
-    return tools.ask(Roster.from_env(), question, sensitive)
+    return tools.ask(Roster.from_env(), question, privacy.tighten(sensitive, source_path))
+
+
+@mcp.tool()
+@guarded
+def privacy_class_of(path: str) -> dict:
+    """Privacy class of a path (low, personal or restricted) from the privacy map file (MINION_PRIVACY_MAP), by
+    script with no model: real path, longest match on path boundaries, unlabelled = the map's default. Returns
+    {"path", "class", "matched", "map"}; map is "absent", "ok" or "invalid" (invalid fails closed: personal).
+    Calls that name a source path are kept local when its class is not low."""
+    return privacy.class_of(path)
 
 
 @mcp.tool()
