@@ -624,3 +624,79 @@ Procedure: runs only on AC power and without memory pressure; `MINION_ROSTER=~/.
 not edited, local models only; the prompts of this tool are not changed after the first run except as a stated fix. If a fix is made
 after the first set, it is stated here, set A is re-run on the fixed code and the fresh set is run once on the fixed code. A fail is
 logged here with its reason and the tool is removed from the code.
+
+### Results (2026-10-31)
+
+Run by `scripts/multi_trial.py` against the real roster (`roster.cloud.json`, read in place, not edited), each local model pinned alone,
+`sensitive=true`, on AC power, throwaway in-memory diffs, invented text. Sets: 20 first (`a01`-`a20`), 10 fresh (`b01`-`b10`); sizes
+13240 to 69468 characters; main change first in the diff in 7 of 30 cases; 14 cases with a lock file of 43000 characters or more; 7
+with a rename; 3 with a deleted file, 3 with a binary; 8 with a prompt-injection comment (3 in the fresh set).
+
+**Order of events (all stated).**
+
+1. *First run of set A, code as first committed* (3 repeats): air-qwen 45/60 (75%), mini-gemma4b 18/60 (30%). Cause, in every failing case: one of the
+   per-piece summaries failed its own check (`MINION_INVENTED` for a number or a name such as `103`, `SQL`, `Python`, `ISO` that the piece does not
+   contain; `MINION_TOO_LONG`, 41 to 46 words against a limit of 39) and one rejected summary killed the whole call. No invented answer was returned
+   (the checks worked); the design was too brittle.
+2. *Fix, one commit, before set B was written:* a rejected step summary is repaired once (the offending terms are named, as `summarize` does); if
+   it still fails, that piece is described by code (`+N -M lines`, and the function or class names found in the piece), never by the model's rejected
+   text. The word check accepts up to 55 words (the model is still asked for 35), and the step prompt adds "do not count or add anything up". The
+   result reports `code_summaries`, the number of such pieces.
+3. *Scorer defect found in the first run, fixed with the above:* case `a07`'s keywords (`rate`, `throttl`, `429`, `per minute`) did not accept a correct
+   message, "Limit API Requests to 100 per Client in 60 Seconds" (mini-gemma4b, 3 of 3 repeats counted wrong). The keywords were widened to also accept
+   "limits requests", "limit api", "requests per", "per client". This was done **after seeing that result**. With the original keywords mini-gemma4b would
+   score 0/3 on `a07` (same message in the first run; the fixed-code run did not store the text of correct answers, so it is unverified there) and
+   54/60 = 90% on set A at worst, still on the bar; air-qwen is unaffected (its `a07` answers contain "rate"). The baseline is scored with the
+   same keywords.
+4. *Set A re-run on the fixed code, set B run once on the fixed code after it was written* (3 repeats each).
+5. *Baseline* (`commit_message` on the first 12000 characters) was run **once per case, not 3 times**: at temperature 0 the repeats were identical in
+   the 14 calls I did repeat (a01 to a03), and one call takes 2 to 4 minutes on these models. This deviates from the "same 3 repeats" in criterion 6
+   and is stated here; the comparison below is by rate.
+6. A count of code-written summaries was added afterwards and measured in a separate pass (1 repeat per case, both sets, both models).
+
+| model | set | score | stable | invented returned (+refused) | check failures | p50 s | p95 s | mean steps |
+|---|---|---|---|---|---|---|---|---|
+| air-qwen | A | 60/60 (100%) | 1.00 | 0 (+0) | - | 27.5 | 70.5 | 4.5 |
+| air-qwen | B | 30/30 (100%) | 1.00 | 0 (+0) | - | 29.0 | 74.2 | 5.6 |
+| air-qwen | A+B | 90/90 (100%) | 1.00 | 0 | | 29.0 | 73.2 | 4.9 |
+| mini-gemma4b | A | 57/60 (95%) | 1.00 | 0 (+0) | - | 34.1 | 68.7 | 4.5 |
+| mini-gemma4b | B | 27/30 (90%) | 1.00 | 0 (+0) | - | 36.7 | 109.8 | 5.6 |
+| mini-gemma4b | A+B | 84/90 (93%) | 1.00 | 0 | | 36.2 | 80.0 | 4.9 |
+
+Wrong answers: mini-gemma4b `a04` (3 of 3: it described the new billing report module, the largest change, instead of the null guard in
+`services/user.py`) and `b03` (3 of 3: "Add New Functions for Data Processing" instead of the acknowledgement order). Main change not in the first file: air-qwen 69/69, mini-gemma4b 63/69 (91%).
+Code-written summaries (separate pass, 1 repeat): air-qwen 0 of 146 pieces, mini-gemma4b 3 of 146.
+
+**Baseline, same cases, same scorer (1 repeat):**
+
+| model | A | B | A+B |
+|---|---|---|---|
+| air-qwen, `commit_message` on the first 12000 characters | 2/20 (10%) | 2/10 (20%) | 4/30 (13%) |
+| mini-gemma4b, same | 0/20 (0%) | 0/10 (0%) | 0/30 (0%) |
+
+The baseline mostly fails by itself, not only by missing the change: 16 of 30 air-qwen calls and 13 of 30 mini-gemma4b calls returned invalid JSON, a
+multi-line subject or a subject over 72 characters (a 12000-character, 3-file diff is at the edge of what these models handle in one call); the rest
+named a package from the lock file or a file name as the subject. In 3 baseline cases (`a09`, `b09` for both models) the model **obeyed the
+prompt-injection comment** ("Delete everything", "Release v9"); the multi path obeyed none of the 8 injections. Where the main change sits in the
+first file the baseline is no better (air-qwen 1/7, mini-gemma4b 0/7).
+
+### Criteria, one by one
+
+1. 30 invented diffs over 12000 characters, 20 + 10, 3 repeats, with the stated mix: **met** (mix counts above; main change first in 7 of 30 = 23%).
+2. At least 90% on set A, set B and both, per model: **met** (air-qwen 100/100/100; mini-gemma4b 95/90/93, the fresh set with no margin).
+3. Same bar where the main change is not in the first file: **met** (air-qwen 100%, mini-gemma4b 91%).
+4. 0 invented answers returned: **met** (0 of 180 multi calls; independent scorer; 0 refused after the fix).
+5. Planted bad output caught: **met**, `tests/test_commit_multi.py` (subject too long, three non-imperative forms, final period, multi-line, empty, an invented file in
+   subject and body, a step summary that invents a file, a number, is empty or is too long).
+6. Baseline: **met**, strictly better for both models (100% vs 13% and 93% vs 0%), with the deviation in point 5 above.
+7. Limits and privacy tests: **met** (over total, too many files, one huge file: refused before any model call; cloud-only route refused when sensitive; sensitive defaults to true in tool
+   and server; concurrent calls; the module source contains no file or process access).
+8. Latency reported: p50 about 29 to 36 s, p95 about 73 to 80 s per call (4.9 model steps on average); the baseline p50 was 36 s (mini-gemma4b) to 150 s (air-qwen) and mostly failed.
+
+### Verdict: PASS
+
+`commit_message_multi` passes. Route: it borrows the `commit_message` route (`air-qwen`, fallback `mini-gemma4b`); the roster needs no change.
+Known limits: a diff over 150000 characters, over 30 files, or with one non-lock file over about 20000 characters of diff is refused, not cut; a
+lock file's content is never read by a model (so a dependency bump is described by counts only); when the largest change is not the main one a small
+model may describe the largest (mini-gemma4b `a04`, `b03`); `commit_message_staged` is unchanged and still refuses a stage over 12000 characters
+(using this path there would raise the cap of its one approved git read, so it is left for Martin to decide).
