@@ -1,0 +1,24 @@
+{
+ "model": "or-nemotron120b",
+ "backend_model": "nvidia/nemotron-3-super-120b-a12b:free",
+ "cloud": true,
+ "machine": "local",
+ "tasks": {
+  "merge_intervals": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"This model is unavailable for free. The paid version is available now - use this slug instead: nvidia/nemotron-3-super-120b-a12b\",\"co",
+   "latency": 0.31
+  },
+  "parse_duration": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"This model is unavailable for free. The paid version is available now - use this slug instead: nvidia/nemotron-3-super-120b-a12b\",\"co",
+   "latency": 0.08
+  },
+  "slugify": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"This model is unavailable for free. The paid version is available now - use this slug instead: nvidia/nemotron-3-super-120b-a12b\",\"co",
+   "latency": 0.06
+  }
+ },
+ "unavailable": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"This model is unavailable for free. The paid version is available now - use this slug instead: nvidia/nemotron-3-super-120b-a12b\",\"co"
+}

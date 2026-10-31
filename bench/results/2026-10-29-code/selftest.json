@@ -1,0 +1,10 @@
+{
+ "probes_blocked": true,
+ "probes_passed": "12/12",
+ "infinite_loop_killed": true,
+ "memory_hog_killed": true,
+ "good_snippet_passes": true,
+ "ok": true,
+ "mem_kind": "killed",
+ "hang_kind": "timeout"
+}

@@ -1,0 +1,230 @@
+{
+ "model": "stub-do-nothing",
+ "tasks": {
+  "merge_intervals": {
+   "kind": "wrong_answer",
+   "passed": 1,
+   "failed": 7,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": " ../tests/test_task.py::test_contained - assert None == [(1, 10)]\nFAILED ../tests/test_task.py::test_empty_and_single - assert None == []\nFAILED ../tests/test_task.py::test_returns_tuples_negative - assert None == [...\n========================= 7 failed, 1 passed in 0.01s ==========================\n"
+  },
+  "parse_duration": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 8,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": "k.py::test_invalid_order_or_repeat - Failed: DID NOT ...\nFAILED ../tests/test_task.py::test_invalid_syntax - Failed: DID NOT RAISE <cl...\nFAILED ../tests/test_task.py::test_returns_int - AssertionError: assert <clas...\n============================== 8 failed in 0.01s ===============================\n"
+  },
+  "slugify": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 7,
+   "rc": 1,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": "k.py::test_empty_results - AssertionError: assert Non...\nFAILED ../tests/test_task.py::test_other_script_dropped - AssertionError: ass...\nFAILED ../tests/test_task.py::test_digits_kept - AssertionError: assert None ...\n============================== 7 failed in 0.01s ===============================\n"
+  },
+  "business_days": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 7,
+   "rc": 1,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": "ILED ../tests/test_task.py::test_end_excluded_start_included - assert None ...\nFAILED ../tests/test_task.py::test_whole_leap_year - assert None == 262\nFAILED ../tests/test_task.py::test_partial_weeks - assert None == 9\n============================== 7 failed in 0.01s ===============================\n"
+  },
+  "parse_csv_line": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 8,
+   "rc": 1,
+   "elapsed": 0.55,
+   "collection_error": false,
+   "tail": "st_task.py::test_quoted_empty - assert None == ['', 'x']\nFAILED ../tests/test_task.py::test_unterminated_quote - Failed: DID NOT RAISE...\nFAILED ../tests/test_task.py::test_quote_only_field_with_escape_at_end - asse...\n============================== 8 failed in 0.01s ===============================\n"
+  },
+  "wrap_text": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 8,
+   "rc": 1,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": "k.py::test_width_one - AssertionError: assert None ==...\nFAILED ../tests/test_task.py::test_all_fits_one_line - AssertionError: assert...\nFAILED ../tests/test_task.py::test_no_line_exceeds_width - TypeError: 'NoneTy...\n============================== 8 failed in 0.01s ===============================\n"
+  },
+  "compare_versions": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 7,
+   "rc": 1,
+   "elapsed": 0.74,
+   "collection_error": false,
+   "tail": "k.py::test_numeric_vs_text_identifier - AssertionErro...\nFAILED ../tests/test_task.py::test_build_metadata_ignored - AssertionError: a...\nFAILED ../tests/test_task.py::test_text_compared_as_ascii - AssertionError: a...\n============================== 7 failed in 0.01s ===============================\n"
+  },
+  "toposort": {
+   "kind": "wrong_answer",
+   "passed": 1,
+   "failed": 9,
+   "rc": 1,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": "k.py::test_cycle - Failed: DID NOT RAISE <class 'Valu...\nFAILED ../tests/test_task.py::test_self_cycle - Failed: DID NOT RAISE <class ...\nFAILED ../tests/test_task.py::test_duplicate_dependency_entries - AssertionEr...\n========================= 9 failed, 1 passed in 0.01s ==========================\n"
+  },
+  "lru_cache": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 8,
+   "rc": 1,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": "k.py::test_capacity_one - AttributeError: 'LRUCache' ...\nFAILED ../tests/test_task.py::test_bad_capacity - Failed: DID NOT RAISE <clas...\nFAILED ../tests/test_task.py::test_falsy_values_are_values - AttributeError: ...\n============================== 8 failed in 0.01s ===============================\n"
+  },
+  "flatten_dict": {
+   "kind": "wrong_answer",
+   "passed": 1,
+   "failed": 5,
+   "rc": 1,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": "tests/test_task.py::test_lists_kept - AssertionError: assert None =...\nFAILED ../tests/test_task.py::test_empty_nested_dict_kept - AssertionError: a...\nFAILED ../tests/test_task.py::test_empty_input - assert None == {}\n========================= 5 failed, 1 passed in 0.01s ==========================\n"
+  },
+  "fix_median": {
+   "kind": "wrong_answer",
+   "passed": 1,
+   "failed": 5,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "AILED ../tests/test_task.py::test_single - assert None == 7\nFAILED ../tests/test_task.py::test_empty - Failed: DID NOT RAISE <class 'Valu...\nFAILED ../tests/test_task.py::test_floats_and_negatives - assert None == 1.25\n========================= 5 failed, 1 passed in 0.01s ==========================\n"
+  },
+  "fix_chunked": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 6,
+   "rc": 1,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": "ED ../tests/test_task.py::test_empty - assert None == []\nFAILED ../tests/test_task.py::test_size_one - AssertionError: assert None == ...\nFAILED ../tests/test_task.py::test_bad_size - Failed: DID NOT RAISE <class 'V...\n============================== 6 failed in 0.01s ===============================\n"
+  },
+  "fix_unique_bucket": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 4,
+   "rc": 1,
+   "elapsed": 0.63,
+   "collection_error": false,
+   "tail": "ask.py::test_explicit_bucket_is_used - AssertionError: ...\nFAILED ../tests/test_task.py::test_no_duplicates - AssertionError: assert Non...\nFAILED ../tests/test_task.py::test_many_calls_independent - assert None == [0]\n============================== 4 failed in 0.01s ===============================\n"
+  },
+  "fix_top_words": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 7,
+   "rc": 1,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": "k.py::test_empty_and_zero - AssertionError: assert No...\nFAILED ../tests/test_task.py::test_punctuation_only_tokens_ignored - Assertio...\nFAILED ../tests/test_task.py::test_inner_punctuation_kept - assert None == [\"...\n============================== 7 failed in 0.01s ===============================\n"
+  },
+  "re_hex_color": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 4,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": "k.py::test_good - AttributeError: 'NoneType' object h...\nFAILED ../tests/test_task.py::test_bad - AttributeError: 'NoneType' object ha...\nFAILED ../tests/test_task.py::test_trailing_newline_rejected - AttributeError...\n============================== 4 failed in 0.01s ===============================\n"
+  },
+  "re_dates_in_text": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 8,
+   "rc": 1,
+   "elapsed": 0.64,
+   "collection_error": false,
+   "tail": "k.py::test_adjacent_punctuation - AttributeError: 'No...\nFAILED ../tests/test_task.py::test_no_dates - AttributeError: 'NoneType' obje...\nFAILED ../tests/test_task.py::test_no_capture_group_leak - AttributeError: 'N...\n============================== 8 failed in 0.01s ===============================\n"
+  },
+  "re_ipv4": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 5,
+   "rc": 1,
+   "elapsed": 0.49,
+   "collection_error": false,
+   "tail": "k.py::test_bad - AttributeError: 'NoneType' object ha...\nFAILED ../tests/test_task.py::test_trailing_newline_rejected - AttributeError...\nFAILED ../tests/test_task.py::test_non_ascii_digits_rejected - AttributeError...\n============================== 5 failed in 0.01s ===============================\n"
+  },
+  "cx_ttl_cache": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 10,
+   "rc": 1,
+   "elapsed": 0.55,
+   "collection_error": false,
+   "tail": "k.py::test_keys_order_is_recency - AttributeError: 'T...\nFAILED ../tests/test_task.py::test_bad_arguments - Failed: DID NOT RAISE <cla...\nFAILED ../tests/test_task.py::test_falsy_value_is_stored - AttributeError: 'T...\n============================== 10 failed in 0.01s ==============================\n"
+  },
+  "cx_scheduler": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 11,
+   "rc": 1,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": "t_task.py::test_task_added_by_callback_waits_for_next_call\nFAILED ../tests/test_task.py::test_cancel_by_earlier_callback - AttributeErro...\nFAILED ../tests/test_task.py::test_pending_order_uses_first_scheduled_for_ties\n============================== 11 failed in 0.02s ==============================\n"
+  },
+  "cx_expression": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 9,
+   "rc": 1,
+   "elapsed": 0.55,
+   "collection_error": false,
+   "tail": "k.py::test_invalid[()] - Failed: DID NOT RAISE <class...\nFAILED ../tests/test_task.py::test_division_by_zero_in_subexpression - Failed...\nFAILED ../tests/test_task.py::test_unknown_variable_with_other_variables - Fa...\n============================== 31 failed in 0.03s ==============================\n"
+  },
+  "cx_ini_parser": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 14,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "rs_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5]\n============================== 22 failed in 0.02s ==============================\n"
+  },
+  "cx_shortest_path": {
+   "kind": "wrong_answer",
+   "passed": 2,
+   "failed": 12,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "k.py::test_cycles_do_not_hang - AssertionError: asser...\nFAILED ../tests/test_task.py::test_unknown_nodes - Failed: DID NOT RAISE <cla...\nFAILED ../tests/test_task.py::test_bad_weights_even_when_unused - Failed: DID...\n========================= 12 failed, 2 passed in 0.02s =========================\n"
+  },
+  "cx_schedule_algos": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 11,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "ts/test_task.py::test_rooms_all_overlap - assert None == 4\nFAILED ../tests/test_task.py::test_rooms_empty_and_unsorted - assert None == 0\nFAILED ../tests/test_task.py::test_rooms_many_small_between_a_long_one - asse...\n============================== 11 failed in 0.01s ==============================\n"
+  },
+  "cx_inventory_fix": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 12,
+   "rc": 1,
+   "elapsed": 0.49,
+   "collection_error": false,
+   "tail": "test_task.py::test_fulfil_bad_quantity_removes_nothing - Fail...\nFAILED ../tests/test_task.py::test_fulfil_empty_order - assert None == 0\nFAILED ../tests/test_task.py::test_out_of_stock_is_an_exception_class - asser...\n============================== 12 failed in 0.02s ==============================\n"
+  },
+  "cx_template": {
+   "kind": "wrong_answer",
+   "passed": 0,
+   "failed": 15,
+   "rc": 1,
+   "elapsed": 0.57,
+   "collection_error": false,
+   "tail": "ture_errors[{% for i in xs %}a{% endif %}]\nFAILED ../tests/test_task.py::test_structure_errors[{% while x %}{% endwhile %}]\nFAILED ../tests/test_task.py::test_structure_errors[{% if x %}{% else %}{% else %}{% endif %}]\n============================== 24 failed in 0.03s ==============================\n"
+  }
+ }
+}

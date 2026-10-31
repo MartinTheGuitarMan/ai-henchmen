@@ -1,0 +1,230 @@
+{
+ "model": "groq-gptoss120b",
+ "tasks": {
+  "merge_intervals": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "parse_duration": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "slugify": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.61,
+   "collection_error": false,
+   "tail": ""
+  },
+  "business_days": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "parse_csv_line": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "wrap_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "compare_versions": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": ""
+  },
+  "toposort": {
+   "kind": "wrong_answer",
+   "passed": 9,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": "est_duplicate_dependency_entries FAILED          [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_duplicate_dependency_entries - ValueError:...\n========================= 1 failed, 9 passed in 0.01s ==========================\n"
+  },
+  "lru_cache": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "flatten_dict": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_median": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_chunked": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_unique_bucket": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_top_words": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_hex_color": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_dates_in_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_ipv4": {
+   "kind": "wrong_answer",
+   "passed": 4,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "est_non_ascii_digits_rejected FAILED             [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_non_ascii_digits_rejected - AssertionError...\n========================= 1 failed, 4 passed in 0.01s ==========================\n"
+  },
+  "cx_ttl_cache": {
+   "kind": "ok",
+   "passed": 10,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_scheduler": {
+   "kind": "ok",
+   "passed": 11,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_expression": {
+   "kind": "wrong_answer",
+   "passed": 7,
+   "failed": 2,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_power_rules - ValueError: Unexpected token...\nFAILED ../tests/test_task.py::test_unary_minus - ValueError: Unexpected token...\n========================= 2 failed, 29 passed in 0.02s =========================\n"
+  },
+  "cx_ini_parser": {
+   "kind": "wrong_answer",
+   "passed": 13,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.48,
+   "collection_error": false,
+   "tail": "ame_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5] PASSED [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_empty_value - AssertionError: assert {'a':...\n========================= 1 failed, 21 passed in 0.02s =========================\n"
+  },
+  "cx_shortest_path": {
+   "kind": "ok",
+   "passed": 14,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_schedule_algos": {
+   "kind": "ok",
+   "passed": 11,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_inventory_fix": {
+   "kind": "ok",
+   "passed": 12,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_template": {
+   "kind": "ok",
+   "passed": 15,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": ""
+  }
+ }
+}

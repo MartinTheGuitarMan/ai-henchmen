@@ -1,0 +1,26 @@
+{
+ "model": "mini-nemotronmini",
+ "backend_model": "nemotron-mini",
+ "cloud": false,
+ "machine": "night-host",
+ "tasks": {
+  "merge_intervals": {
+   "raw": " ```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    intervals.sort()\n    result = []\n    current = intervals[0]\n    for start, end in intervals[1:]:\n        if start <= current[1]:\n            current = (min(start, current[0]), max(end, current[1]))\n        else:\n            result.append(current)\n            current = (start, end)\n    result.append(current)\n    return result\n```",
+   "finish": "stop",
+   "latency": 11.61,
+   "code": "def merge_intervals(intervals):\n    if not intervals:\n        return []\n    intervals.sort()\n    result = []\n    current = intervals[0]\n    for start, end in intervals[1:]:\n        if start <= current[1]:\n            current = (min(start, current[0]), max(end, current[1]))\n        else:\n            result.append(current)\n            current = (start, end)\n    result.append(current)\n    return result\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "parse_duration": {
+   "raw": " ```python\nimport re\n\ndef parse_duration(text):\n    \"\"\"\n    Parses a duration string into a whole number of seconds.\n\n    :param text: The duration string to parse.\n    :return: The duration in seconds.\n    :raises ValueError: If the input is invalid.\n    \"\"\"\n    # Regular expression pattern for matching a duration string\n    pattern = r'^(\\d+)([dhms])?$'\n\n    # Compile the pattern into a regular expression object\n    regex = re.compile(pattern)\n\n    # Find all matches in the input string\n    matches = regex.findall(text)\n\n    # If there are no matches, raise ValueError\n    if not matches:\n        raise ValueError(\"Invalid duration string\")\n\n    # Extract the duration from the first match\n    duration = int(matches[0][0])\n    unit = matches[0][1]\n\n    # Convert the unit to seconds\n    if unit == 'd':\n        duration *= 86400\n    elif unit == 'h':\n        duration *= 3600\n    elif unit == 'm':\n        duration *= 60\n    elif unit == 's':\n        pass\n    else:\n        raise ValueError(\"Invalid unit\")\n\n    return duration\n```",
+   "finish": "stop",
+   "latency": 18.17,
+   "code": "import re\n\ndef parse_duration(text):\n    \"\"\"\n    Parses a duration string into a whole number of seconds.\n\n    :param text: The duration string to parse.\n    :return: The duration in seconds.\n    :raises ValueError: If the input is invalid.\n    \"\"\"\n    # Regular expression pattern for matching a duration string\n    pattern = r'^(\\d+)([dhms])?$'\n\n    # Compile the pattern into a regular expression object\n    regex = re.compile(pattern)\n\n    # Find all matches in the input string\n    matches = regex.findall(text)\n\n    # If there are no matches, raise ValueError\n    if not matches:\n        raise ValueError(\"Invalid duration string\")\n\n    # Extract the duration from the first match\n    duration = int(matches[0][0])\n    unit = matches[0][1]\n\n    # Convert the unit to seconds\n    if unit == 'd':\n        duration *= 86400\n    elif unit == 'h':\n        duration *= 3600\n    elif unit == 'm':\n        duration *= 60\n    elif unit == 's':\n        pass\n    else:\n        raise ValueError(\"Invalid unit\")\n\n    return duration\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  }
+ }
+}

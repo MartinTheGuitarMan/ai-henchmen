@@ -1,0 +1,21 @@
+{
+ "notes": [
+  "air-qwen-judge: same model as air-qwen, not run twice",
+  "typesafe-jev: decision model, does not write code",
+  "air-jev-style: decision model, does not write code",
+  "air-jev-style-2b: decision model, does not write code"
+ ],
+ "models": [
+  "groq-gptoss20b",
+  "groq-gptoss120b",
+  "mistral-ministral8b",
+  "air-qwen",
+  "mini-gemma4b",
+  "or-nemotron120b",
+  "mini-phi4mini",
+  "mini-gemma4e4b",
+  "mini-nemotronmini",
+  "gemini-flashlite",
+  "air-gemma4-26b"
+ ]
+}

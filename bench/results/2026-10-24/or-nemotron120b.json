@@ -1,0 +1,59 @@
+{
+ "model": "or-nemotron120b",
+ "backend_model": "nvidia/nemotron-3-super-120b-a12b:free",
+ "cloud": true,
+ "kind": "fast",
+ "machine": "local",
+ "units": {
+  "grounded": {
+   "status": "unavailable",
+   "reason": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\\"status\\\":404,\\\"title\\\":\\\"Not Found\\",
+   "items": [
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 0.39363908767700195,
+     "error": "MINION_BACKEND_ERROR",
+     "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\\"status\\\":404,\\\"title\\\":\\\"Not Found\\",
+     "ok": false
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 0.18578505516052246,
+     "error": "MINION_BACKEND_ERROR",
+     "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\\"status\\\":404,\\\"title\\\":\\\"Not Found\\",
+     "ok": false
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 0.18740415573120117,
+     "error": "MINION_BACKEND_ERROR",
+     "detail": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\\"status\\\":404,\\\"title\\\":\\\"Not Found\\",
+     "ok": false
+    }
+   ]
+  },
+  "same": {
+   "status": "unavailable",
+   "reason": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\\"status\\\":404,\\\"title\\\":\\\"Not Found\\",
+   "items": []
+  },
+  "extract": {
+   "status": "unavailable",
+   "reason": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\\"status\\\":404,\\\"title\\\":\\\"Not Found\\",
+   "items": []
+  },
+  "classify_batch": {
+   "status": "unavailable",
+   "reason": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\\"status\\\":404,\\\"title\\\":\\\"Not Found\\",
+   "items": []
+  },
+  "tag_batch": {
+   "status": "unavailable",
+   "reason": "MINION_BACKEND_ERROR: openai-compat HTTP 404: {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\\"status\\\":404,\\\"title\\\":\\\"Not Found\\",
+   "items": []
+  }
+ }
+}

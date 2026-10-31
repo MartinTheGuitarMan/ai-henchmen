@@ -1,0 +1,203 @@
+{
+ "model": "groq-gptoss20b",
+ "tasks": {
+  "merge_intervals": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "parse_duration": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "slugify": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "business_days": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "parse_csv_line": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": ""
+  },
+  "wrap_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "compare_versions": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "toposort": {
+   "kind": "ok",
+   "passed": 10,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.47,
+   "collection_error": false,
+   "tail": ""
+  },
+  "lru_cache": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "flatten_dict": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_median": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.64,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_chunked": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_unique_bucket": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.6,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_top_words": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_hex_color": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.56,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_dates_in_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.57,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_ipv4": {
+   "kind": "ok",
+   "passed": 5,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_ttl_cache": {
+   "kind": "ok",
+   "passed": 10,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_scheduler": {
+   "kind": "ok",
+   "passed": 11,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.66,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_shortest_path": {
+   "kind": "ok",
+   "passed": 14,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.56,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_schedule_algos": {
+   "kind": "ok",
+   "passed": 11,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.57,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_inventory_fix": {
+   "kind": "ok",
+   "passed": 12,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.57,
+   "collection_error": false,
+   "tail": ""
+  }
+ }
+}

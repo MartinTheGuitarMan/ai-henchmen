@@ -1,0 +1,59 @@
+{
+ "model": "air-qwen",
+ "backend_model": "qwen3.5:9b",
+ "cloud": false,
+ "kind": "fast",
+ "machine": "local",
+ "units": {
+  "grounded": {
+   "status": "unavailable",
+   "reason": "MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError)",
+   "items": [
+    {
+     "tag": "plain",
+     "expected": "supported",
+     "latency": 0.0044438838958740234,
+     "error": "MINION_DOWN",
+     "detail": "MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError)",
+     "ok": false
+    },
+    {
+     "tag": "reword",
+     "expected": "supported",
+     "latency": 0.003805875778198242,
+     "error": "MINION_DOWN",
+     "detail": "MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError)",
+     "ok": false
+    },
+    {
+     "tag": "negation",
+     "expected": "contradicted",
+     "latency": 0.010928153991699219,
+     "error": "MINION_DOWN",
+     "detail": "MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError)",
+     "ok": false
+    }
+   ]
+  },
+  "same": {
+   "status": "unavailable",
+   "reason": "MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError)",
+   "items": []
+  },
+  "extract": {
+   "status": "unavailable",
+   "reason": "MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError)",
+   "items": []
+  },
+  "classify_batch": {
+   "status": "unavailable",
+   "reason": "MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError)",
+   "items": []
+  },
+  "tag_batch": {
+   "status": "unavailable",
+   "reason": "MINION_DOWN: ollama backend not reachable at http://127.0.0.1:11436/v1/chat/completions (ConnectError)",
+   "items": []
+  }
+ }
+}

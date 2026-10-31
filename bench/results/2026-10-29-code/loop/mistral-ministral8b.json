@@ -1,0 +1,1064 @@
+{
+ "model": "mistral-ministral8b",
+ "cloud": true,
+ "tasks": {
+  "merge_intervals": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def merge_intervals(intervals):\n    if not intervals:\n        return []\n\n    # Create a sorted copy of the input intervals\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n\n    merged = []\n    for interval in sorted_intervals:\n        if not merged:\n            merged.append(interval)\n        else:\n            last_start, last_end = merged[-1]\n            current_start, current_end = interval\n            if current_start <= last_end:\n                # Overlapping or touching intervals, merge them\n                new_start = last_start\n                new_end = max(last_end, current_end)\n                merged[-1] = (new_start, new_end)\n            else:\n                merged.append(interval)\n\n    return merged\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.0,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 25%]\n../tests/test_task.py::test_touching_merge PASSED                        [ 50%]\n../tests/test_task.py::test_contained PASSED                             [ 75%]\n../tests/test_task.py::test_input_not_modified PASSED                    [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 8,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "parse_duration": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\nfrom collections import defaultdict\n\ndef parse_duration(text):\n    if not text:\n        raise ValueError(\"Empty string\")\n\n    # Check for negative numbers\n    if re.search(r'-', text):\n        raise ValueError(\"Negative numbers not allowed\")\n\n    # Check for decimals\n    if re.search(r'\\.', text):\n        raise ValueError(\"Decimals not allowed\")\n\n    # Check for spaces\n    if ' ' in text:\n        raise ValueError(\"Spaces not allowed\")\n\n    # Check for unknown units or out-of-order units\n    pattern = r'^(\\d+[dhms])*$'\n    if not re.fullmatch(pattern, text):\n        raise ValueError(\"Invalid format\")\n\n    # Check for repeated units\n    units = defaultdict(int)\n    for match in re.finditer(r'([dhms])', text):\n        unit = match.group(1)\n        if units[unit] > 0:\n            raise ValueError(\"Repeated unit\")\n        units[unit] += 1\n\n    # Check for out-of-order units\n    unit_order = []\n    for match in re.finditer(r'([dhms])', text):\n        unit_order.append(match.group(1))\n\n    expected_order = ['d', 'h', 'm', 's']\n    for i, unit in enumerate(unit_order):\n        if unit != expected_order[i]:\n            raise ValueError(\"Units must appear in order: days, hours, minutes, seconds\")\n\n    # Parse the text into a dictionary of integers\n    parts = re.findall(r'(\\d+)(d|h|m|s)', text)\n    duration_dict = {}\n    for num, unit in parts:\n        duration_dict[unit] = int(num)\n\n    # Calculate total seconds\n    total_seconds = 0\n    for unit, num in duration_dict.items():\n        if unit == 'd':\n            total_seconds += num * 86400\n        elif unit == 'h':\n            total_seconds += num * 3600\n        elif unit == 'm':\n            total_seconds += num * 60\n        elif unit == 's':\n            total_seconds += num\n\n    return total_seconds\n",
+     "failure": null,
+     "detail": "",
+     "latency": 6.04,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 2,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_single_units FAILED                          [ 25%]\n../tests/test_task.py::test_zero FAILED                                  [ 50%]\n../tests/test_task.py::test_invalid_missing_or_unknown_unit PASSED       [ 75%]\n../tests/test_task.py::test_invalid_syntax PASSED                        [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_single_units _______________________________\n/tests/test_task.py:5: in test_single_units\n    assert parse_duration('45s') == 45\nsolution.py:41: in parse_duration\n    raise ValueError(\"Units must appear in order: days, hours, minutes, seconds\")\nE   ValueError: Units must appear in order: days, hours, minutes, seconds\n__________________________________ test_zero ___________________________________\n/tests/test_task.py:11: in test_zero\n    assert parse_duration('0s') == 0\nsolution.py:41: in parse_duration\n    raise ValueError(\"Units must appear in order: days, hours, minutes, seconds\")\nE   ValueError: Units must appear in order: days, hours, minutes, seconds\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_single_units - ValueError: Units must appe...\nFAILED ../tests/test_task.py::test_zero - ValueError: Units must appear in or...\n========================= 2 failed, 2 passed in 0.01s ==========================\n",
+      "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_single_units - ValueError: Units must appe...\nFAILED ../tests/test_task.py::test_zero - ValueError: Units must appear in or...\n========================= 2 failed, 2 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import re\n\ndef parse_duration(text):\n    if not text:\n        raise ValueError(\"Empty string\")\n\n    # Check for negative numbers\n    if re.search(r'-', text):\n        raise ValueError(\"Negative numbers not allowed\")\n\n    # Check for decimals\n    if re.search(r'\\.', text):\n        raise ValueError(\"Decimals not allowed\")\n\n    # Check for spaces\n    if ' ' in text:\n        raise ValueError(\"Spaces not allowed\")\n\n    # Check for unknown units or out-of-order units\n    pattern = r'^(\\d+[dhms])*$'\n    if not re.fullmatch(pattern, text):\n        raise ValueError(\"Invalid format\")\n\n    # Check for repeated units\n    units = []\n    for match in re.finditer(r'([dhms])', text):\n        units.append(match.group(1))\n\n    if len(units) != len(set(units)):\n        raise ValueError(\"Repeated unit\")\n\n    # Check for invalid order\n    valid_order = ['d', 'h', 'm', 's']\n    for i, unit in enumerate(units):\n        if unit not in valid_order:\n            raise ValueError(\"Unknown unit\")\n        if i > 0 and valid_order.index(unit) < valid_order.index(units[i-1]):\n            raise ValueError(\"Units must appear in order: days, hours, minutes, seconds\")\n\n    # Parse the text into a dictionary of integers\n    parts = re.findall(r'(\\d+)(d|h|m|s)', text)\n    duration_dict = {}\n    for num, unit in parts:\n        duration_dict[unit] = int(num)\n\n    # Calculate total seconds\n    total_seconds = 0\n    for unit, num in duration_dict.items():\n        if unit == 'd':\n            total_seconds += num * 86400\n        elif unit == 'h':\n            total_seconds += num * 3600\n        elif unit == 'm':\n            total_seconds += num * 60\n        elif unit == 's':\n            total_seconds += num\n\n    return total_seconds\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.9,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_single_units PASSED                          [ 25%]\n../tests/test_task.py::test_zero PASSED                                  [ 50%]\n../tests/test_task.py::test_invalid_missing_or_unknown_unit PASSED       [ 75%]\n../tests/test_task.py::test_invalid_syntax PASSED                        [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 8,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "slugify": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import unicodedata\nimport re\n\ndef slugify(text):\n    # Normalize the text to decompose accented characters\n    normalized = unicodedata.normalize('NFKD', text)\n\n    # Replace accented characters with their plain ASCII equivalents\n    slug = ''.join(\n        c for c in normalized\n        if not unicodedata.combining(c)\n    )\n\n    # Convert to lowercase\n    slug = slug.lower()\n\n    # Replace non-ASCII letters and digits with a single hyphen\n    slug = re.sub(r'[^\\w\\s-]', '', slug)  # Remove non-word chars except spaces and hyphens\n    slug = re.sub(r'[\\s]+', '-', slug)    # Replace spaces and multiple hyphens with a single hyphen\n\n    # Remove leading and trailing hyphens\n    slug = slug.strip('-')\n\n    return slug\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.83,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 25%]\n../tests/test_task.py::test_runs_and_edges FAILED                        [ 50%]\n../tests/test_task.py::test_empty_results PASSED                         [ 75%]\n../tests/test_task.py::test_digits_kept PASSED                           [100%]\n\n=================================== FAILURES ===================================\n_____________________________ test_runs_and_edges ______________________________\n/tests/test_task.py:7: in test_runs_and_edges\n    assert slugify('  --a__b--  ') == 'a-b'\nE   AssertionError: assert 'a__b' == 'a-b'\nE     \nE     - a-b\nE     + a__b\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_runs_and_edges - AssertionError: assert 'a...\n========================= 1 failed, 3 passed in 0.01s ==========================\n",
+      "tail": ": assert 'a__b' == 'a-b'\nE     \nE     - a-b\nE     + a__b\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_runs_and_edges - AssertionError: assert 'a...\n========================= 1 failed, 3 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import unicodedata\nimport re\n\ndef slugify(text):\n    # Normalize the text to decompose accented characters\n    normalized = unicodedata.normalize('NFKD', text)\n\n    # Replace accented characters with their plain ASCII equivalents\n    slug = ''.join(\n        c for c in normalized\n        if not unicodedata.combining(c)\n    )\n\n    # Convert to lowercase\n    slug = slug.lower()\n\n    # Replace non-ASCII letters, digits, and underscores with a single hyphen\n    slug = re.sub(r'[^\\w-]', ' ', slug)  # Replace non-word and non-hyphen chars with spaces\n    slug = re.sub(r'[_\\s]+', '-', slug)  # Replace underscores and spaces with hyphens\n    slug = re.sub(r'-+', '-', slug)      # Replace multiple hyphens with a single hyphen\n\n    # Remove leading and trailing hyphens\n    slug = slug.strip('-')\n\n    return slug\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.33,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 25%]\n../tests/test_task.py::test_runs_and_edges PASSED                        [ 50%]\n../tests/test_task.py::test_empty_results PASSED                         [ 75%]\n../tests/test_task.py::test_digits_kept PASSED                           [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 6,
+     "failed": 1
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 2,
+     "failed": 1
+    }
+   },
+   "done": true
+  },
+  "business_days": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "from datetime import date, timedelta\n\ndef business_days(start, end):\n    if end <= start:\n        return 0\n\n    count = 0\n    current = start\n\n    while current < end:\n        if current.weekday() < 5:  # Monday is 0, Friday is 4\n            count += 1\n        current += timedelta(days=1)\n\n    return count\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.33,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_one_full_week PASSED                         [ 25%]\n../tests/test_task.py::test_weekend_only PASSED                          [ 50%]\n../tests/test_task.py::test_end_excluded_start_included PASSED           [ 75%]\n../tests/test_task.py::test_partial_weeks PASSED                         [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 7,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "parse_csv_line": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\ndef parse_csv_line(line):\n    if not line:\n        return [\"\"]\n\n    fields = []\n    current_field = []\n    in_quotes = False\n    escape_next = False\n\n    for char in line:\n        if escape_next:\n            current_field.append(char)\n            escape_next = False\n            continue\n\n        if char == '\"':\n            if in_quotes:\n                if len(current_field) > 0 and current_field[-1] == '\"':\n                    current_field.pop()  # Remove the previous quote\n                else:\n                    escape_next = True\n            else:\n                in_quotes = True\n        elif char == ',':\n            if in_quotes:\n                current_field.append(char)\n            else:\n                fields.append(''.join(current_field))\n                current_field = []\n        else:\n            current_field.append(char)\n\n    if in_quotes:\n        raise ValueError(\"Unclosed quote\")\n\n    fields.append(''.join(current_field))\n\n    # Handle trailing comma\n    if line.endswith(','):\n        fields.append('')\n\n    return fields\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.35,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_plain PASSED                                 [ 25%]\n../tests/test_task.py::test_escaped_quote FAILED                         [ 50%]\n../tests/test_task.py::test_spaces_kept PASSED                           [ 75%]\n../tests/test_task.py::test_unterminated_quote PASSED                    [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_escaped_quote ______________________________\n/tests/test_task.py:8: in test_escaped_quote\n    assert parse_csv_line('\"say \"\"hi\"\" now\",x') == ['say \"hi\" now', 'x']\nsolution.py:36: in parse_csv_line\n    raise ValueError(\"Unclosed quote\")\nE   ValueError: Unclosed quote\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_escaped_quote - ValueError: Unclosed quote\n========================= 1 failed, 3 passed in 0.01s ==========================\n",
+      "tail": "ValueError(\"Unclosed quote\")\nE   ValueError: Unclosed quote\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_escaped_quote - ValueError: Unclosed quote\n========================= 1 failed, 3 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import re\n\ndef parse_csv_line(line):\n    if not line:\n        return [\"\"]\n\n    fields = []\n    current_field = []\n    in_quotes = False\n    escape_next = False\n\n    for char in line:\n        if escape_next:\n            current_field.append(char)\n            escape_next = False\n            continue\n\n        if char == '\"':\n            if in_quotes:\n                if len(current_field) > 0 and current_field[-1] == '\"':\n                    current_field.pop()  # Remove the previous quote\n                else:\n                    in_quotes = False\n            else:\n                in_quotes = True\n        elif char == ',':\n            if in_quotes:\n                current_field.append(char)\n            else:\n                fields.append(''.join(current_field))\n                current_field = []\n        else:\n            current_field.append(char)\n\n    if in_quotes:\n        raise ValueError(\"Unclosed quote\")\n\n    fields.append(''.join(current_field))\n\n    # Handle trailing comma\n    if line.endswith(','):\n        fields.append('')\n\n    return fields\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.31,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_plain PASSED                                 [ 25%]\n../tests/test_task.py::test_escaped_quote FAILED                         [ 50%]\n../tests/test_task.py::test_spaces_kept PASSED                           [ 75%]\n../tests/test_task.py::test_unterminated_quote PASSED                    [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_escaped_quote ______________________________\n/tests/test_task.py:8: in test_escaped_quote\n    assert parse_csv_line('\"say \"\"hi\"\" now\",x') == ['say \"hi\" now', 'x']\nE   assert ['say hi now', 'x'] == ['say \"hi\" now', 'x']\nE     \nE     At index 0 diff: 'say hi now' != 'say \"hi\" now'\nE     \nE     Full diff:\nE       [\nE     -     'say \"hi\" now',\nE     ?          -  -...\nE     \nE     ...Full output truncated (3 lines hidden), use '-vv' to show\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_escaped_quote - assert ['say hi now', 'x']...\n========================= 1 failed, 3 passed in 0.01s ==========================\n",
+      "tail": "ull output truncated (3 lines hidden), use '-vv' to show\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_escaped_quote - assert ['say hi now', 'x']...\n========================= 1 failed, 3 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 3,
+     "code": "def parse_csv_line(line):\n    if not line:\n        return [\"\"]\n\n    fields = []\n    current_field = []\n    in_quotes = False\n    escape_next = False\n\n    for char in line:\n        if escape_next:\n            current_field.append(char)\n            escape_next = False\n            continue\n\n        if char == '\"':\n            if in_quotes:\n                if len(current_field) > 0 and current_field[-1] == '\"':\n                    current_field.pop()  # Remove the previous quote\n                else:\n                    in_quotes = False\n            else:\n                in_quotes = True\n        elif char == ',':\n            if in_quotes:\n                current_field.append(char)\n            else:\n                fields.append(''.join(current_field))\n                current_field = []\n        else:\n            current_field.append(char)\n\n    if in_quotes:\n        raise ValueError(\"Unclosed quote\")\n\n    # Join the current field and add to fields\n    fields.append(''.join(current_field))\n\n    # Handle trailing comma\n    if line.endswith(','):\n        fields.append('')\n\n    # Process fields to remove surrounding quotes if not escaped\n    processed_fields = []\n    for field in fields:\n        if in_quotes and field.startswith('\"') and field.endswith('\"'):\n            # Remove surrounding quotes\n            processed_field = field[1:-1]\n            # Handle escaped quotes inside\n            processed_field = processed_field.replace('\"\"', '\"')\n            processed_fields.append(processed_field)\n        else:\n            processed_fields.append(field)\n\n    return processed_fields\n",
+     "failure": null,
+     "detail": "",
+     "latency": 98.51,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_plain PASSED                                 [ 25%]\n../tests/test_task.py::test_escaped_quote FAILED                         [ 50%]\n../tests/test_task.py::test_spaces_kept PASSED                           [ 75%]\n../tests/test_task.py::test_unterminated_quote PASSED                    [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_escaped_quote ______________________________\n/tests/test_task.py:8: in test_escaped_quote\n    assert parse_csv_line('\"say \"\"hi\"\" now\",x') == ['say \"hi\" now', 'x']\nE   assert ['say hi now', 'x'] == ['say \"hi\" now', 'x']\nE     \nE     At index 0 diff: 'say hi now' != 'say \"hi\" now'\nE     \nE     Full diff:\nE       [\nE     -     'say \"hi\" now',\nE     ?          -  -...\nE     \nE     ...Full output truncated (3 lines hidden), use '-vv' to show\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_escaped_quote - assert ['say hi now', 'x']...\n========================= 1 failed, 3 passed in 0.01s ==========================\n",
+      "tail": "ull output truncated (3 lines hidden), use '-vv' to show\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_escaped_quote - assert ['say hi now', 'x']...\n========================= 1 failed, 3 passed in 0.01s ==========================\n"
+     }
+    }
+   ],
+   "accepted": false,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 5,
+     "failed": 3
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 2,
+     "failed": 2
+    }
+   },
+   "done": true
+  },
+  "wrap_text": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\ndef wrap_text(text, width):\n    if not text.strip():\n        return []\n\n    words = re.split(r'\\s+', text.strip())\n    lines = []\n    current_line = []\n\n    for word in words:\n        if not current_line:\n            if len(word) <= width:\n                current_line.append(word)\n            else:\n                lines.append(word)\n        else:\n            # Check if adding the word fits in the current line\n            test_line = ' '.join(current_line + [word])\n            if len(test_line) <= width:\n                current_line.append(word)\n            else:\n                lines.append(' '.join(current_line))\n                current_line = [word]\n\n    if current_line:\n        lines.append(' '.join(current_line))\n\n    return lines\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.84,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 25%]\n../tests/test_task.py::test_long_word_alone PASSED                       [ 50%]\n../tests/test_task.py::test_empty PASSED                                 [ 75%]\n../tests/test_task.py::test_all_fits_one_line PASSED                     [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 8,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "compare_versions": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\ndef compare_versions(a, b):\n    def parse_version(version):\n        # Split into main version and pre-release/build\n        main, *rest = version.split('-', 1)\n        main_parts = list(map(int, main.split('.')))\n        pre_release = None\n        if rest:\n            pre_release = rest[0].split('+')[0]  # Ignore build metadata\n            pre_parts = []\n            for part in pre_release.split('.'):\n                if part.isdigit():\n                    pre_parts.append(int(part))\n                else:\n                    pre_parts.append(part)\n        return main_parts, pre_parts\n\n    main_a, pre_a = parse_version(a)\n    main_b, pre_b = parse_version(b)\n\n    # Compare main versions\n    for ma, mb in zip(main_a, main_b):\n        if ma < mb:\n            return -1\n        elif ma > mb:\n            return 1\n    if len(main_a) < len(main_b):\n        return -1\n    elif len(main_a) > len(main_b):\n        return 1\n\n    # If main versions are equal, compare pre-releases\n    if pre_a is None and pre_b is None:\n        return 0\n    elif pre_a is None:\n        return 1\n    elif pre_b is None:\n        return -1\n\n    # Compare pre-release parts\n    for pa, pb in zip(pre_a, pre_b):\n        if isinstance(pa, int) and isinstance(pb, int):\n            if pa < pb:\n                return -1\n            elif pa > pb:\n                return 1\n        elif isinstance(pa, int):\n            return 1\n        elif isinstance(pb, int):\n            return -1\n        else:\n            if pa < pb:\n                return -1\n            elif pa > pb:\n                return 1\n\n    # If all shared parts are equal, shorter pre-release is lower\n    if len(pre_a) < len(pre_b):\n        return -1\n    elif len(pre_a) > len(pre_b):\n        return 1\n\n    return 0\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.4,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 1,
+      "failed": 3,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_core_numeric FAILED                          [ 25%]\n../tests/test_task.py::test_prerelease_lower_than_release FAILED         [ 50%]\n../tests/test_task.py::test_numeric_vs_text_identifier FAILED            [ 75%]\n../tests/test_task.py::test_text_compared_as_ascii PASSED                [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_core_numeric _______________________________\n/tests/test_task.py:5: in test_core_numeric\n    assert compare_versions('1.10.0', '1.9.0') == 1\nsolution.py:19: in compare_versions\n    main_a, pre_a = parse_version(a)\nsolution.py:17: in parse_version\n    return main_parts, pre_parts\nE   UnboundLocalError: cannot access local variable 'pre_parts' where it is not associated with a value\n______________________ test_prerelease_lower_than_release ______________________\n/tests/test_task.py:10: in test_prerelease_lower_than_release\n    assert compare_versions('1.0.0-rc.1', '1.0.0') == -1\nsolution.py:20: in compare_versions\n    main_b, pre_b = parse_version(b)\nsolution.py:17: in parse_version\n    return main_parts, pre_parts\nE   UnboundLocalError: cannot access local variable 'pre_parts' where it is not associated with a value\n_______________________ test_numeric_vs_text_identifier ________________________\n/tests/test_task.py:14: in test_numeric_vs_text_identifier\n    assert compare_versions('1.0.0-1', '1.0.0-a') == -1\nE   AssertionError: assert 1 == -1\nE    +  where 1 = compare_versions('1.0.0-1', '1.0.0-a')\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_core_numeric - UnboundLocalError: cannot a...\nFAILED ../tests/test_task.py::test_prerelease_lower_than_release - UnboundLoc...\nFAILED ../tests/test_task.py::test_numeric_vs_text_identifier - AssertionErro...\n========================= 3 failed, 1 passed in 0.02s ==========================\n",
+      "tail": "k.py::test_core_numeric - UnboundLocalError: cannot a...\nFAILED ../tests/test_task.py::test_prerelease_lower_than_release - UnboundLoc...\nFAILED ../tests/test_task.py::test_numeric_vs_text_identifier - AssertionErro...\n========================= 3 failed, 1 passed in 0.02s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import re\n\ndef compare_versions(a, b):\n    def parse_version(version):\n        # Split into main version and pre-release/build\n        main, *rest = version.split('-', 1)\n        main_parts = list(map(int, main.split('.')))\n        pre_parts = []\n        if rest:\n            pre_release = rest[0].split('+')[0]  # Ignore build metadata\n            pre_parts = []\n            for part in pre_release.split('.'):\n                if part.isdigit():\n                    pre_parts.append(int(part))\n                else:\n                    pre_parts.append(part)\n        return main_parts, pre_parts\n\n    main_a, pre_a = parse_version(a)\n    main_b, pre_b = parse_version(b)\n\n    # Compare main versions\n    for ma, mb in zip(main_a, main_b):\n        if ma < mb:\n            return -1\n        elif ma > mb:\n            return 1\n    if len(main_a) < len(main_b):\n        return -1\n    elif len(main_a) > len(main_b):\n        return 1\n\n    # If main versions are equal, compare pre-releases\n    if pre_a is None and pre_b is None:\n        return 0\n    elif pre_a is None:\n        return -1\n    elif pre_b is None:\n        return 1\n\n    # Compare pre-release parts\n    for pa, pb in zip(pre_a, pre_b):\n        if isinstance(pa, int) and isinstance(pb, int):\n            if pa < pb:\n                return -1\n            elif pa > pb:\n                return 1\n        elif isinstance(pa, int):\n            return -1\n        elif isinstance(pb, int):\n            return 1\n        else:\n            if pa < pb:\n                return -1\n            elif pa > pb:\n                return 1\n\n    # If all shared parts are equal, shorter pre-release is lower\n    if len(pre_a) < len(pre_b):\n        return -1\n    elif len(pre_a) > len(pre_b):\n        return 1\n\n    return 0\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.66,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_core_numeric PASSED                          [ 25%]\n../tests/test_task.py::test_prerelease_lower_than_release FAILED         [ 50%]\n../tests/test_task.py::test_numeric_vs_text_identifier PASSED            [ 75%]\n../tests/test_task.py::test_text_compared_as_ascii PASSED                [100%]\n\n=================================== FAILURES ===================================\n______________________ test_prerelease_lower_than_release ______________________\n/tests/test_task.py:10: in test_prerelease_lower_than_release\n    assert compare_versions('1.0.0-rc.1', '1.0.0') == -1\nE   AssertionError: assert 1 == -1\nE    +  where 1 = compare_versions('1.0.0-rc.1', '1.0.0')\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_prerelease_lower_than_release - AssertionE...\n========================= 1 failed, 3 passed in 0.01s ==========================\n",
+      "tail": "    +  where 1 = compare_versions('1.0.0-rc.1', '1.0.0')\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_prerelease_lower_than_release - AssertionE...\n========================= 1 failed, 3 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 3,
+     "code": "import re\n\ndef compare_versions(a, b):\n    def parse_version(version):\n        # Split into main version and pre-release/build\n        main, *rest = version.split('-', 1)\n        main_parts = list(map(int, main.split('.')))\n        pre_parts = []\n        if rest:\n            pre_release = rest[0].split('+')[0]  # Ignore build metadata\n            pre_parts = []\n            for part in pre_release.split('.'):\n                if part.isdigit():\n                    pre_parts.append(int(part))\n                else:\n                    pre_parts.append(part)\n        return main_parts, pre_parts\n\n    main_a, pre_a = parse_version(a)\n    main_b, pre_b = parse_version(b)\n\n    # Compare main versions\n    for ma, mb in zip(main_a, main_b):\n        if ma < mb:\n            return -1\n        elif ma > mb:\n            return 1\n    if len(main_a) < len(main_b):\n        return -1\n    elif len(main_a) > len(main_b):\n        return 1\n\n    # If main versions are equal, compare pre-releases\n    if not pre_a and not pre_b:\n        return 0\n    if not pre_a:\n        return -1\n    if not pre_b:\n        return 1\n\n    # Compare pre-release parts\n    for pa, pb in zip(pre_a, pre_b):\n        if isinstance(pa, int) and isinstance(pb, int):\n            if pa < pb:\n                return -1\n            elif pa > pb:\n                return 1\n        elif isinstance(pa, int):\n            return -1\n        elif isinstance(pb, int):\n            return 1\n        else:\n            if pa < pb:\n                return -1\n            elif pa > pb:\n                return 1\n\n    # If all shared parts are equal, shorter pre-release is lower\n    if len(pre_a) < len(pre_b):\n        return -1\n    elif len(pre_a) > len(pre_b):\n        return 1\n\n    return 0\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.81,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_core_numeric PASSED                          [ 25%]\n../tests/test_task.py::test_prerelease_lower_than_release FAILED         [ 50%]\n../tests/test_task.py::test_numeric_vs_text_identifier PASSED            [ 75%]\n../tests/test_task.py::test_text_compared_as_ascii PASSED                [100%]\n\n=================================== FAILURES ===================================\n______________________ test_prerelease_lower_than_release ______________________\n/tests/test_task.py:10: in test_prerelease_lower_than_release\n    assert compare_versions('1.0.0-rc.1', '1.0.0') == -1\nE   AssertionError: assert 1 == -1\nE    +  where 1 = compare_versions('1.0.0-rc.1', '1.0.0')\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_prerelease_lower_than_release - AssertionE...\n========================= 1 failed, 3 passed in 0.01s ==========================\n",
+      "tail": "    +  where 1 = compare_versions('1.0.0-rc.1', '1.0.0')\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_prerelease_lower_than_release - AssertionE...\n========================= 1 failed, 3 passed in 0.01s ==========================\n"
+     }
+    }
+   ],
+   "accepted": false,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 4,
+     "failed": 3
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 1,
+     "failed": 2
+    }
+   },
+   "done": true
+  },
+  "toposort": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "from collections import defaultdict, deque\n\ndef toposort(deps):\n    # Create a copy of the input to avoid modifying the original\n    deps_copy = {k: list(v) for k, v in deps.items()}\n\n    # Build the graph and in-degree count\n    graph = defaultdict(list)\n    in_degree = defaultdict(int)\n    all_nodes = set()\n\n    for node in deps_copy:\n        all_nodes.add(node)\n        for neighbor in deps_copy[node]:\n            graph[neighbor].append(node)\n            in_degree[node] += 1\n            all_nodes.add(neighbor)\n\n    # Initialize queue with nodes having zero in-degree\n    queue = deque()\n    for node in all_nodes:\n        if in_degree.get(node, 0) == 0:\n            queue.append(node)\n\n    # Process nodes in alphabetical order when multiple are available\n    result = []\n    while queue:\n        # Sort the queue to ensure alphabetical order\n        queue = deque(sorted(queue))\n        current = queue.popleft()\n        result.append(current)\n\n        for neighbor in graph[current]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n\n    # Check for cycles\n    if len(result) != len(all_nodes):\n        raise ValueError(\"Cycle detected in dependencies\")\n\n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.96,
+     "vis": {
+      "kind": "ok",
+      "passed": 5,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 5 items\n\n../tests/test_task.py::test_chain PASSED                                 [ 20%]\n../tests/test_task.py::test_alphabetical_tie_break PASSED                [ 40%]\n../tests/test_task.py::test_late_small_name_goes_first_when_ready PASSED [ 60%]\n../tests/test_task.py::test_cycle PASSED                                 [ 80%]\n../tests/test_task.py::test_input_not_modified PASSED                    [100%]\n\n============================== 5 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 10,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 5,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "lru_cache": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self.cache:\n            return None\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.capacity:\n            self.cache.popitem(last=False)\n\n    def __len__(self):\n        return len(self.cache)\n\n    def keys(self):\n        return list(self.cache.keys())\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.83,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic_eviction PASSED                        [ 25%]\n../tests/test_task.py::test_update_refreshes_and_replaces PASSED         [ 50%]\n../tests/test_task.py::test_update_does_not_grow PASSED                  [ 75%]\n../tests/test_task.py::test_bad_capacity PASSED                          [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 8,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "flatten_dict": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def flatten_dict(d, sep=\".\"):\n    \"\"\"Flatten a nested dictionary into a single-level dictionary.\n\n    Args:\n        d: The dictionary to flatten.\n        sep: The separator to use between keys in nested paths.\n\n    Returns:\n        A new flattened dictionary.\n    \"\"\"\n    flattened = {}\n\n    def _flatten(current_dict, current_key):\n        for key, value in current_dict.items():\n            new_key = f\"{current_key}{sep}{key}\" if current_key else key\n            if isinstance(value, dict):\n                _flatten(value, new_key)\n            else:\n                flattened[new_key] = value\n\n    _flatten(d, \"\")\n    return flattened\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.46,
+     "vis": {
+      "kind": "ok",
+      "passed": 3,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 33%]\n../tests/test_task.py::test_lists_kept PASSED                            [ 66%]\n../tests/test_task.py::test_empty_input PASSED                           [100%]\n\n============================== 3 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 5,
+     "failed": 1
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 2,
+     "failed": 1
+    }
+   },
+   "done": true
+  },
+  "fix_median": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def median(values):\n    if not values:\n        raise ValueError(\"median() arg is an empty sequence\")\n    s = sorted(values)\n    n = len(s)\n    if n % 2 == 1:\n        return s[n // 2]\n    else:\n        return (s[n // 2 - 1] + s[n // 2]) / 2\n",
+     "failure": null,
+     "detail": "",
+     "latency": 0.95,
+     "vis": {
+      "kind": "ok",
+      "passed": 3,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_odd PASSED                                   [ 33%]\n../tests/test_task.py::test_single PASSED                                [ 66%]\n../tests/test_task.py::test_not_modified PASSED                          [100%]\n\n============================== 3 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 6,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "fix_chunked": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def chunked(items, size):\n    if size < 1:\n        raise ValueError(\"Size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.02,
+     "vis": {
+      "kind": "ok",
+      "passed": 3,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_remainder_kept PASSED                        [ 33%]\n../tests/test_task.py::test_size_larger_than_list PASSED                 [ 66%]\n../tests/test_task.py::test_size_one PASSED                              [100%]\n\n============================== 3 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 6,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "fix_unique_bucket": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n",
+     "failure": null,
+     "detail": "",
+     "latency": 0.68,
+     "vis": {
+      "kind": "ok",
+      "passed": 2,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 2 items\n\n../tests/test_task.py::test_fresh_list_each_call PASSED                  [ 50%]\n../tests/test_task.py::test_no_duplicates PASSED                         [100%]\n\n============================== 2 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 2,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "fix_top_words": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\nfrom collections import defaultdict\n\ndef top_words(text, n):\n    words = re.findall(r\"\\b[\\w'-]+\\b\", text.lower())\n    counts = defaultdict(int)\n    for word in words:\n        counts[word] += 1\n    sorted_words = sorted(counts.items(), key=lambda item: (-item[1], item[0]))\n    return [word for word, count in sorted_words[:n]]\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.33,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_case_insensitive PASSED                      [ 25%]\n../tests/test_task.py::test_tie_break_alphabetical PASSED                [ 50%]\n../tests/test_task.py::test_empty_and_zero PASSED                        [ 75%]\n../tests/test_task.py::test_inner_punctuation_kept PASSED                [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 7,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "re_hex_color": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\nPATTERN = re.compile(r'^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$')\n",
+     "failure": null,
+     "detail": "",
+     "latency": 0.82,
+     "vis": {
+      "kind": "ok",
+      "passed": 2,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 2 items\n\n../tests/test_task.py::test_is_compiled PASSED                           [ 50%]\n../tests/test_task.py::test_bad PASSED                                   [100%]\n\n============================== 2 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 2,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "re_dates_in_text": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\nPATTERN = re.compile(\n    r'(?<!\\d)(?<!\\-)'\n    r'(?P<year>\\d{4})'\n    r'(?<!\\d)(?<!\\-)'\n    r'-'\n    r'(?P<month>\\d{2})'\n    r'(?<!\\d)(?<!\\-)'\n    r'-'\n    r'(?P<day>\\d{2})'\n    r'(?!\\d)(?!\\-)'\n)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.17,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 2,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_is_compiled PASSED                           [ 25%]\n../tests/test_task.py::test_month_range FAILED                           [ 50%]\n../tests/test_task.py::test_not_inside_longer_digits FAILED              [ 75%]\n../tests/test_task.py::test_no_dates PASSED                              [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_month_range _______________________________\n/tests/test_task.py:11: in test_month_range\n    assert find('2024-00-10 2024-13-10 2024-12-10') == ['2024-12-10']\nE   AssertionError: assert [] == ['2024-12-10']\nE     \nE     Right contains one more item: '2024-12-10'\nE     \nE     Full diff:\nE     + []\nE     - [\nE     -     '2024-12-10',\nE     - ]\n________________________ test_not_inside_longer_digits _________________________\n/tests/test_task.py:14: in test_not_inside_longer_digits\n    assert find('12024-01-05 2024-01-055 x2024-01-05') == ['2024-01-05']\nE   AssertionError: assert [] == ['2024-01-05']\nE     \nE     Right contains one more item: '2024-01-05'\nE     \nE     Full diff:\nE     + []\nE     - [\nE     -     '2024-01-05',\nE     - ]\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_month_range - AssertionError: assert [] ==...\nFAILED ../tests/test_task.py::test_not_inside_longer_digits - AssertionError:...\n========================= 2 failed, 2 passed in 0.01s ==========================\n",
+      "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_month_range - AssertionError: assert [] ==...\nFAILED ../tests/test_task.py::test_not_inside_longer_digits - AssertionError:...\n========================= 2 failed, 2 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import re\n\nPATTERN = re.compile(\n    r'(?<!\\S)(?<!\\d)'\n    r'(?P<year>\\d{4})'\n    r'(?<!\\S)(?<!\\d)'\n    r'-'\n    r'(?P<month>[0][1-9]|1[0-2])'\n    r'(?<!\\S)(?<!\\d)'\n    r'-'\n    r'(?P<day>\\d{2})'\n    r'(?!\\S)(?!\\d)'\n)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.63,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 2,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_is_compiled PASSED                           [ 25%]\n../tests/test_task.py::test_month_range FAILED                           [ 50%]\n../tests/test_task.py::test_not_inside_longer_digits FAILED              [ 75%]\n../tests/test_task.py::test_no_dates PASSED                              [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_month_range _______________________________\n/tests/test_task.py:11: in test_month_range\n    assert find('2024-00-10 2024-13-10 2024-12-10') == ['2024-12-10']\nE   AssertionError: assert [] == ['2024-12-10']\nE     \nE     Right contains one more item: '2024-12-10'\nE     \nE     Full diff:\nE     + []\nE     - [\nE     -     '2024-12-10',\nE     - ]\n________________________ test_not_inside_longer_digits _________________________\n/tests/test_task.py:14: in test_not_inside_longer_digits\n    assert find('12024-01-05 2024-01-055 x2024-01-05') == ['2024-01-05']\nE   AssertionError: assert [] == ['2024-01-05']\nE     \nE     Right contains one more item: '2024-01-05'\nE     \nE     Full diff:\nE     + []\nE     - [\nE     -     '2024-01-05',\nE     - ]\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_month_range - AssertionError: assert [] ==...\nFAILED ../tests/test_task.py::test_not_inside_longer_digits - AssertionError:...\n========================= 2 failed, 2 passed in 0.01s ==========================\n",
+      "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_month_range - AssertionError: assert [] ==...\nFAILED ../tests/test_task.py::test_not_inside_longer_digits - AssertionError:...\n========================= 2 failed, 2 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 3,
+     "code": "import re\n\nPATTERN = re.compile(\n    r'(?<!\\S)(?<!\\d)'\n    r'(?P<year>\\d{4})'\n    r'(?<!\\S)(?<!\\d)'\n    r'-'\n    r'(?P<month>\\d{2})'\n    r'(?<!\\S)(?<!\\d)'\n    r'-'\n    r'(?P<day>\\d{2})'\n    r'(?!\\S)(?!\\d)'\n)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.55,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 2,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_is_compiled PASSED                           [ 25%]\n../tests/test_task.py::test_month_range FAILED                           [ 50%]\n../tests/test_task.py::test_not_inside_longer_digits FAILED              [ 75%]\n../tests/test_task.py::test_no_dates PASSED                              [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_month_range _______________________________\n/tests/test_task.py:11: in test_month_range\n    assert find('2024-00-10 2024-13-10 2024-12-10') == ['2024-12-10']\nE   AssertionError: assert [] == ['2024-12-10']\nE     \nE     Right contains one more item: '2024-12-10'\nE     \nE     Full diff:\nE     + []\nE     - [\nE     -     '2024-12-10',\nE     - ]\n________________________ test_not_inside_longer_digits _________________________\n/tests/test_task.py:14: in test_not_inside_longer_digits\n    assert find('12024-01-05 2024-01-055 x2024-01-05') == ['2024-01-05']\nE   AssertionError: assert [] == ['2024-01-05']\nE     \nE     Right contains one more item: '2024-01-05'\nE     \nE     Full diff:\nE     + []\nE     - [\nE     -     '2024-01-05',\nE     - ]\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_month_range - AssertionError: assert [] ==...\nFAILED ../tests/test_task.py::test_not_inside_longer_digits - AssertionError:...\n========================= 2 failed, 2 passed in 0.01s ==========================\n",
+      "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_month_range - AssertionError: assert [] ==...\nFAILED ../tests/test_task.py::test_not_inside_longer_digits - AssertionError:...\n========================= 2 failed, 2 passed in 0.01s ==========================\n"
+     }
+    }
+   ],
+   "accepted": false,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 2,
+     "failed": 6
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 0,
+     "failed": 4
+    }
+   },
+   "done": true
+  },
+  "re_ipv4": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\nPATTERN = re.compile(r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.15,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 2,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_is_compiled PASSED                           [ 33%]\n../tests/test_task.py::test_bad FAILED                                   [ 66%]\n../tests/test_task.py::test_non_ascii_digits_rejected PASSED             [100%]\n\n=================================== FAILURES ===================================\n___________________________________ test_bad ___________________________________\n/tests/test_task.py:11: in test_bad\n    assert not PATTERN.fullmatch(s), s\nE   AssertionError: 01.2.3.4\nE   assert not <re.Match object; span=(0, 8), match='01.2.3.4'>\nE    +  where <re.Match object; span=(0, 8), match='01.2.3.4'> = <built-in method fullmatch of re.Pattern object at 0xb821c4545360>('01.2.3.4')\nE    +    where <built-in method fullmatch of re.Pattern object at 0xb821c4545360> = re.compile('^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$').fullmatch\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_bad - AssertionError: 01.2.3.4\n========================= 1 failed, 2 passed in 0.01s ==========================\n",
+      "tail": "?[0-9][0-9]?)\\\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$').fullmatch\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_bad - AssertionError: 01.2.3.4\n========================= 1 failed, 2 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import re\n\nPATTERN = re.compile(r'^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$')\n",
+     "failure": null,
+     "detail": "",
+     "latency": 1.92,
+     "vis": {
+      "kind": "ok",
+      "passed": 3,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_is_compiled PASSED                           [ 33%]\n../tests/test_task.py::test_bad PASSED                                   [ 66%]\n../tests/test_task.py::test_non_ascii_digits_rejected PASSED             [100%]\n\n============================== 3 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 5,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 2,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "cx_ttl_cache": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import time\nfrom collections import OrderedDict\n\nclass TTLCache:\n    def __init__(self, capacity, ttl, clock=time.monotonic):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        if ttl <= 0:\n            raise ValueError(\"TTL must be greater than 0\")\n        self.capacity = capacity\n        self.ttl = ttl\n        self.clock = clock\n        self.cache = OrderedDict()\n\n    def put(self, key, value):\n        current_time = self.clock()\n        # Remove expired entries first\n        self._remove_expired()\n        # If key exists, remove it to update its position and expiry\n        if key in self.cache:\n            del self.cache[key]\n        # Add new entry with expiry time\n        self.cache[key] = (value, current_time + self.ttl)\n        # Move to end to mark as most recently used\n        self.cache.move_to_end(key)\n        # Evict if over capacity\n        while len(self.cache) > self.capacity:\n            self.cache.popitem(last=False)\n\n    def get(self, key):\n        current_time = self.clock()\n        # Remove expired entries first\n        self._remove_expired()\n        if key not in self.cache:\n            return None\n        # Move to end to mark as most recently used\n        self.cache.move_to_end(key)\n        return self.cache[key][0]\n\n    def __len__(self):\n        self._remove_expired()\n        return len(self.cache)\n\n    def keys(self):\n        self._remove_expired()\n        return list(self.cache.keys())\n\n    def _remove_expired(self):\n        current_time = self.clock()\n        # Iterate over a copy of keys to avoid modification during iteration\n        keys_to_remove = [k for k, (v, expiry) in self.cache.items() if current_time >= expiry]\n        for k in keys_to_remove:\n            del self.cache[k]\n",
+     "failure": null,
+     "detail": "",
+     "latency": 3.01,
+     "vis": {
+      "kind": "ok",
+      "passed": 5,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 5 items\n\n../tests/test_task.py::test_basic_get_put PASSED                         [ 20%]\n../tests/test_task.py::test_len_counts_only_live_entries PASSED          [ 40%]\n../tests/test_task.py::test_get_does_not_extend_expiry PASSED            [ 60%]\n../tests/test_task.py::test_expired_entries_dropped_before_live_lru PASSED [ 80%]\n../tests/test_task.py::test_bad_arguments PASSED                         [100%]\n\n============================== 5 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 10,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 5,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "cx_scheduler": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import heapq\nfrom collections import defaultdict\n\nclass Scheduler:\n    def __init__(self):\n        self.tasks = {}  # name -> (run_at, every, callback, order)\n        self.heap = []    # heap of (run_at, order, name)\n        self.order = 0    # counter for ordering tasks\n        self.errors = []  # list of (name, exception) tuples\n\n    def schedule(self, name, run_at, callback, every=None):\n        if name in self.tasks:\n            raise ValueError(\"Task name already exists\")\n        if every is not None and every <= 0:\n            raise ValueError(\"Every must be greater than 0\")\n\n        self.order += 1\n        self.tasks[name] = (run_at, every, callback, self.order)\n        heapq.heappush(self.heap, (run_at, self.order, name))\n\n    def cancel(self, name):\n        if name not in self.tasks:\n            return False\n        del self.tasks[name]\n        return True\n\n    def pending(self):\n        # Rebuild heap to ensure correct order (since we can't efficiently remove from heap)\n        self.heap = []\n        for name, (run_at, every, callback, order) in self.tasks.items():\n            heapq.heappush(self.heap, (run_at, order, name))\n        return [(run_at, name) for (run_at, _, name) in sorted(self.heap, key=lambda x: (x[0], x[1]))]\n\n    def run_due(self, now):\n        run_names = []\n        temp_heap = []\n        temp_tasks = {}\n\n        # Process tasks in order\n        while self.heap:\n            run_at, order, name = heapq.heappop(self.heap)\n            if run_at > now:\n                # Put remaining tasks back in the heap\n                heapq.heappush(self.heap, (run_at, order, name))\n                break\n\n            # Get task details\n            run_at, every, callback, _ = self.tasks[name]\n\n            try:\n                callback()\n                run_names.append(name)\n            except Exception as e:\n                self.errors.append((name, e))\n\n            # Handle task rescheduling or removal\n            if every is None:\n                # One-time task: remove it\n                del self.tasks[name]\n            else:\n                # Repeating task: reschedule\n                new_run_at = run_at + every\n                if new_run_at <= now:\n                    # Skip missed runs (no backfilling)\n                    new_run_at = now + every\n                self.tasks[name] = (new_run_at, every, callback, order)\n                heapq.heappush(self.heap, (new_run_at, order, name))\n\n        # Rebuild heap for pending() to work correctly\n        self.heap = []\n        for name, (run_at, every, callback, order) in self.tasks.items():\n            heapq.heappush(self.heap, (run_at, order, name))\n\n        return run_names\n",
+     "failure": null,
+     "detail": "",
+     "latency": 10.58,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 3,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_runs_due_tasks_in_time_then_insertion_order PASSED [ 16%]\n../tests/test_task.py::test_duplicate_name_and_bad_every PASSED          [ 33%]\n../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed FAILED [ 50%]\n../tests/test_task.py::test_exception_is_recorded_and_others_continue FAILED [ 66%]\n../tests/test_task.py::test_task_added_by_callback_waits_for_next_call FAILED [ 83%]\n../tests/test_task.py::test_pending_order_uses_first_scheduled_for_ties PASSED [100%]\n\n=================================== FAILURES ===================================\n______________ test_repeating_runs_once_per_call_and_skips_missed ______________\n/tests/test_task.py:31: in test_repeating_runs_once_per_call_and_skips_missed\n    assert s.pending() == [(50, 'tick')]\nE   AssertionError: assert [(55, 'tick')] == [(50, 'tick')]\nE     \nE     At index 0 diff: (55, 'tick') != (50, 'tick')\nE     \nE     Full diff:\nE       [\nE           (\nE     -         50,...\nE     \nE     ...Full output truncated (6 lines hidden), use '-vv' to show\n________________ test_exception_is_recorded_and_others_continue ________________\n/tests/test_task.py:45: in test_exception_is_recorded_and_others_continue\n    assert s.run_due(5) == ['boom', 'ok']\nE   AssertionError: assert ['ok'] == ['boom', 'ok']\nE     \nE     At index 0 diff: 'ok' != 'boom'\nE     Right contains one more item: 'ok'\nE     \nE     Full diff:\nE       [\nE     -     'boom',\nE           'ok',\nE       ]\n_______________ test_task_added_by_callback_waits_for_next_call ________________\n/tests/test_task.py:57: in test_task_added_by_callback_waits_for_next_call\n    assert s.run_due(5) == ['parent']\nE   AssertionError: assert ['parent', 'child'] == ['parent']\nE     \nE     Left contains one more item: 'child'\nE     \nE     Full diff:\nE       [\nE           'parent',\nE     +     'child',\nE       ]\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed\nFAILED ../tests/test_task.py::test_exception_is_recorded_and_others_continue\nFAILED ../tests/test_task.py::test_task_added_by_callback_waits_for_next_call\n========================= 3 failed, 3 passed in 0.02s ==========================\n",
+      "tail": "est_task.py::test_repeating_runs_once_per_call_and_skips_missed\nFAILED ../tests/test_task.py::test_exception_is_recorded_and_others_continue\nFAILED ../tests/test_task.py::test_task_added_by_callback_waits_for_next_call\n========================= 3 failed, 3 passed in 0.02s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import heapq\nfrom collections import defaultdict\n\nclass Scheduler:\n    def __init__(self):\n        self.tasks = {}  # name -> (run_at, every, callback, order)\n        self.heap = []    # heap of (run_at, order, name)\n        self.order = 0    # counter for ordering tasks\n        self.errors = []  # list of (name, exception) tuples\n        self._temp_heap = []  # temporary heap for run_due processing\n\n    def schedule(self, name, run_at, callback, every=None):\n        if name in self.tasks:\n            raise ValueError(\"Task name already exists\")\n        if every is not None and every <= 0:\n            raise ValueError(\"Every must be greater than 0\")\n\n        self.order += 1\n        self.tasks[name] = (run_at, every, callback, self.order)\n        heapq.heappush(self.heap, (run_at, self.order, name))\n\n    def cancel(self, name):\n        if name not in self.tasks:\n            return False\n        del self.tasks[name]\n        return True\n\n    def pending(self):\n        # Create a fresh heap for pending tasks\n        self._temp_heap = []\n        for name, (run_at, every, callback, order) in self.tasks.items():\n            heapq.heappush(self._temp_heap, (run_at, order, name))\n        return [(run_at, name) for (run_at, _, name) in sorted(self._temp_heap, key=lambda x: (x[0], x[1]))]\n\n    def run_due(self, now):\n        run_names = []\n        # Create a temporary heap to process tasks without modifying the main heap\n        temp_heap = []\n        temp_heap.extend(self.heap)\n        heapq.heapify(temp_heap)\n\n        while temp_heap:\n            run_at, order, name = heapq.heappop(temp_heap)\n            if run_at > now:\n                # Put remaining tasks back in the heap\n                self.heap = temp_heap\n                heapq.heapify(self.heap)\n                break\n\n            # Get task details\n            run_at, every, callback, _ = self.tasks[name]\n\n            try:\n                callback()\n                run_names.append(name)\n            except Exception as e:\n                self.errors.append((name, e))\n\n            # Handle task rescheduling or removal\n            if every is None:\n                # One-time task: remove it\n                del self.tasks[name]\n            else:\n                # Repeating task: reschedule\n                new_run_at = run_at + every\n                if new_run_at <= now:\n                    # Skip missed runs (no backfilling)\n                    new_run_at = now + every\n                self.tasks[name] = (new_run_at, every, callback, order)\n                heapq.heappush(self.heap, (new_run_at, order, name))\n\n        return run_names\n",
+     "failure": null,
+     "detail": "",
+     "latency": 8.36,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 3,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_runs_due_tasks_in_time_then_insertion_order PASSED [ 16%]\n../tests/test_task.py::test_duplicate_name_and_bad_every PASSED          [ 33%]\n../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed FAILED [ 50%]\n../tests/test_task.py::test_exception_is_recorded_and_others_continue FAILED [ 66%]\n../tests/test_task.py::test_task_added_by_callback_waits_for_next_call FAILED [ 83%]\n../tests/test_task.py::test_pending_order_uses_first_scheduled_for_ties PASSED [100%]\n\n=================================== FAILURES ===================================\n______________ test_repeating_runs_once_per_call_and_skips_missed ______________\n/tests/test_task.py:31: in test_repeating_runs_once_per_call_and_skips_missed\n    assert s.pending() == [(50, 'tick')]\nE   AssertionError: assert [(55, 'tick')] == [(50, 'tick')]\nE     \nE     At index 0 diff: (55, 'tick') != (50, 'tick')\nE     \nE     Full diff:\nE       [\nE           (\nE     -         50,...\nE     \nE     ...Full output truncated (6 lines hidden), use '-vv' to show\n________________ test_exception_is_recorded_and_others_continue ________________\n/tests/test_task.py:45: in test_exception_is_recorded_and_others_continue\n    assert s.run_due(5) == ['boom', 'ok']\nE   AssertionError: assert ['ok'] == ['boom', 'ok']\nE     \nE     At index 0 diff: 'ok' != 'boom'\nE     Right contains one more item: 'ok'\nE     \nE     Full diff:\nE       [\nE     -     'boom',\nE           'ok',\nE       ]\n_______________ test_task_added_by_callback_waits_for_next_call ________________\n/tests/test_task.py:58: in test_task_added_by_callback_waits_for_next_call\n    assert s.run_due(5) == ['child']\nsolution.py:51: in run_due\n    run_at, every, callback, _ = self.tasks[name]\nE   KeyError: 'parent'\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed\nFAILED ../tests/test_task.py::test_exception_is_recorded_and_others_continue\nFAILED ../tests/test_task.py::test_task_added_by_callback_waits_for_next_call\n========================= 3 failed, 3 passed in 0.02s ==========================\n",
+      "tail": "est_task.py::test_repeating_runs_once_per_call_and_skips_missed\nFAILED ../tests/test_task.py::test_exception_is_recorded_and_others_continue\nFAILED ../tests/test_task.py::test_task_added_by_callback_waits_for_next_call\n========================= 3 failed, 3 passed in 0.02s ==========================\n"
+     }
+    },
+    {
+     "n": 3,
+     "code": "import heapq\n\nclass Scheduler:\n    def __init__(self):\n        self.tasks = {}  # name -> (run_at, every, callback, order)\n        self.heap = []    # heap of (run_at, order, name)\n        self.order = 0    # counter for ordering tasks\n        self.errors = []  # list of (name, exception) tuples\n        self._cancelled = set()  # names of cancelled tasks during run_due\n\n    def schedule(self, name, run_at, callback, every=None):\n        if name in self.tasks:\n            raise ValueError(\"Task name already exists\")\n        if every is not None and every <= 0:\n            raise ValueError(\"Every must be greater than 0\")\n\n        self.order += 1\n        self.tasks[name] = (run_at, every, callback, self.order)\n        heapq.heappush(self.heap, (run_at, self.order, name))\n\n    def cancel(self, name):\n        if name not in self.tasks:\n            return False\n        del self.tasks[name]\n        return True\n\n    def pending(self):\n        # Create a fresh heap for pending tasks\n        temp_heap = []\n        for name, (run_at, every, callback, order) in self.tasks.items():\n            heapq.heappush(temp_heap, (run_at, order, name))\n        return [(run_at, name) for (run_at, _, name) in sorted(temp_heap, key=lambda x: (x[0], x[1]))]\n\n    def run_due(self, now):\n        run_names = []\n        self._cancelled = set()  # Reset cancelled set for each run_due call\n\n        # Create a temporary heap to process tasks without modifying the main heap\n        temp_heap = []\n        temp_heap.extend(self.heap)\n        heapq.heapify(temp_heap)\n\n        while temp_heap:\n            run_at, order, name = heapq.heappop(temp_heap)\n            if run_at > now:\n                # Put remaining tasks back in the heap\n                self.heap = temp_heap\n                heapq.heapify(self.heap)\n                break\n\n            if name in self._cancelled:\n                continue\n\n            # Get task details\n            if name not in self.tasks:\n                continue\n            run_at, every, callback, _ = self.tasks[name]\n\n            try:\n                callback()\n                run_names.append(name)\n            except Exception as e:\n                self.errors.append((name, e))\n\n            # Handle task rescheduling or removal\n            if every is None:\n                # One-time task: remove it\n                del self.tasks[name]\n            else:\n                # Repeating task: reschedule\n                new_run_at = run_at + every\n                if new_run_at <= now:\n                    # Skip missed runs (no backfilling)\n                    new_run_at = now + every\n                self.tasks[name] = (new_run_at, every, callback, order)\n                heapq.heappush(self.heap, (new_run_at, order, name))\n\n        return run_names\n",
+     "failure": null,
+     "detail": "",
+     "latency": 6.97,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 4,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_runs_due_tasks_in_time_then_insertion_order PASSED [ 16%]\n../tests/test_task.py::test_duplicate_name_and_bad_every PASSED          [ 33%]\n../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed FAILED [ 50%]\n../tests/test_task.py::test_exception_is_recorded_and_others_continue FAILED [ 66%]\n../tests/test_task.py::test_task_added_by_callback_waits_for_next_call PASSED [ 83%]\n../tests/test_task.py::test_pending_order_uses_first_scheduled_for_ties PASSED [100%]\n\n=================================== FAILURES ===================================\n______________ test_repeating_runs_once_per_call_and_skips_missed ______________\n/tests/test_task.py:31: in test_repeating_runs_once_per_call_and_skips_missed\n    assert s.pending() == [(50, 'tick')]\nE   AssertionError: assert [(55, 'tick')] == [(50, 'tick')]\nE     \nE     At index 0 diff: (55, 'tick') != (50, 'tick')\nE     \nE     Full diff:\nE       [\nE           (\nE     -         50,...\nE     \nE     ...Full output truncated (6 lines hidden), use '-vv' to show\n________________ test_exception_is_recorded_and_others_continue ________________\n/tests/test_task.py:45: in test_exception_is_recorded_and_others_continue\n    assert s.run_due(5) == ['boom', 'ok']\nE   AssertionError: assert ['ok'] == ['boom', 'ok']\nE     \nE     At index 0 diff: 'ok' != 'boom'\nE     Right contains one more item: 'ok'\nE     \nE     Full diff:\nE       [\nE     -     'boom',\nE           'ok',\nE       ]\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed\nFAILED ../tests/test_task.py::test_exception_is_recorded_and_others_continue\n========================= 2 failed, 4 passed in 0.02s ==========================\n",
+      "tail": "======= short test summary info ============================\nFAILED ../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed\nFAILED ../tests/test_task.py::test_exception_is_recorded_and_others_continue\n========================= 2 failed, 4 passed in 0.02s ==========================\n"
+     }
+    }
+   ],
+   "accepted": false,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 7,
+     "failed": 4
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 3,
+     "failed": 2
+    }
+   },
+   "done": true
+  },
+  "cx_expression": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\nimport math\n\ndef evaluate(expr, variables=None):\n    if variables is None:\n        variables = {}\n\n    # Remove all whitespace\n    expr = expr.replace(' ', '')\n\n    # Check for empty expression\n    if not expr:\n        raise ValueError(\"Empty expression\")\n\n    # Check for unbalanced parentheses\n    if expr.count('(') != expr.count(')'):\n        raise ValueError(\"Unbalanced parentheses\")\n\n    # Check for trailing garbage\n    if not re.fullmatch(r'^[\\d+\\-*/^().a-zA-Z_,]+$', expr):\n        raise ValueError(\"Trailing garbage or unknown character\")\n\n    # Tokenize the expression\n    tokens = re.findall(r'(\\d+\\.?\\d*|\\.\\d+|[+\\-*/^()]|[a-zA-Z_]+|,)', expr)\n    if not tokens:\n        raise ValueError(\"Empty expression after tokenization\")\n\n    # Check for two operators in a row (except unary minus)\n    for i in range(len(tokens) - 1):\n        if tokens[i] in '+-*/^(' and tokens[i+1] in '+-*/^(' and tokens[i] != '-' and tokens[i+1] != '-':\n            raise ValueError(\"Two operators in a row\")\n\n    # Check for missing operand\n    for i in range(len(tokens) - 1):\n        if tokens[i] in '+-*/^' and tokens[i+1] in '+-*/^(':\n            raise ValueError(\"Missing operand\")\n\n    # Check for implicit multiplication\n    for i in range(len(tokens) - 1):\n        if tokens[i].isdigit() and tokens[i+1] == '(':\n            raise ValueError(\"Implicit multiplication such as 2(3)\")\n        if tokens[i] == ')' and tokens[i+1].isdigit():\n            raise ValueError(\"Implicit multiplication such as 2 3\")\n\n    # Check for unknown names or functions\n    for token in tokens:\n        if token in variables or token in ['min', 'max', 'abs']:\n            continue\n        if re.fullmatch(r'[a-zA-Z_]+', token):\n            raise ValueError(f\"Unknown name: {token}\")\n        if token in ['min', 'max', 'abs']:\n            continue\n        if re.fullmatch(r'[a-zA-Z_]+\\([^)]*\\)', token):\n            continue\n\n    # Convert tokens to postfix notation (Reverse Polish Notation)\n    output = []\n    operators = []\n    precedence = {'^': 4, '*': 3, '/': 3, '+': 2, '-': 2}\n    right_associative = {'^'}\n\n    for token in tokens:\n        if token.replace('.', '').isdigit() or (token.startswith('.') and token[1:].isdigit()):\n            output.append(float(token))\n        elif token in variables:\n            output.append(variables[token])\n        elif token == '(':\n            operators.append(token)\n        elif token == ')':\n            while operators and operators[-1] != '(':\n                output.append(operators.pop())\n            if not operators:\n                raise ValueError(\"Unbalanced parentheses\")\n            operators.pop()  # Remove '('\n            if operators and operators[-1] in ['min', 'max', 'abs']:\n                output.append(operators.pop())\n        elif token in precedence:\n            while (operators and operators[-1] != '(' and\n                   ((precedence[operators[-1]] > precedence[token]) or\n                    (precedence[operators[-1]] == precedence[token] and token not in right_associative))):\n                output.append(operators.pop())\n            operators.append(token)\n        elif token in ['min', 'max', 'abs']:\n            operators.append(token)\n        elif token == ',':\n            continue\n        else:\n            raise ValueError(f\"Unknown token: {token}\")\n\n    while operators:\n        if operators[-1] == '(':\n            raise ValueError(\"Unbalanced parentheses\")\n        output.append(operators.pop())\n\n    # Evaluate postfix notation\n    stack = []\n    for token in output:\n        if isinstance(token, float):\n            stack.append(token)\n        elif token in variables:\n            stack.append(variables[token])\n        elif token in ['min', 'max', 'abs']:\n            if token == 'abs':\n                if len(stack) < 1:\n                    raise ValueError(\"Wrong number of arguments for abs\")\n                arg = stack.pop()\n                stack.append(abs(arg))\n            else:\n                if len(stack) < 1:\n                    raise ValueError(\"Wrong number of arguments for min/max\")\n                args = []\n                while stack and stack[-1] not in ['min', 'max', 'abs']:\n                    args.append(stack.pop())\n                args.reverse()\n                if not args:\n                    raise ValueError(\"No arguments for min/max\")\n                if token == 'min':\n                    stack.append(min(args))\n                else:\n                    stack.append(max(args))\n        else:\n            if len(stack) < 2:\n                raise ValueError(\"Missing operand\")\n            b = stack.pop()\n            a = stack.pop()\n            if token == '+':\n                stack.append(a + b)\n            elif token == '-':\n                stack.append(a - b)\n            elif token == '*':\n                stack.append(a * b)\n            elif token == '/':\n                if b == 0:\n                    raise ValueError(\"Division by zero\")\n                stack.append(a / b)\n            elif token == '^':\n                stack.append(a ** b)\n\n    if len(stack) != 1:\n        raise ValueError(\"Missing operand or wrong number of arguments\")\n\n    return stack[0]\n",
+     "failure": null,
+     "detail": "",
+     "latency": 14.01,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 5 items\n\n../tests/test_task.py::test_basic_arithmetic_and_precedence PASSED       [ 20%]\n../tests/test_task.py::test_power_rules FAILED                           [ 40%]\n../tests/test_task.py::test_decimals PASSED                              [ 60%]\n../tests/test_task.py::test_functions FAILED                             [ 80%]\n../tests/test_task.py::test_division_by_zero_in_subexpression PASSED     [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_power_rules _______________________________\n/tests/test_task.py:12: in test_power_rules\n    assert evaluate('-2^2') == -4\nsolution.py:123: in evaluate\n    raise ValueError(\"Missing operand\")\nE   ValueError: Missing operand\n________________________________ test_functions ________________________________\n/tests/test_task.py:23: in test_functions\n    assert evaluate('abs(-7) + min(2, 1+0)') == 8\nsolution.py:123: in evaluate\n    raise ValueError(\"Missing operand\")\nE   ValueError: Missing operand\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_power_rules - ValueError: Missing operand\nFAILED ../tests/test_task.py::test_functions - ValueError: Missing operand\n========================= 2 failed, 3 passed in 0.02s ==========================\n",
+      "tail": "============= short test summary info ============================\nFAILED ../tests/test_task.py::test_power_rules - ValueError: Missing operand\nFAILED ../tests/test_task.py::test_functions - ValueError: Missing operand\n========================= 2 failed, 3 passed in 0.02s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import re\nimport math\n\ndef evaluate(expr, variables=None):\n    if variables is None:\n        variables = {}\n\n    # Remove all whitespace\n    expr = expr.replace(' ', '')\n\n    # Check for empty expression\n    if not expr:\n        raise ValueError(\"Empty expression\")\n\n    # Check for unbalanced parentheses\n    if expr.count('(') != expr.count(')'):\n        raise ValueError(\"Unbalanced parentheses\")\n\n    # Check for trailing garbage\n    if not re.fullmatch(r'^[\\d+\\-*/^().a-zA-Z_,]+$', expr):\n        raise ValueError(\"Trailing garbage or unknown character\")\n\n    # Tokenize the expression\n    tokens = re.findall(r'(\\d+\\.?\\d*|\\.\\d+|[+\\-*/^()]|[a-zA-Z_]+|,)', expr)\n    if not tokens:\n        raise ValueError(\"Empty expression after tokenization\")\n\n    # Check for two operators in a row (except unary minus)\n    for i in range(len(tokens) - 1):\n        if tokens[i] in '+*/^(' and tokens[i+1] in '+*/^(':\n            raise ValueError(\"Two operators in a row\")\n        if tokens[i] == '-' and tokens[i+1] in '+*/^(':\n            continue\n        if tokens[i] in '+*/^' and tokens[i+1] in '+*/^(':\n            raise ValueError(\"Two operators in a row\")\n\n    # Check for missing operand\n    for i in range(len(tokens) - 1):\n        if tokens[i] in '+*/^' and tokens[i+1] in '+*/^(':\n            raise ValueError(\"Missing operand\")\n\n    # Check for implicit multiplication\n    for i in range(len(tokens) - 1):\n        if tokens[i].isdigit() and tokens[i+1] == '(':\n            raise ValueError(\"Implicit multiplication such as 2(3)\")\n        if tokens[i] == ')' and tokens[i+1].isdigit():\n            raise ValueError(\"Implicit multiplication such as 2 3\")\n\n    # Check for unknown names or functions\n    for token in tokens:\n        if token in variables or token in ['min', 'max', 'abs']:\n            continue\n        if re.fullmatch(r'[a-zA-Z_]+', token):\n            raise ValueError(f\"Unknown name: {token}\")\n\n    # Handle unary minus\n    tokens = re.sub(r'(?<!\\()(-)', r'(\\0)', expr).replace(' ', '').split('(')\n    tokens = [t for token in tokens for t in re.findall(r'(\\d+\\.?\\d*|\\.\\d+|[+\\-*/^()]|[a-zA-Z_]+|,)', token)]\n\n    # Convert tokens to postfix notation (Reverse Polish Notation)\n    output = []\n    operators = []\n    precedence = {'^': 4, '*': 3, '/': 3, '+': 2, '-': 2}\n    right_associative = {'^'}\n\n    for token in tokens:\n        if token == '':\n            continue\n        if token.replace('.', '').isdigit() or (token.startswith('.') and token[1:].isdigit()):\n            output.append(float(token))\n        elif token in variables:\n            output.append(variables[token])\n        elif token == '(':\n            operators.append(token)\n        elif token == ')':\n            while operators and operators[-1] != '(':\n                output.append(operators.pop())\n            if not operators:\n                raise ValueError(\"Unbalanced parentheses\")\n            operators.pop()  # Remove '('\n        elif token in precedence:\n            while (operators and operators[-1] != '(' and\n                   ((precedence[operators[-1]] > precedence[token]) or\n                    (precedence[operators[-1]] == precedence[token] and token not in right_associative))):\n                output.append(operators.pop())\n            operators.append(token)\n        elif token in ['min', 'max', 'abs']:\n            operators.append(token)\n        elif token == ',':\n            continue\n        else:\n            raise ValueError(f\"Unknown token: {token}\")\n\n    while operators:\n        if operators[-1] == '(':\n            raise ValueError(\"Unbalanced parentheses\")\n        output.append(operators.pop())\n\n    # Evaluate postfix notation\n    stack = []\n    for token in output:\n        if isinstance(token, float):\n            stack.append(token)\n        elif token in variables:\n            stack.append(variables[token])\n        elif token == '-':\n            if not stack:\n                raise ValueError(\"Missing operand for unary minus\")\n            operand = stack.pop()\n            stack.append(-operand)\n        elif token in ['min', 'max', 'abs']:\n            if token == 'abs':\n                if len(stack) < 1:\n                    raise ValueError(\"Wrong number of arguments for abs\")\n                arg = stack.pop()\n                stack.append(abs(arg))\n            else:\n                if len(stack) < 1:\n                    raise ValueError(\"Wrong number of arguments for min/max\")\n                args = []\n                while stack and stack[-1] not in ['min', 'max', 'abs']:\n                    args.append(stack.pop())\n                args.reverse()\n                if not args:\n                    raise ValueError(\"No arguments for min/max\")\n                if token == 'min':\n                    stack.append(min(args))\n                else:\n                    stack.append(max(args))\n        else:\n            if len(stack) < 2:\n                raise ValueError(\"Missing operand\")\n            b = stack.pop()\n            a = stack.pop()\n            if token == '+':\n                stack.append(a + b)\n            elif token == '-':\n                stack.append(a - b)\n            elif token == '*':\n                stack.append(a * b)\n            elif token == '/':\n                if b == 0:\n                    raise ValueError(\"Division by zero\")\n                stack.append(a / b)\n            elif token == '^':\n                stack.append(a ** b)\n\n    if len(stack) != 1:\n        raise ValueError(\"Missing operand or wrong number of arguments\")\n\n    return stack[0]\n\n# Correct tokenization for unary minus and function calls\ndef evaluate(expr, variables=None):\n    if variables is None:\n        variables = {}\n\n    # Remove all whitespace\n    expr = expr.replace(' ', '')\n\n    # Check for empty expression\n    if not expr:\n        raise ValueError(\"Empty expression\")\n\n    # Check for unbalanced parentheses\n    if expr.count('(') != expr.count(')'):\n        raise ValueError(\"Unbalanced parentheses\")\n\n    # Check for trailing garbage\n    if not re.fullmatch(r'^[\\d+\\-*/^().a-zA-Z_,]+$', expr):\n        raise ValueError(\"Trailing garbage or unknown character\")\n\n    # Tokenize the expression\n    tokens = re.findall(r'(\\d+\\.?\\d*|\\.\\d+|[+\\-*/^()]|[a-zA-Z_]+|,)', expr)\n    if not tokens:\n        raise ValueError(\"Empty expression after tokenization\")\n\n    # Check for two operators in a row (except unary minus)\n    for i in range(len(tokens) - 1):\n        if tokens[i] in '+*/^(' and tokens[i+1] in '+*/^(':\n            raise ValueError(\"Two operators in a row\")\n        if tokens[i] == '-' and tokens[i+1] in '+*/^(':\n            continue\n\n    # Check for missing operand\n    for i in range(len(tokens) - 1):\n        if tokens[i] in '+*/^' and tokens[i+1] in '+*/^(':\n            raise ValueError(\"Missing operand\")\n\n    # Check for implicit multiplication\n    for i in range(len(tokens) - 1):\n        if tokens[i].isdigit() and tokens[i+1] == '(':\n            raise ValueError(\"Implicit multiplication such as 2(3)\")\n        if tokens[i] == ')' and tokens[i+1].isdigit():\n            raise ValueError(\"Implicit multiplication such as 2 3\")\n\n    # Check for unknown names or functions\n    for token in tokens:\n        if token in variables or token in ['min', 'max', 'abs']:\n            continue\n        if re.fullmatch(r'[a-zA-Z_]+', token):\n            raise ValueError(f\"Unknown name: {token}\")\n\n    # Handle unary minus and function calls\n    tokens = []\n    i = 0\n    while i < len(expr):\n        if expr[i] in '()+-*/^':\n            tokens.append(expr[i])\n            i += 1\n        elif expr[i].isdigit() or expr[i] == '.':\n            num = ''\n            while i < len(expr) and (expr[i].isdigit() or expr[i] == '.'):\n                num += expr[i]\n                i += 1\n            tokens.append(num)\n        elif expr[i] == ',':\n            tokens.append(',')\n            i += 1\n        else:\n            name = ''\n            while i < len(expr) and (expr[i].isalpha() or expr[i] == '_'):\n                name += expr[i]\n                i += 1\n            tokens.append(name)\n\n    # Re-tokenize to handle unary minus properly\n    tokens = []\n    i = 0\n    while i < len(expr):\n        if expr[i] == '(':\n            tokens.append('(')\n            i += 1\n        elif expr[i] == ')':\n            tokens.append(')')\n            i += 1\n        elif expr[i] in '+*/^':\n            tokens.append(expr[i])\n            i += 1\n        elif expr[i] == ',':\n            tokens.append(',')\n            i += 1\n        elif expr[i] == '-':\n            if i == 0 or expr[i-1] == '(' or expr[i-1] in '+-*/^':\n                tokens.append('u-')  # Mark unary minus\n            else:\n                tokens.append('-')\n            i += 1\n        elif expr[i].isdigit() or expr[i] == '.':\n            num = ''\n            while i < len(expr) and (expr[i].isdigit() or expr[i] == '.'):\n                num += expr[i]\n                i += 1\n            tokens.append(num)\n        else:\n            name = ''\n            while i < len(expr) and (expr[i].isalpha() or expr[i] == '_'):\n                name += expr[i]\n                i += 1\n            tokens.append(name)\n\n    # Convert tokens to postfix notation (Reverse Polish Notation)\n    output = []\n    operators = []\n    precedence = {'^': 4, '*': 3, '/': 3, '+': 2, '-': 2}\n    right_associative = {'^'}\n\n    for token in tokens:\n        if token.replace('.', '').isdigit() or (token.startswith('.') and token[1:].isdigit()):\n            output.append(float(token))\n        elif token in variables:\n            output.append(variables[token])\n        elif token == 'u-':\n            output.append('u-')\n        elif token == '(':\n            operators.append(token)\n        elif token == ')':\n            while operators and operators[-1] != '(':\n                output.append(operators.pop())\n            if not operators:\n                raise ValueError(\"Unbalanced parentheses\")\n            operators.pop()  # Remove '('\n        elif token in precedence:\n            while (operators and operators[-1] != '(' and\n                   ((precedence[operators[-1]] > precedence[token]) or\n                    (precedence[operators[-1]] == precedence[token] and token not in right_associative))):\n                output.append(operators.pop())\n            operators.append(token)\n        elif token in ['min', 'max', 'abs']:\n            operators.append(token)\n        elif token == ',':\n            continue\n        else:\n            raise ValueError(f\"Unknown token: {token}\")\n\n    while operators:\n        if operators[-1] == '(':\n            raise ValueError(\"Unbalanced parentheses\")\n        output.append(operators.pop())\n\n    # Evaluate postfix notation\n    stack = []\n    for token in output:\n        if isinstance(token, float):\n            stack.append(token)\n        elif token in variables:\n            stack.append(variables[token])\n        elif token == 'u-':\n            if not stack:\n                raise ValueError(\"Missing operand for unary minus\")\n            operand = stack.pop()\n            stack.append(-operand)\n        elif token in ['min', 'max', 'abs']:\n            if token == 'abs':\n                if len(stack) < 1:\n                    raise ValueError(\"Wrong number of arguments for abs\")\n                arg = stack.pop()\n                stack.append(abs(arg))\n            else:\n                args = []\n                while stack and stack[-1] not in ['min', 'max', 'abs']:\n                    args.append(stack.pop())\n                args.reverse()\n                if not args:\n                    raise ValueError(\"No arguments for min/max\")\n                if token == 'min':\n                    stack.append(min(args))\n                else:\n                    stack.append(max(args))\n        else:\n            if len(stack) < 2:\n                raise ValueError(\"Missing operand\")\n            b = stack.pop()\n            a = stack.pop()\n            if token == '+':\n                stack.append(a + b)\n            elif token == '-':\n                stack.append(a - b)\n            elif token == '*':\n                stack.append(a * b)\n            elif token == '/':\n                if b == 0:\n                    raise ValueError(\"Division by zero\")\n                stack.append(a / b)\n            elif token == '^':\n                stack.append(a ** b)\n\n    if len(stack) != 1:\n        raise ValueError(\"Missing operand or wrong number of arguments\")\n\n    return stack[0]\n\n# Final correct implementation\ndef evaluate(expr, variables=None):\n    if variables is None:\n        variables = {}\n\n    # Remove all whitespace\n    expr = expr.replace(' ', '')\n\n    # Check for empty expression\n    if not expr:\n        raise ValueError(\"Empty expression\")\n\n    # Check for unbalanced parentheses\n    if expr.count('(') != expr.count(')'):\n        raise ValueError(\"Unbalanced parentheses\")\n\n    # Check for trailing garbage\n    if not re.fullmatch(r'^[\\d+\\-*/^().a-zA-Z_,]+$', expr):\n        raise ValueError(\"Trailing garbage or unknown character\")\n\n    # Tokenize the expression\n    tokens = re.findall(r'(\\d+\\.?\\d*|\\.\\d+|[+\\-*/^()]|[a-zA-Z_]+|,)', expr)\n    if not tokens:\n        raise ValueError(\"Empty expression after tokenization\")\n\n    # Check for two operators in a row (except unary minus)\n    for i in range(len(tokens) - 1):\n        if tokens[i] in '+*/^(' and tokens[i+1] in '+*/^(':\n            raise ValueError(\"Two operators in a row\")\n        if tokens[i] == '-' and tokens[i+1] in '+*/^(':\n            continue\n\n    # Check for missing operand\n    for i in range(len(tokens) - 1):\n        if tokens[i] in '+*/^' and tokens[i+1] in '+*/^(':\n            raise ValueError(\"Missing operand\")\n\n    # Check for implicit multiplication\n    for i in range(len(tokens) - 1):\n        if tokens[i].isdigit() and tokens[i+1] == '(':\n            raise ValueError(\"Implicit multiplication such as 2(3)\")\n        if tokens[i] == ')' and tokens[i+1].isdigit():\n            raise ValueError(\"Implicit multiplication such as 2 3\")\n\n    # Check for unknown names or functions\n    for token in tokens:\n        if token in variables or token in ['min', 'max', 'abs']:\n            continue\n        if re.fullmatch(r'[a-zA-Z_]+', token):\n            raise ValueError(f\"Unknown name: {token}\")\n\n    # Convert to postfix notation with proper handling of unary minus\n    output = []\n    operators = []\n    precedence = {'^': 4, '*': 3, '/': 3, '+': 2, '-': 2}\n    right_associative = {'^'}\n\n    i = 0\n    while i < len(tokens):\n        token = tokens[i]\n        if token.replace('.', '').isdigit() or (token.startswith('.') and token[1:].isdigit()):\n            output.append(float(token))\n            i += 1\n        elif token in variables:\n            output.append(variables[token])\n            i += 1\n        elif token == '(':\n            operators.append(token)\n            i += 1\n        elif token == ')':\n            while operators and operators[-1] != '(':\n                output.append(operators.pop())\n            if not operators:\n                raise ValueError(\"Unbalanced parentheses\")\n            operators.pop()  # Remove '('\n            i += 1\n        elif token in precedence:\n            while (operators and operators[-1] != '(' and\n                   ((precedence[operators[-1]] > precedence[token]) or\n                    (precedence[operators[-1]] == precedence[token] and token not in right_associative))):\n                output.append(operators.pop())\n            operators.append(token)\n            i += 1\n        elif token in ['min', 'max', 'abs']:\n            operators.append(token)\n            i += 1\n        elif token == ',':\n            i += 1\n        elif token == '-':\n            if i == 0 or tokens[i-1] in '+-*/^(':\n                # Handle unary minus\n                operators.append('u-')\n            else:\n                while (operators and operators[-1] != '(' and\n                       precedence.get(operators[-1], 0) >= precedence.get('-', 0)):\n                    output.append(operators.pop())\n                operators.append('-')\n            i += 1\n        else:\n            raise ValueError(f\"Unknown token: {token}\")\n\n    while operators:\n        if operators[-1] == '(':\n            raise ValueError(\"Unbalanced parentheses\")\n        output.append(operators.pop())\n\n    # Evaluate postfix notation\n    stack = []\n    for token in output:\n        if isinstance(token, float):\n            stack.append(token)\n        elif token in variables:\n            stack.append(variables[token])\n        elif token == 'u-':\n            if not stack:\n                raise ValueError(\"Missing operand for unary minus\")\n            operand = stack.pop()\n            stack.append(-operand)\n        elif token in ['min', 'max', 'abs']:\n            if token == 'abs':\n                if len(stack) < 1:\n                    raise ValueError(\"Wrong number of arguments for abs\")\n                arg = stack.pop()\n                stack.append(abs(arg))\n            else:\n                args = []\n                while stack and stack[-1] not in ['min', 'max', 'abs']:\n                    args.append(stack.pop())\n                args.reverse()\n                if not args:\n                    raise ValueError(\"No arguments for min/max\")\n                if token == 'min':\n                    stack.append(min(args))\n                else:\n                    stack.append(max(args))\n        else:\n            if len(stack) < 2:\n                raise ValueError(\"Missing operand\")\n            b = stack.pop()\n            a = stack.pop()\n            if token == '+':\n                stack.append(a + b)\n            elif token == '-':\n                stack.append(a - b)\n            elif token == '*':\n                stack.append(a * b)\n            elif token == '/':\n                if b == 0:\n                    raise ValueError(\"Division by zero\")\n                stack.append(a / b)\n            elif token == '^':\n                stack.append(a ** b)\n\n    if len(stack) != 1:\n        raise ValueError(\"Missing operand or wrong number of arguments\")\n\n    return stack[0]\n",
+     "failure": null,
+     "detail": "",
+     "latency": 79.94,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 5 items\n\n../tests/test_task.py::test_basic_arithmetic_and_precedence PASSED       [ 20%]\n../tests/test_task.py::test_power_rules FAILED                           [ 40%]\n../tests/test_task.py::test_decimals PASSED                              [ 60%]\n../tests/test_task.py::test_functions FAILED                             [ 80%]\n../tests/test_task.py::test_division_by_zero_in_subexpression PASSED     [100%]\n\n=================================== FAILURES ===================================\n_______________________________ test_power_rules _______________________________\n/tests/test_task.py:12: in test_power_rules\n    assert evaluate('-2^2') == -4\nsolution.py:490: in evaluate\n    raise ValueError(\"Missing operand\")\nE   ValueError: Missing operand\n________________________________ test_functions ________________________________\n/tests/test_task.py:23: in test_functions\n    assert evaluate('abs(-7) + min(2, 1+0)') == 8\nsolution.py:431: in evaluate\n    ((precedence[operators[-1]] > precedence[token]) or\nE   KeyError: 'abs'\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_power_rules - ValueError: Missing operand\nFAILED ../tests/test_task.py::test_functions - KeyError: 'abs'\n========================= 2 failed, 3 passed in 0.03s ==========================\n",
+      "tail": "========================= short test summary info ============================\nFAILED ../tests/test_task.py::test_power_rules - ValueError: Missing operand\nFAILED ../tests/test_task.py::test_functions - KeyError: 'abs'\n========================= 2 failed, 3 passed in 0.03s ==========================\n"
+     }
+    },
+    {
+     "n": 3,
+     "code": null,
+     "failure": "truncated",
+     "detail": "token budget ran out or fence never closed",
+     "latency": 55.79
+    }
+   ],
+   "accepted": false,
+   "final": {
+    "full": null,
+    "hold": null
+   },
+   "done": true
+  },
+  "cx_ini_parser": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\ndef parse_ini(text):\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    current_line = 0\n\n    for line in lines:\n        current_line += 1\n        stripped_line = line.strip()\n        if not stripped_line:\n            continue\n\n        if stripped_line.startswith((';', '#')):\n            continue\n\n        if stripped_line.startswith('[') and stripped_line.endswith(']'):\n            section_name = stripped_line[1:-1].strip()\n            if not section_name:\n                raise ValueError(f\"line {current_line}: empty section name\")\n            current_section = section_name\n            if current_section not in result:\n                result[current_section] = {}\n        else:\n            if '=' not in stripped_line:\n                raise ValueError(f\"line {current_line}: missing '=' in key-value pair\")\n\n            key_part, value_part = stripped_line.split('=', 1)\n            key = key_part.strip()\n            if not key:\n                raise ValueError(f\"line {current_line}: empty key\")\n\n            if current_section not in result:\n                result[current_section] = {}\n\n            if value_part.startswith((';', '#')):\n                raise ValueError(f\"line {current_line}: comment cannot follow '=' directly\")\n\n            # Process unquoted value\n            if not (value_part.startswith('\"') and value_part.endswith('\"')):\n                # Split value and comment\n                value_end = len(value_part)\n                for i, char in enumerate(value_part):\n                    if char in (';', '#') and (i == 0 or value_part[i-1].isspace()):\n                        value_end = i\n                        break\n                value = value_part[:value_end].strip()\n                # Check for trailing comment\n                if value_end < len(value_part):\n                    if not value_part[value_end:].strip().startswith((';', '#')):\n                        raise ValueError(f\"line {current_line}: invalid comment placement\")\n            else:\n                # Process quoted value\n                if not value_part.startswith('\"') or not value_part.endswith('\"'):\n                    raise ValueError(f\"line {current_line}: unterminated quoted value\")\n                quoted_value = value_part[1:-1]\n                i = 0\n                result_value = []\n                while i < len(quoted_value):\n                    if quoted_value[i] == '\\\\':\n                        if i + 1 >= len(quoted_value):\n                            raise ValueError(f\"line {current_line}: unterminated escape sequence\")\n                        escape_char = quoted_value[i+1]\n                        if escape_char == '\"':\n                            result_value.append('\"')\n                        elif escape_char == '\\\\':\n                            result_value.append('\\\\')\n                        elif escape_char == 'n':\n                            result_value.append('\\n')\n                        elif escape_char == 't':\n                            result_value.append('\\t')\n                        else:\n                            raise ValueError(f\"line {current_line}: invalid escape sequence '\\\\{escape_char}'\")\n                        i += 2\n                    else:\n                        result_value.append(quoted_value[i])\n                        i += 1\n                value = ''.join(result_value)\n                # Check for trailing whitespace or comment\n                remaining = value_part[-1:].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after closing quote\")\n\n            # Ensure no trailing comment after unquoted value\n            if not (value_part.startswith('\"') and value_part.endswith('\"')):\n                remaining = value_part[len(value):].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after value\")\n\n            result[current_section][key] = value\n\n    # Remove empty sections except for the default section if it has keys\n    if not result:\n        return {}\n    if \"\" in result and not result[\"\"]:\n        del result[\"\"]\n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 11.44,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 2,
+      "failed": 5,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 15 items\n\n../tests/test_task.py::test_basic_sections FAILED                        [  6%]\n../tests/test_task.py::test_global_keys_go_to_empty_section_only_if_present FAILED [ 13%]\n../tests/test_task.py::test_repeated_section_merges_and_later_key_wins PASSED [ 20%]\n../tests/test_task.py::test_first_equals_splits FAILED                   [ 26%]\n../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars FAILED [ 33%]\n../tests/test_task.py::test_comment_after_quoted_value_allowed FAILED    [ 40%]\n../tests/test_task.py::test_section_name_trimmed PASSED                  [ 46%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx=1\\nnovalue\\n-3] PASSED [ 53%]\n../tests/test_task.py::test_errors_name_the_line[[a\\nx=1\\n-1] PASSED     [ 60%]\n../tests/test_task.py::test_errors_name_the_line[[]\\n-1] PASSED          [ 66%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\n= 5\\n-2] PASSED    [ 73%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"open\\n-2] PASSED [ 80%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2] PASSED [ 86%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2] PASSED [ 93%]\n../tests/test_task.py::test_errors_name_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5] PASSED [100%]\n\n=================================== FAILURES ===================================\n_____________________________ test_basic_sections ______________________________\n/tests/test_task.py:6: in test_basic_sections\n    assert parse_ini(text) == {'a': {'x': '1', 'y': 'two words'}, 'b': {'z': '3'}}\nsolution.py:89: in parse_ini\n    raise ValueError(f\"line {current_line}: text after value\")\nE   ValueError: line 2: text after value\n_____________ test_global_keys_go_to_empty_section_only_if_present _____________\n/tests/test_task.py:9: in test_global_keys_go_to_empty_section_only_if_present\n    assert parse_ini('k = v\\n[a]\\nx=1') == {'': {'k': 'v'}, 'a': {'x': '1'}}\nsolution.py:89: in parse_ini\n    raise ValueError(f\"line {current_line}: text after value\")\nE   ValueError: line 1: text after value\n___________________________ test_first_equals_splits ___________________________\n/tests/test_task.py:17: in test_first_equals_splits\n    assert parse_ini('[a]\\nformula = a=b+c\\n') == {'a': {'formula': 'a=b+c'}}\nsolution.py:89: in parse_ini\n    raise ValueError(f\"line {current_line}: text after value\")\nE   ValueError: line 2: text after value\n_______________ test_quoted_values_keep_spaces_and_comment_chars _______________\n/tests/test_task.py:21: in test_quoted_values_keep_spaces_and_comment_chars\n    assert parse_ini(text) == {'a': {'x': '  padded ; not a comment  ', 'y': '# also kept'}}\nsolution.py:89: in parse_ini\n    raise ValueError(f\"line {current_line}: text after value\")\nE   ValueError: line 2: text after value\n___________________ test_comment_after_quoted_value_allowed ____________________\n/tests/test_task.py:24: in test_comment_after_quoted_value_allowed\n    assert parse_ini('[a]\\nx = \"v\"   ; note\\n') == {'a': {'x': 'v'}}\nsolution.py:89: in parse_ini\n    raise ValueError(f\"line {current_line}: text after value\")\nE   ValueError: line 2: text after value\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_basic_sections - ValueError: line 2: text ...\nFAILED ../tests/test_task.py::test_global_keys_go_to_empty_section_only_if_present\nFAILED ../tests/test_task.py::test_first_equals_splits - ValueError: line 2: ...\nFAILED ../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars\nFAILED ../tests/test_task.py::test_comment_after_quoted_value_allowed - Value...\n========================= 5 failed, 10 passed in 0.03s =========================\n",
+      "tail": "ask.py::test_first_equals_splits - ValueError: line 2: ...\nFAILED ../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars\nFAILED ../tests/test_task.py::test_comment_after_quoted_value_allowed - Value...\n========================= 5 failed, 10 passed in 0.03s =========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import re\n\ndef parse_ini(text):\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    current_line = 0\n\n    for line in lines:\n        current_line += 1\n        stripped_line = line.strip()\n        if not stripped_line:\n            continue\n\n        if stripped_line.startswith((';', '#')):\n            continue\n\n        if stripped_line.startswith('[') and stripped_line.endswith(']'):\n            section_name = stripped_line[1:-1].strip()\n            if not section_name:\n                raise ValueError(f\"line {current_line}: empty section name\")\n            current_section = section_name\n            if current_section not in result:\n                result[current_section] = {}\n        else:\n            if '=' not in stripped_line:\n                raise ValueError(f\"line {current_line}: missing '=' in key-value pair\")\n\n            key_part, value_part = stripped_line.split('=', 1)\n            key = key_part.strip()\n            if not key:\n                raise ValueError(f\"line {current_line}: empty key\")\n\n            if current_section not in result:\n                result[current_section] = {}\n\n            # Process unquoted value\n            if not (value_part.startswith('\"') and value_part.endswith('\"')):\n                # Split value and comment\n                value_end = len(value_part)\n                for i, char in enumerate(value_part):\n                    if char in (';', '#') and (i == 0 or not value_part[i-1].isspace()):\n                        break\n                    if char in (';', '#') and value_part[i-1].isspace():\n                        value_end = i\n                        break\n                value = value_part[:value_end].strip()\n\n                # Check for trailing comment\n                remaining = value_part[value_end:].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after value\")\n\n            else:\n                # Process quoted value\n                if not value_part.startswith('\"') or not value_part.endswith('\"'):\n                    raise ValueError(f\"line {current_line}: unterminated quoted value\")\n\n                quoted_value = value_part[1:-1]\n                i = 0\n                result_value = []\n                while i < len(quoted_value):\n                    if quoted_value[i] == '\\\\':\n                        if i + 1 >= len(quoted_value):\n                            raise ValueError(f\"line {current_line}: unterminated escape sequence\")\n                        escape_char = quoted_value[i+1]\n                        if escape_char == '\"':\n                            result_value.append('\"')\n                        elif escape_char == '\\\\':\n                            result_value.append('\\\\')\n                        elif escape_char == 'n':\n                            result_value.append('\\n')\n                        elif escape_char == 't':\n                            result_value.append('\\t')\n                        else:\n                            raise ValueError(f\"line {current_line}: invalid escape sequence '\\\\{escape_char}'\")\n                        i += 2\n                    else:\n                        result_value.append(quoted_value[i])\n                        i += 1\n                value = ''.join(result_value)\n\n                # Check for trailing whitespace or comment after closing quote\n                remaining = value_part[-1:].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after closing quote\")\n\n                # Check for trailing whitespace or comment after the entire quoted value\n                remaining = value_part[len(value_part)-len(quoted_value)-2:].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after closing quote\")\n\n            result[current_section][key] = value\n\n    # Remove empty sections except for the default section if it has keys\n    if not result:\n        return {}\n    if \"\" in result and not result[\"\"]:\n        del result[\"\"]\n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 48.2,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 5,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 15 items\n\n../tests/test_task.py::test_basic_sections PASSED                        [  6%]\n../tests/test_task.py::test_global_keys_go_to_empty_section_only_if_present PASSED [ 13%]\n../tests/test_task.py::test_repeated_section_merges_and_later_key_wins PASSED [ 20%]\n../tests/test_task.py::test_first_equals_splits PASSED                   [ 26%]\n../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars FAILED [ 33%]\n../tests/test_task.py::test_comment_after_quoted_value_allowed FAILED    [ 40%]\n../tests/test_task.py::test_section_name_trimmed PASSED                  [ 46%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx=1\\nnovalue\\n-3] PASSED [ 53%]\n../tests/test_task.py::test_errors_name_the_line[[a\\nx=1\\n-1] PASSED     [ 60%]\n../tests/test_task.py::test_errors_name_the_line[[]\\n-1] PASSED          [ 66%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\n= 5\\n-2] PASSED    [ 73%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"open\\n-2] FAILED [ 80%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2] FAILED [ 86%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2] FAILED [ 93%]\n../tests/test_task.py::test_errors_name_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5] PASSED [100%]\n\n=================================== FAILURES ===================================\n_______________ test_quoted_values_keep_spaces_and_comment_chars _______________\n/tests/test_task.py:21: in test_quoted_values_keep_spaces_and_comment_chars\n    assert parse_ini(text) == {'a': {'x': '  padded ; not a comment  ', 'y': '# also kept'}}\nE   assert {'a': {'x': '... also kept\"'}} == {'a': {'x': '...# also kept'}}\nE     \nE     Differing items:\nE     {'a': {'x': '\"  padded', 'y': '\"# also kept\"'}} != {'a': {'x': '  padded ; not a comment  ', 'y': '# also kept'}}\nE     \nE     Full diff:\nE       {\nE           'a': {...\nE     \nE     ...Full output truncated (7 lines hidden), use '-vv' to show\n___________________ test_comment_after_quoted_value_allowed ____________________\n/tests/test_task.py:24: in test_comment_after_quoted_value_allowed\n    assert parse_ini('[a]\\nx = \"v\"   ; note\\n') == {'a': {'x': 'v'}}\nE   assert {'a': {'x': '\"v\"'}} == {'a': {'x': 'v'}}\nE     \nE     Differing items:\nE     {'a': {'x': '\"v\"'}} != {'a': {'x': 'v'}}\nE     \nE     Full diff:\nE       {\nE           'a': {...\nE     \nE     ...Full output truncated (5 lines hidden), use '-vv' to show\n________________ test_errors_name_the_line[[a]\\nx = \"open\\n-2] _________________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n___________ test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2] ___________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n___________ test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2] ____________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars\nFAILED ../tests/test_task.py::test_comment_after_quoted_value_allowed - asser...\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"open\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2]\n========================= 5 failed, 10 passed in 0.02s =========================\n",
+      "tail": "test_errors_name_the_line[[a]\\nx = \"open\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2]\n========================= 5 failed, 10 passed in 0.02s =========================\n"
+     }
+    },
+    {
+     "n": 3,
+     "code": "import re\n\ndef parse_ini(text):\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    current_line = 0\n\n    for line in lines:\n        current_line += 1\n        stripped_line = line.strip()\n        if not stripped_line:\n            continue\n\n        if stripped_line.startswith((';', '#')):\n            continue\n\n        if stripped_line.startswith('[') and stripped_line.endswith(']'):\n            section_name = stripped_line[1:-1].strip()\n            if not section_name:\n                raise ValueError(f\"line {current_line}: empty section name\")\n            current_section = section_name\n            if current_section not in result:\n                result[current_section] = {}\n        else:\n            if '=' not in stripped_line:\n                raise ValueError(f\"line {current_line}: missing '=' in key-value pair\")\n\n            key_part, value_part = stripped_line.split('=', 1)\n            key = key_part.strip()\n            if not key:\n                raise ValueError(f\"line {current_line}: empty key\")\n\n            if current_section not in result:\n                result[current_section] = {}\n\n            # Process unquoted value\n            if not (value_part.startswith('\"') and value_part.endswith('\"')):\n                # Split value and comment\n                value_end = len(value_part)\n                for i, char in enumerate(value_part):\n                    if char in (';', '#') and (i == 0 or not value_part[i-1].isspace()):\n                        break\n                    if char in (';', '#') and value_part[i-1].isspace():\n                        value_end = i\n                        break\n                value = value_part[:value_end].strip()\n\n                # Check for trailing comment\n                remaining = value_part[value_end:].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after value\")\n\n            else:\n                # Process quoted value\n                if not value_part.startswith('\"') or not value_part.endswith('\"'):\n                    raise ValueError(f\"line {current_line}: unterminated quoted value\")\n\n                quoted_value = value_part[1:-1]\n                i = 0\n                result_value = []\n                while i < len(quoted_value):\n                    if quoted_value[i] == '\\\\':\n                        if i + 1 >= len(quoted_value):\n                            raise ValueError(f\"line {current_line}: unterminated escape sequence\")\n                        escape_char = quoted_value[i+1]\n                        if escape_char == '\"':\n                            result_value.append('\"')\n                        elif escape_char == '\\\\':\n                            result_value.append('\\\\')\n                        elif escape_char == 'n':\n                            result_value.append('\\n')\n                        elif escape_char == 't':\n                            result_value.append('\\t')\n                        else:\n                            raise ValueError(f\"line {current_line}: invalid escape sequence '\\\\{escape_char}'\")\n                        i += 2\n                    else:\n                        result_value.append(quoted_value[i])\n                        i += 1\n                value = ''.join(result_value)\n\n                # Check for trailing whitespace or comment after closing quote\n                remaining = value_part[-1:].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after closing quote\")\n\n                # Check for trailing whitespace or comment after the entire quoted value\n                if len(value_part) > len(quoted_value) + 2:\n                    remaining = value_part[-len(value_part) + len(quoted_value) + 2:].strip()\n                    if remaining and not remaining.startswith((';', '#')):\n                        raise ValueError(f\"line {current_line}: text after closing quote\")\n\n            result[current_section][key] = value\n\n    # Remove empty sections except for the default section if it has keys\n    if not result:\n        return {}\n    if \"\" in result and not result[\"\"]:\n        del result[\"\"]\n    return result\n\ndef parse_ini(text):\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    current_line = 0\n\n    for line in lines:\n        current_line += 1\n        stripped_line = line.strip()\n        if not stripped_line:\n            continue\n\n        if stripped_line.startswith((';', '#')):\n            continue\n\n        if stripped_line.startswith('[') and stripped_line.endswith(']'):\n            section_name = stripped_line[1:-1].strip()\n            if not section_name:\n                raise ValueError(f\"line {current_line}: empty section name\")\n            current_section = section_name\n            if current_section not in result:\n                result[current_section] = {}\n        else:\n            if '=' not in stripped_line:\n                raise ValueError(f\"line {current_line}: missing '=' in key-value pair\")\n\n            key_part, value_part = stripped_line.split('=', 1)\n            key = key_part.strip()\n            if not key:\n                raise ValueError(f\"line {current_line}: empty key\")\n\n            if current_section not in result:\n                result[current_section] = {}\n\n            # Process unquoted value\n            if not (value_part.startswith('\"') and value_part.endswith('\"')):\n                # Split value and comment\n                value_end = len(value_part)\n                for i, char in enumerate(value_part):\n                    if char in (';', '#') and (i == 0 or not value_part[i-1].isspace()):\n                        break\n                    if char in (';', '#') and value_part[i-1].isspace():\n                        value_end = i\n                        break\n                value = value_part[:value_end].strip()\n\n                # Check for trailing comment\n                remaining = value_part[value_end:].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after value\")\n\n            else:\n                # Process quoted value\n                if not value_part.startswith('\"') or not value_part.endswith('\"'):\n                    raise ValueError(f\"line {current_line}: unterminated quoted value\")\n\n                quoted_value = value_part[1:-1]\n                i = 0\n                result_value = []\n                while i < len(quoted_value):\n                    if quoted_value[i] == '\\\\':\n                        if i + 1 >= len(quoted_value):\n                            raise ValueError(f\"line {current_line}: unterminated escape sequence\")\n                        escape_char = quoted_value[i+1]\n                        if escape_char == '\"':\n                            result_value.append('\"')\n                        elif escape_char == '\\\\':\n                            result_value.append('\\\\')\n                        elif escape_char == 'n':\n                            result_value.append('\\n')\n                        elif escape_char == 't':\n                            result_value.append('\\t')\n                        else:\n                            raise ValueError(f\"line {current_line}: invalid escape sequence '\\\\{escape_char}'\")\n                        i += 2\n                    else:\n                        result_value.append(quoted_value[i])\n                        i += 1\n                value = ''.join(result_value)\n\n                # Check for trailing whitespace or comment after the entire quoted value\n                if len(value_part) > len(quoted_value) + 2:\n                    remaining = value_part[-len(value_part) + len(quoted_value) + 2:].strip()\n                    if remaining and not remaining.startswith((';', '#')):\n                        raise ValueError(f\"line {current_line}: text after closing quote\")\n\n            result[current_section][key] = value\n\n    # Remove empty sections except for the default section if it has keys\n    if not result:\n        return {}\n    if \"\" in result and not result[\"\"]:\n        del result[\"\"]\n    return result\n\ndef parse_ini(text):\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    current_line = 0\n\n    for line in lines:\n        current_line += 1\n        stripped_line = line.strip()\n        if not stripped_line:\n            continue\n\n        if stripped_line.startswith((';', '#')):\n            continue\n\n        if stripped_line.startswith('[') and stripped_line.endswith(']'):\n            section_name = stripped_line[1:-1].strip()\n            if not section_name:\n                raise ValueError(f\"line {current_line}: empty section name\")\n            current_section = section_name\n            if current_section not in result:\n                result[current_section] = {}\n        else:\n            if '=' not in stripped_line:\n                raise ValueError(f\"line {current_line}: missing '=' in key-value pair\")\n\n            key_part, value_part = stripped_line.split('=', 1)\n            key = key_part.strip()\n            if not key:\n                raise ValueError(f\"line {current_line}: empty key\")\n\n            if current_section not in result:\n                result[current_section] = {}\n\n            # Process unquoted value\n            if not value_part.startswith('\"'):\n                # Split value and comment\n                value_end = len(value_part)\n                for i, char in enumerate(value_part):\n                    if char in (';', '#') and (i == 0 or not value_part[i-1].isspace()):\n                        break\n                    if char in (';', '#') and value_part[i-1].isspace():\n                        value_end = i\n                        break\n                value = value_part[:value_end].strip()\n\n                # Check for trailing comment\n                remaining = value_part[value_end:].strip()\n                if remaining and not remaining.startswith((';', '#')):\n                    raise ValueError(f\"line {current_line}: text after value\")\n\n            else:\n                # Process quoted value\n                if not value_part.endswith('\"'):\n                    raise ValueError(f\"line {current_line}: unterminated quoted value\")\n\n                quoted_value = value_part[1:-1]\n                i = 0\n                result_value = []\n                while i < len(quoted_value):\n                    if quoted_value[i] == '\\\\':\n                        if i + 1 >= len(quoted_value):\n                            raise ValueError(f\"line {current_line}: unterminated escape sequence\")\n                        escape_char = quoted_value[i+1]\n                        if escape_char == '\"':\n                            result_value.append('\"')\n                        elif escape_char == '\\\\':\n                            result_value.append('\\\\')\n                        elif escape_char == 'n':\n                            result_value.append('\\n')\n                        elif escape_char == 't':\n                            result_value.append('\\t')\n                        else:\n                            raise ValueError(f\"line {current_line}: invalid escape sequence '\\\\{escape_char}'\")\n                        i += 2\n                    else:\n                        result_value.append(quoted_value[i])\n                        i += 1\n                value = ''.join(result_value)\n\n                # Check for trailing whitespace or comment after the entire quoted value\n                if len(value_part) > len(quoted_value) + 2:\n                    remaining = value_part[-len(value_part) + len(quoted_value) + 2:].strip()\n                    if remaining and not remaining.startswith((';', '#')):\n                        raise ValueError(f\"line {current_line}: text after closing quote\")\n\n            result[current_section][key] = value\n\n    # Remove empty sections except for the default section if it has keys\n    if not result:\n        return {}\n    if \"\" in result and not result[\"\"]:\n        del result[\"\"]\n    return result\n\ndef parse_ini(text):\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    current_line = 0\n\n    for line in lines:\n        current_line += 1\n        stripped_line = line.strip()\n        if not stripped_line:\n            continue\n\n        if stripped_line.startswith((';', '#')):\n            continue\n\n        if stripped_line.startswith('[') and stripped_line.endswith(']'):\n            section_name = stripped_line[1:-1].strip()\n            if not section_name:\n                raise ValueError(f\"line {current_line}: empty section name\")\n            current_section = section_name\n            if current_section not in result:\n                result[current_section] = {}\n        else:\n            if '=' not in stripped_line:\n                raise ValueError(f\"line {current_line}: missing '=' in key-value pair\")\n\n            key_part, value_part = stripped_line.split('=', 1)\n            key = key_part.strip()\n            if not key:\n                raise ValueError(f\"line {current_line}: empty key\")\n\n            if current_section not in result:\n                result[current_section] = {}\n\n            # Process unquoted value\n            if not value_part.startswith('\"'):\n                # Split value and comment\n                value_end = len(value_part)\n                for i, char in enumerate(value_part):\n                    if char in (';', '#') and (i == 0 or not value_part[i-1].isspace()):\n                        break\n                    if char in (';', '#') and value_part[i-1].isspace():\n                        value_end = i\n                        break\n                value = value_part[:value_end].strip()\n\n            else:\n                # Process quoted value\n                if not value_part.endswith('\"'):\n                    raise ValueError(f\"line {current_line}: unterminated quoted value\")\n\n                quoted_value = value_part[1:-1]\n                i = 0\n                result_value = []\n                while i < len(quoted_value):\n                    if quoted_value[i] == '\\\\':\n                        if i + 1 >= len(quoted_value):\n                            raise ValueError(f\"line {current_line}: unterminated escape sequence\")\n                        escape_char = quoted_value[i+1]\n                        if escape_char == '\"':\n                            result_value.append('\"')\n                        elif escape_char == '\\\\':\n                            result_value.append('\\\\')\n                        elif escape_char == 'n':\n                            result_value.append('\\n')\n                        elif escape_char == 't':\n                            result_value.append('\\t')\n                        else:\n                            raise ValueError(f\"line {current_line}: invalid escape sequence '\\\\{escape_char}'\")\n                        i += 2\n                    else:\n                        result_value.append(quoted_value[i])\n                        i += 1\n                value = ''.join(result_value)\n\n                # Check for trailing whitespace or comment after the entire quoted value\n                if len(value_part) > len(quoted_value) + 2:\n                    remaining = value_part[-len(value_part) + len(quoted_value) + 2:].strip()\n                    if remaining and not remaining.startswith((';', '#')):\n                        raise ValueError(f\"line {current_line}: text after closing quote\")\n\n            result[current_section][key] = value\n\n    # Remove empty sections except for the default section if it has keys\n    if not result:\n        return {}\n    if \"\" in result and not result[\"\"]:\n        del result[\"\"]\n    return result\n\ndef parse_ini(text):\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    current_line = 0\n\n    for line in lines:\n        current_line += 1\n        stripped_line = line.strip()\n        if not stripped_line:\n            continue\n\n        if stripped_line.startswith((';', '#')):\n            continue\n\n        if stripped_line.startswith('[') and stripped_line.endswith(']'):\n            section_name = stripped_line[1:-1].strip()\n            if not section_name:\n                raise ValueError(f\"line {current_line}: empty section name\")\n            current_section = section_name\n            if current_section not in result:\n                result[current_section] = {}\n        else:\n            if '=' not in stripped_line:\n                raise ValueError(f\"line {current_line}: missing '=' in key-value pair\")\n\n            key_part, value_part = stripped_line.split('=', 1)\n            key = key_part.strip()\n            if not key:\n                raise ValueError(f\"line {current_line}: empty key\")\n\n            if current_section not in result:\n                result[current_section] = {}\n\n            # Process unquoted value\n            if not value_part.startswith('\"'):\n                # Split value and comment\n                value_end = len(value_part)\n                for i, char in enumerate(value_part):\n                    if char in (';', '#') and (i == 0 or not value_part[i-1].isspace()):\n                        break\n                    if char in (';', '#') and value_part[i-1].isspace():\n                        value_end = i\n                        break\n                value = value_part[:value_end].strip()\n\n            else:\n                # Process quoted value\n                if not value_part.endswith('\"'):\n                    raise ValueError(f\"line {current_line}: unterminated quoted value\")\n\n                quoted_value = value_part[1:-1]\n                i = 0\n                result_value = []\n                while i < len(quoted_value):\n                    if quoted_value[i] == '\\\\':\n                        if i + 1 >= len(quoted_value):\n                            raise ValueError(f\"line {current_line}: unterminated escape sequence\")\n                        escape_char = quoted_value[i+1]\n                        if escape_char == '\"':\n                            result_value.append('\"')\n                        elif escape_char == '\\\\':\n                            result_value.append('\\\\')\n                        elif escape_char == 'n':\n                            result_value.append('\\n')\n                        elif escape_char == 't':\n                            result_value.append('\\t')\n                        else:\n                            raise ValueError(f\"line {current_line}: invalid escape sequence '\\\\{escape_char}'\")\n                        i += 2\n                    else:\n                        result_value.append(quoted_value[i])\n                        i += 1\n                value = ''.join(result_value)\n\n            result[current_section][key] = value\n\n    # Remove empty sections except for the default section if it has keys\n    if not result:\n        return {}\n    if \"\" in result and not result[\"\"]:\n        del result[\"\"]\n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 45.54,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 5,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 15 items\n\n../tests/test_task.py::test_basic_sections PASSED                        [  6%]\n../tests/test_task.py::test_global_keys_go_to_empty_section_only_if_present PASSED [ 13%]\n../tests/test_task.py::test_repeated_section_merges_and_later_key_wins PASSED [ 20%]\n../tests/test_task.py::test_first_equals_splits PASSED                   [ 26%]\n../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars FAILED [ 33%]\n../tests/test_task.py::test_comment_after_quoted_value_allowed FAILED    [ 40%]\n../tests/test_task.py::test_section_name_trimmed PASSED                  [ 46%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx=1\\nnovalue\\n-3] PASSED [ 53%]\n../tests/test_task.py::test_errors_name_the_line[[a\\nx=1\\n-1] PASSED     [ 60%]\n../tests/test_task.py::test_errors_name_the_line[[]\\n-1] PASSED          [ 66%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\n= 5\\n-2] PASSED    [ 73%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"open\\n-2] FAILED [ 80%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2] FAILED [ 86%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2] FAILED [ 93%]\n../tests/test_task.py::test_errors_name_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5] PASSED [100%]\n\n=================================== FAILURES ===================================\n_______________ test_quoted_values_keep_spaces_and_comment_chars _______________\n/tests/test_task.py:21: in test_quoted_values_keep_spaces_and_comment_chars\n    assert parse_ini(text) == {'a': {'x': '  padded ; not a comment  ', 'y': '# also kept'}}\nE   assert {'a': {'x': '... also kept\"'}} == {'a': {'x': '...# also kept'}}\nE     \nE     Differing items:\nE     {'a': {'x': '\"  padded', 'y': '\"# also kept\"'}} != {'a': {'x': '  padded ; not a comment  ', 'y': '# also kept'}}\nE     \nE     Full diff:\nE       {\nE           'a': {...\nE     \nE     ...Full output truncated (7 lines hidden), use '-vv' to show\n___________________ test_comment_after_quoted_value_allowed ____________________\n/tests/test_task.py:24: in test_comment_after_quoted_value_allowed\n    assert parse_ini('[a]\\nx = \"v\"   ; note\\n') == {'a': {'x': 'v'}}\nE   assert {'a': {'x': '\"v\"'}} == {'a': {'x': 'v'}}\nE     \nE     Differing items:\nE     {'a': {'x': '\"v\"'}} != {'a': {'x': 'v'}}\nE     \nE     Full diff:\nE       {\nE           'a': {...\nE     \nE     ...Full output truncated (5 lines hidden), use '-vv' to show\n________________ test_errors_name_the_line[[a]\\nx = \"open\\n-2] _________________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n___________ test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2] ___________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n___________ test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2] ____________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars\nFAILED ../tests/test_task.py::test_comment_after_quoted_value_allowed - asser...\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"open\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2]\n========================= 5 failed, 10 passed in 0.02s =========================\n",
+      "tail": "test_errors_name_the_line[[a]\\nx = \"open\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2]\n========================= 5 failed, 10 passed in 0.02s =========================\n"
+     }
+    }
+   ],
+   "accepted": false,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 11,
+     "failed": 3
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 6,
+     "failed": 1
+    }
+   },
+   "done": true
+  },
+  "cx_shortest_path": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import heapq\nfrom collections import defaultdict\n\ndef shortest_path(graph, src, dst):\n    # Check if src or dst is not in the graph\n    if src not in graph and src not in {neighbor for neighbors in graph.values() for neighbor in neighbors}:\n        raise ValueError(f\"Source node {src} not found in the graph\")\n    if dst not in graph and dst not in {neighbor for neighbors in graph.values() for neighbor in neighbors}:\n        raise ValueError(f\"Destination node {dst} not found in the graph\")\n\n    # Check for zero or negative weights\n    for neighbors in graph.values():\n        for neighbor, weight in neighbors.items():\n            if weight <= 0:\n                raise ValueError(\"Weight must be greater than zero\")\n\n    # Handle case where src == dst\n    if src == dst:\n        return (0, [src])\n\n    # Build adjacency list and reverse adjacency list for path reconstruction\n    adj = defaultdict(dict)\n    for node in graph:\n        for neighbor, weight in graph[node].items():\n            adj[node][neighbor] = weight\n\n    # Priority queue: (distance, current_node)\n    heap = []\n    heapq.heappush(heap, (0, src))\n\n    # Track visited nodes and their distances\n    visited = {}\n    predecessors = {}\n\n    while heap:\n        current_dist, current_node = heapq.heappop(heap)\n\n        if current_node == dst:\n            # Reconstruct the path\n            path = []\n            while current_node in predecessors:\n                path.append(current_node)\n                current_node = predecessors[current_node]\n            path.append(src)\n            path.reverse()\n            return (current_dist, path)\n\n        if current_node in visited:\n            continue\n        visited[current_node] = current_dist\n\n        for neighbor, weight in adj.get(current_node, {}).items():\n            if neighbor not in visited:\n                new_dist = current_dist + weight\n                heapq.heappush(heap, (new_dist, neighbor))\n                if neighbor not in predecessors or new_dist < visited.get(neighbor, float('inf')):\n                    predecessors[neighbor] = current_node\n\n    # If dst is not reachable\n    return None\n",
+     "failure": null,
+     "detail": "",
+     "latency": 7.55,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 5,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 7 items\n\n../tests/test_task.py::test_classic FAILED                               [ 14%]\n../tests/test_task.py::test_unreachable PASSED                           [ 28%]\n../tests/test_task.py::test_node_only_as_neighbour PASSED                [ 42%]\n../tests/test_task.py::test_tie_decided_late_in_the_path FAILED          [ 57%]\n../tests/test_task.py::test_prefers_cheaper_over_fewer_hops PASSED       [ 71%]\n../tests/test_task.py::test_cycles_do_not_hang PASSED                    [ 85%]\n../tests/test_task.py::test_bad_weights_even_when_unused PASSED          [100%]\n\n=================================== FAILURES ===================================\n_________________________________ test_classic _________________________________\n/tests/test_task.py:6: in test_classic\n    assert shortest_path(G, 'a', 'e') == (20, ['a', 'c', 'f', 'e'])\nE   AssertionError: assert (20, ['a', 'b...c', 'd', 'e']) == (20, ['a', 'c', 'f', 'e'])\nE     \nE     At index 1 diff: ['a', 'b', 'c', 'd', 'e'] != ['a', 'c', 'f', 'e']\nE     \nE     Full diff:\nE       (\nE           20,\nE           [...\nE     \nE     ...Full output truncated (10 lines hidden), use '-vv' to show\n______________________ test_tie_decided_late_in_the_path _______________________\n/tests/test_task.py:19: in test_tie_decided_late_in_the_path\n    assert shortest_path(g, 's', 't') == (3, ['s', 'm', 'x', 't'])\nE   AssertionError: assert (3, ['s', 'm', 'y', 't']) == (3, ['s', 'm', 'x', 't'])\nE     \nE     At index 1 diff: ['s', 'm', 'y', 't'] != ['s', 'm', 'x', 't']\nE     \nE     Full diff:\nE       (\nE           3,\nE           [...\nE     \nE     ...Full output truncated (9 lines hidden), use '-vv' to show\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_classic - AssertionError: assert (20, ['a'...\nFAILED ../tests/test_task.py::test_tie_decided_late_in_the_path - AssertionEr...\n========================= 2 failed, 5 passed in 0.02s ==========================\n",
+      "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_classic - AssertionError: assert (20, ['a'...\nFAILED ../tests/test_task.py::test_tie_decided_late_in_the_path - AssertionEr...\n========================= 2 failed, 5 passed in 0.02s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import heapq\nfrom collections import defaultdict\n\ndef shortest_path(graph, src, dst):\n    # Check if src or dst is not in the graph\n    nodes = set(graph.keys()).union({neighbor for neighbors in graph.values() for neighbor in neighbors})\n    if src not in nodes:\n        raise ValueError(f\"Source node {src} not found in the graph\")\n    if dst not in nodes:\n        raise ValueError(f\"Destination node {dst} not found in the graph\")\n\n    # Check for zero or negative weights\n    for neighbors in graph.values():\n        for weight in neighbors.values():\n            if weight <= 0:\n                raise ValueError(\"Weight must be greater than zero\")\n\n    # Handle case where src == dst\n    if src == dst:\n        return (0, [src])\n\n    # Build adjacency list\n    adj = defaultdict(dict)\n    for node in graph:\n        for neighbor, weight in graph[node].items():\n            adj[node][neighbor] = weight\n\n    # Priority queue: (distance, current_node, path)\n    heap = []\n    heapq.heappush(heap, (0, src, [src]))\n\n    # Track visited nodes and their shortest distances\n    visited = {}\n\n    while heap:\n        current_dist, current_node, path = heapq.heappop(heap)\n\n        if current_node == dst:\n            return (current_dist, path)\n\n        if current_node in visited and visited[current_node] <= current_dist:\n            continue\n        visited[current_node] = current_dist\n\n        for neighbor, weight in adj.get(current_node, {}).items():\n            new_dist = current_dist + weight\n            new_path = path + [neighbor]\n            heapq.heappush(heap, (new_dist, neighbor, new_path))\n\n    # If dst is not reachable\n    return None\n",
+     "failure": null,
+     "detail": "",
+     "latency": 26.15,
+     "vis": {
+      "kind": "ok",
+      "passed": 7,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 7 items\n\n../tests/test_task.py::test_classic PASSED                               [ 14%]\n../tests/test_task.py::test_unreachable PASSED                           [ 28%]\n../tests/test_task.py::test_node_only_as_neighbour PASSED                [ 42%]\n../tests/test_task.py::test_tie_decided_late_in_the_path PASSED          [ 57%]\n../tests/test_task.py::test_prefers_cheaper_over_fewer_hops PASSED       [ 71%]\n../tests/test_task.py::test_cycles_do_not_hang PASSED                    [ 85%]\n../tests/test_task.py::test_bad_weights_even_when_unused PASSED          [100%]\n\n============================== 7 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 14,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 7,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "cx_schedule_algos": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import heapq\n\ndef max_profit(jobs):\n    if not jobs:\n        return 0\n\n    # Sort jobs by end time\n    jobs_sorted = sorted(jobs, key=lambda x: x[1])\n\n    # Initialize variables\n    total_profit = 0\n    last_end = -1\n    selected_jobs = []\n\n    for start, end, profit in jobs_sorted:\n        if start >= last_end:\n            selected_jobs.append((start, end, profit))\n            total_profit += profit\n            last_end = end\n\n    return total_profit\n\ndef min_rooms(meetings):\n    if not meetings:\n        return 0\n\n    # Sort meetings by start time\n    meetings_sorted = sorted(meetings, key=lambda x: x[0])\n\n    # Use a min-heap to track end times of meetings in rooms\n    heap = []\n    heapq.heappush(heap, meetings_sorted[0][1])\n\n    for start, end in meetings_sorted[1:]:\n        # If the earliest ending meeting is over, reuse that room\n        if start >= heap[0]:\n            heapq.heappop(heap)\n        # Push the current meeting's end time into the heap\n        heapq.heappush(heap, end)\n\n    return len(heap)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.56,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 3,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_profit_basic FAILED                          [ 16%]\n../tests/test_task.py::test_profit_prefers_one_big_job FAILED            [ 33%]\n../tests/test_task.py::test_profit_unsorted_input_and_not_modified FAILED [ 50%]\n../tests/test_task.py::test_rooms_basic PASSED                           [ 66%]\n../tests/test_task.py::test_rooms_all_overlap PASSED                     [ 83%]\n../tests/test_task.py::test_rooms_many_small_between_a_long_one PASSED   [100%]\n\n=================================== FAILURES ===================================\n______________________________ test_profit_basic _______________________________\n/tests/test_task.py:4: in test_profit_basic\n    assert max_profit([(1, 3, 5), (2, 5, 6), (4, 6, 5), (6, 7, 4), (5, 8, 11), (7, 9, 2)]) == 17\nE   assert 16 == 17\nE    +  where 16 = max_profit([(1, 3, 5), (2, 5, 6), (4, 6, 5), (6, 7, 4), (5, 8, 11), (7, 9, 2)])\n_______________________ test_profit_prefers_one_big_job ________________________\n/tests/test_task.py:7: in test_profit_prefers_one_big_job\n    assert max_profit([(0, 10, 100), (0, 5, 30), (5, 10, 30)]) == 100\nE   assert 60 == 100\nE    +  where 60 = max_profit([(0, 10, 100), (0, 5, 30), (5, 10, 30)])\n_________________ test_profit_unsorted_input_and_not_modified __________________\n/tests/test_task.py:12: in test_profit_unsorted_input_and_not_modified\n    assert max_profit(jobs) == 16\nE   assert 9 == 16\nE    +  where 9 = max_profit([(6, 7, 4), (1, 3, 5), (5, 8, 11)])\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_profit_basic - assert 16 == 17\nFAILED ../tests/test_task.py::test_profit_prefers_one_big_job - assert 60 == 100\nFAILED ../tests/test_task.py::test_profit_unsorted_input_and_not_modified - a...\n========================= 3 failed, 3 passed in 0.01s ==========================\n",
+      "tail": "/tests/test_task.py::test_profit_basic - assert 16 == 17\nFAILED ../tests/test_task.py::test_profit_prefers_one_big_job - assert 60 == 100\nFAILED ../tests/test_task.py::test_profit_unsorted_input_and_not_modified - a...\n========================= 3 failed, 3 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "import heapq\n\ndef max_profit(jobs):\n    if not jobs:\n        return 0\n\n    # Sort jobs by end time\n    jobs_sorted = sorted(jobs, key=lambda x: x[1])\n\n    # Initialize variables\n    total_profit = 0\n    last_end = -1\n    selected_jobs = []\n\n    # Create a list of jobs sorted by end time\n    for start, end, profit in jobs_sorted:\n        if start >= last_end:\n            # If current job starts after the last selected job ends, select it\n            if profit > 0:\n                total_profit += profit\n                last_end = end\n        else:\n            # Otherwise, check if replacing the last selected job with current job gives higher profit\n            # We need to find the job with the smallest profit among the selected jobs that ends before current job starts\n            # This requires a more sophisticated approach\n            pass\n\n    # Re-implementing the correct greedy algorithm with dynamic programming approach\n    jobs_sorted = sorted(jobs, key=lambda x: x[1])\n    n = len(jobs_sorted)\n    dp = [0] * n\n    dp[0] = jobs_sorted[0][2]\n\n    for i in range(1, n):\n        current_profit = jobs_sorted[i][2]\n        j = i - 1\n        while j >= 0 and jobs_sorted[j][1] > jobs_sorted[i][0]:\n            j -= 1\n        if j >= 0:\n            current_profit += dp[j]\n        dp[i] = max(current_profit, dp[i - 1])\n\n    return dp[-1]\n\ndef min_rooms(meetings):\n    if not meetings:\n        return 0\n\n    meetings_sorted = sorted(meetings, key=lambda x: x[0])\n    heap = []\n    heapq.heappush(heap, meetings_sorted[0][1])\n\n    for start, end in meetings_sorted[1:]:\n        if start >= heap[0]:\n            heapq.heappop(heap)\n        heapq.heappush(heap, end)\n\n    return len(heap)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 9.68,
+     "vis": {
+      "kind": "ok",
+      "passed": 6,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_profit_basic PASSED                          [ 16%]\n../tests/test_task.py::test_profit_prefers_one_big_job PASSED            [ 33%]\n../tests/test_task.py::test_profit_unsorted_input_and_not_modified PASSED [ 50%]\n../tests/test_task.py::test_rooms_basic PASSED                           [ 66%]\n../tests/test_task.py::test_rooms_all_overlap PASSED                     [ 83%]\n../tests/test_task.py::test_rooms_many_small_between_a_long_one PASSED   [100%]\n\n============================== 6 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 11,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 5,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "cx_inventory_fix": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "class OutOfStock(Exception):\n    pass\n\nclass Inventory:\n    def __init__(self, stock=None):\n        self._stock = stock.copy() if stock is not None else {}\n\n    def stock(self, item):\n        return self._stock.get(item, 0)\n\n    def add(self, item, qty):\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        self._stock[item] = self.stock(item) + qty\n\n    def remove(self, item, qty):\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        if self.stock(item) < qty:\n            raise OutOfStock(f\"Not enough stock for {item}\")\n        self._stock[item] = self.stock(item) - qty\n\ndef fulfil(inventory, order):\n    if not isinstance(order, dict):\n        raise ValueError(\"Order must be a dictionary\")\n\n    # Check all quantities are positive before modifying inventory\n    for qty in order.values():\n        if qty <= 0:\n            raise ValueError(\"Order quantities must be positive\")\n\n    temp_stock = inventory._stock.copy()\n    total = 0\n    try:\n        for item, qty in order.items():\n            if temp_stock[item] < qty:\n                raise OutOfStock(f\"Not enough stock for {item}\")\n            temp_stock[item] -= qty\n            total += qty\n        # Only update inventory if all items are available\n        inventory._stock = temp_stock\n    except OutOfStock:\n        # Revert inventory if any item is out of stock\n        inventory._stock = temp_stock.copy()\n        raise\n    return total\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.17,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 5,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_stock_of_unknown_item_is_zero PASSED         [ 16%]\n../tests/test_task.py::test_remove_too_much_raises_and_changes_nothing PASSED [ 33%]\n../tests/test_task.py::test_constructor_dict_is_copied PASSED            [ 50%]\n../tests/test_task.py::test_fulfil_success_returns_total PASSED          [ 66%]\n../tests/test_task.py::test_fulfil_failure_when_the_failing_line_is_first FAILED [ 83%]\n../tests/test_task.py::test_fulfil_empty_order PASSED                    [100%]\n\n=================================== FAILURES ===================================\n______________ test_fulfil_failure_when_the_failing_line_is_first ______________\n/tests/test_task.py:27: in test_fulfil_failure_when_the_failing_line_is_first\n    fulfil(inv, {'pear': 1, 'apple': 1})\nsolution.py:36: in fulfil\n    if temp_stock[item] < qty:\nE   KeyError: 'pear'\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_fulfil_failure_when_the_failing_line_is_first\n========================= 1 failed, 5 passed in 0.01s ==========================\n",
+      "tail": "lfil\n    if temp_stock[item] < qty:\nE   KeyError: 'pear'\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_fulfil_failure_when_the_failing_line_is_first\n========================= 1 failed, 5 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": "class OutOfStock(Exception):\n    pass\n\nclass Inventory:\n    def __init__(self, stock=None):\n        self._stock = stock.copy() if stock is not None else {}\n\n    def stock(self, item):\n        return self._stock.get(item, 0)\n\n    def add(self, item, qty):\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        self._stock[item] = self.stock(item) + qty\n\n    def remove(self, item, qty):\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        if self.stock(item) < qty:\n            raise OutOfStock(f\"Not enough stock for {item}\")\n        self._stock[item] = self.stock(item) - qty\n\ndef fulfil(inventory, order):\n    if not isinstance(order, dict):\n        raise ValueError(\"Order must be a dictionary\")\n\n    # Check all quantities are positive before modifying inventory\n    for qty in order.values():\n        if qty <= 0:\n            raise ValueError(\"Order quantities must be positive\")\n\n    temp_stock = inventory._stock.copy()\n    total = 0\n    try:\n        for item, qty in order.items():\n            current_stock = temp_stock.get(item, 0)\n            if current_stock < qty:\n                raise OutOfStock(f\"Not enough stock for {item}\")\n            temp_stock[item] = current_stock - qty\n            total += qty\n        # Only update inventory if all items are available\n        inventory._stock = temp_stock\n    except OutOfStock:\n        # Revert inventory if any item is out of stock\n        inventory._stock = temp_stock.copy()\n        raise\n    return total\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.93,
+     "vis": {
+      "kind": "ok",
+      "passed": 6,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_stock_of_unknown_item_is_zero PASSED         [ 16%]\n../tests/test_task.py::test_remove_too_much_raises_and_changes_nothing PASSED [ 33%]\n../tests/test_task.py::test_constructor_dict_is_copied PASSED            [ 50%]\n../tests/test_task.py::test_fulfil_success_returns_total PASSED          [ 66%]\n../tests/test_task.py::test_fulfil_failure_when_the_failing_line_is_first PASSED [ 83%]\n../tests/test_task.py::test_fulfil_empty_order PASSED                    [100%]\n\n============================== 6 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 11,
+     "failed": 1
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 5,
+     "failed": 1
+    }
+   },
+   "done": true
+  },
+  "cx_template": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": null,
+     "failure": "truncated",
+     "detail": "token budget ran out or fence never closed",
+     "latency": 81.32
+    },
+    {
+     "n": 2,
+     "code": "import re\nfrom collections import defaultdict\n\ndef render(template, context):\n    stack = []\n    output = []\n    i = 0\n    n = len(template)\n\n    def add(text):\n        nonlocal i\n        output.append(text)\n        i += len(text)\n\n    def parse_path(path):\n        parts = re.split(r'\\.|\\[|\\]', path)\n        current = context\n        for part in parts:\n            if not part:\n                continue\n            if isinstance(current, dict) and part in current:\n                current = current[part]\n            elif isinstance(current, list) and part.isdigit():\n                idx = int(part)\n                if 0 <= idx < len(current):\n                    current = current[idx]\n                else:\n                    return None\n            else:\n                return None\n        return current\n\n    def apply_filter(value, filter_name):\n        if value is None:\n            value = \"\"\n        if filter_name == \"upper\":\n            return str(value).upper()\n        elif filter_name == \"lower\":\n            return str(value).lower()\n        elif filter_name == \"title\":\n            return str(value).title()\n        elif filter_name == \"length\":\n            return str(len(value))\n        else:\n            raise ValueError(f\"Unknown filter: {filter_name}\")\n\n    def parse_tag():\n        nonlocal i\n        tag_start = i\n        while i < n and template[i] != '}':\n            i += 1\n        tag_content = template[tag_start + 2:i]\n        tag_content = tag_content.strip()\n        if not tag_content:\n            return None, None\n\n        if tag_content.startswith('if '):\n            condition = tag_content[3:].strip()\n            is_not = condition.startswith('not ')\n            if is_not:\n                condition = condition[4:].strip()\n            path = condition.split()[0]\n            return 'if', (is_not, path)\n        elif tag_content.startswith('else'):\n            return 'else', None\n        elif tag_content.startswith('endif'):\n            return 'endif', None\n        elif tag_content.startswith('for '):\n            parts = tag_content[4:].strip().split(' in ')\n            if len(parts) != 2:\n                raise ValueError(\"Invalid for tag\")\n            name, path = parts\n            return 'for', (name, path)\n        elif tag_content.startswith('endfor'):\n            return 'endfor', None\n        else:\n            if '|' in tag_content:\n                path, filter_name = tag_content.split('|', 1)\n                path = path.strip()\n                filter_name = filter_name.strip()\n                return 'filter', (path, filter_name)\n            else:\n                return 'value', tag_content\n\n    while i < n:\n        if template[i] == '{' and i + 1 < n and template[i+1] == '{':\n            i += 2\n            tag_type, tag_data = parse_tag()\n            if tag_type is None:\n                add('{{')\n                continue\n            if i >= n or template[i] != '}':\n                raise ValueError(\"Unclosed tag\")\n\n            if tag_type == 'value':\n                path = tag_data\n                value = parse_path(path)\n                if value is None:\n                    add(\"\")\n                else:\n                    add(str(value))\n            elif tag_type == 'filter':\n                path, filter_name = tag_data\n                value = parse_path(path)\n                try:\n                    filtered_value = apply_filter(value, filter_name)\n                    add(filtered_value)\n                except ValueError:\n                    raise\n            elif tag_type == 'if':\n                is_not, path = tag_data\n                value = parse_path(path)\n                if (not is_not and value) or (is_not and not value):\n                    stack.append(tag_type)\n                else:\n                    if stack and stack[-1] == 'if':\n                        stack.pop()\n                    else:\n                        raise ValueError(\"Unmatched if tag\")\n            elif tag_type == 'else':\n                if stack and stack[-1] == 'if':\n                    stack.pop()\n                    stack.append('else')\n                else:\n                    raise ValueError(\"Unmatched else tag\")\n            elif tag_type == 'endif':\n                if stack and stack[-1] == 'if':\n                    stack.pop()\n                elif stack and stack[-1] == 'else':\n                    stack.pop()\n                else:\n                    raise ValueError(\"Unmatched endif tag\")\n            elif tag_type == 'for':\n                name, path = tag_data\n                value = parse_path(path)\n                if value is None or not isinstance(value, list):\n                    i += 1\n                    continue\n                stack.append(('for', name, path))\n                for item in value:\n                    context[name] = item\n                    add(render(template[i+1:], context))\n                    i += 1\n                    break\n            elif tag_type == 'endfor':\n                if stack and stack[-1][0] == 'for':\n                    stack.pop()\n                else:\n                    raise ValueError(\"Unmatched endfor tag\")\n            i += 1\n        else:\n            add(template[i])\n            i += 1\n\n    if stack:\n        raise ValueError(\"Unclosed tag\")\n\n    return ''.join(output)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 22.01,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 1,
+      "failed": 7,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 8 items\n\n../tests/test_task.py::test_plain_text_exact FAILED                      [ 12%]\n../tests/test_task.py::test_dotted_lookup_dict_and_list FAILED           [ 25%]\n../tests/test_task.py::test_numbers_and_falsy_values_render FAILED       [ 37%]\n../tests/test_task.py::test_unknown_filter PASSED                        [ 50%]\n../tests/test_task.py::test_if_not FAILED                                [ 62%]\n../tests/test_task.py::test_for_sees_outer_context_and_restores_it FAILED [ 75%]\n../tests/test_task.py::test_nested_loops FAILED                          [ 87%]\n../tests/test_task.py::test_unclosed_braces_are_text FAILED              [100%]\n\n=================================== FAILURES ===================================\n____________________________ test_plain_text_exact _____________________________\n/tests/test_task.py:5: in test_plain_text_exact\n    assert render('  hello\\n world  ', {}) == '  hello\\n world  '\nE   AssertionError: assert ' hlo ol ' == '  hello\\n world  '\nE     \nE     +  hlo ol \nE     -   hello\nE     -  world\n_______________________ test_dotted_lookup_dict_and_list _______________________\n/tests/test_task.py:9: in test_dotted_lookup_dict_and_list\n    assert render('{{ user.name }} {{ user.tags.1 }}', ctx) == 'Bo y'\nE   AssertionError: assert '}}' == 'Bo y'\nE     \nE     - Bo y\nE     + }}\n_____________________ test_numbers_and_falsy_values_render _____________________\n/tests/test_task.py:12: in test_numbers_and_falsy_values_render\n    assert render('{{ n }}/{{ z }}/{{ f }}', {'n': 3, 'z': 0, 'f': False}) == '3/0/False'\nE   AssertionError: assert '{{/{z}/{f}' == '3/0/False'\nE     \nE     - 3/0/False\nE     + {{/{z}/{f}\n_________________________________ test_if_not __________________________________\n/tests/test_task.py:20: in test_if_not\n    assert render(t, {'items': []}) == 'empty'\nE   AssertionError: assert '{ fnties%epy%edf%' == 'empty'\nE     \nE     - empty\nE     + { fnties%epy%edf%\n_________________ test_for_sees_outer_context_and_restores_it __________________\n/tests/test_task.py:25: in test_for_sees_outer_context_and_restores_it\n    assert render('{% for x in xs %}{{ x }}{{ sep }}{% endfor %}{{ x }}', ctx) == 'a-b-outer'\nE   AssertionError: assert '{ o  nx }{x}}%edo }{x}' == 'a-b-outer'\nE     \nE     - a-b-outer\nE     + { o  nx }{x}}%edo }{x}\n______________________________ test_nested_loops _______________________________\n/tests/test_task.py:30: in test_nested_loops\n    assert render(t, {'rows': [[1, 2], [3]]}) == '[12][3]'\nE   AssertionError: assert '{ o  nrw }{ ...{ nfr%]%edo }' == '[12][3]'\nE     \nE     - [12][3]\nE     + { o  nrw }{ o  nr%{{{ nfr%]%edo }\n________________________ test_unclosed_braces_are_text _________________________\n/tests/test_task.py:33: in test_unclosed_braces_are_text\n    assert render('a {{ b', {'b': 1}) == 'a {{ b'\nE   AssertionError: assert 'a{{' == 'a {{ b'\nE     \nE     - a {{ b\nE     + a{{\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_plain_text_exact - AssertionError: assert ...\nFAILED ../tests/test_task.py::test_dotted_lookup_dict_and_list - AssertionErr...\nFAILED ../tests/test_task.py::test_numbers_and_falsy_values_render - Assertio...\nFAILED ../tests/test_task.py::test_if_not - AssertionError: assert '{ fnties%...\nFAILED ../tests/test_task.py::test_for_sees_outer_context_and_restores_it - A...\nFAILED ../tests/test_task.py::test_nested_loops - AssertionError: assert '{ o...\nFAILED ../tests/test_task.py::test_unclosed_braces_are_text - AssertionError:...\n========================= 7 failed, 1 passed in 0.02s ==========================\n",
+      "tail": "k.py::test_for_sees_outer_context_and_restores_it - A...\nFAILED ../tests/test_task.py::test_nested_loops - AssertionError: assert '{ o...\nFAILED ../tests/test_task.py::test_unclosed_braces_are_text - AssertionError:...\n========================= 7 failed, 1 passed in 0.02s ==========================\n"
+     }
+    },
+    {
+     "n": 3,
+     "code": "import re\nfrom collections import defaultdict\n\ndef render(template, context):\n    output = []\n    i = 0\n    n = len(template)\n\n    def add(text):\n        nonlocal i\n        output.append(text)\n        i += len(text)\n\n    def parse_path(path):\n        parts = re.split(r'\\.|\\[|\\]', path)\n        current = context\n        for part in parts:\n            if not part:\n                continue\n            if isinstance(current, dict) and part in current:\n                current = current[part]\n            elif isinstance(current, list) and part.isdigit():\n                idx = int(part)\n                if 0 <= idx < len(current):\n                    current = current[idx]\n                else:\n                    return None\n            else:\n                return None\n        return current\n\n    def apply_filter(value, filter_name):\n        if value is None:\n            value = \"\"\n        if filter_name == \"upper\":\n            return str(value).upper()\n        elif filter_name == \"lower\":\n            return str(value).lower()\n        elif filter_name == \"title\":\n            return str(value).title()\n        elif filter_name == \"length\":\n            return str(len(value))\n        else:\n            raise ValueError(f\"Unknown filter: {filter_name}\")\n\n    def parse_tag():\n        nonlocal i\n        tag_start = i\n        while i < n and template[i] != '}':\n            i += 1\n        tag_content = template[tag_start + 2:i]\n        tag_content = tag_content.strip()\n\n        if not tag_content:\n            return None, None\n\n        if tag_content.startswith('if '):\n            condition = tag_content[3:].strip()\n            is_not = condition.startswith('not ')\n            if is_not:\n                condition = condition[4:].strip()\n            path = condition.split()[0]\n            return 'if', (is_not, path)\n        elif tag_content.startswith('else'):\n            return 'else', None\n        elif tag_content.startswith('endif'):\n            return 'endif', None\n        elif tag_content.startswith('for '):\n            parts = tag_content[4:].strip().split(' in ')\n            if len(parts) != 2:\n                raise ValueError(\"Invalid for tag\")\n            name, path = parts\n            return 'for', (name, path)\n        elif tag_content.startswith('endfor'):\n            return 'endfor', None\n        else:\n            if '|' in tag_content:\n                path, filter_name = tag_content.split('|', 1)\n                path = path.strip()\n                filter_name = filter_name.strip()\n                return 'filter', (path, filter_name)\n            else:\n                return 'value', tag_content\n\n    while i < n:\n        if template[i] == '{' and i + 1 < n and template[i+1] == '{':\n            i += 2\n            tag_type, tag_data = parse_tag()\n            if tag_type is None:\n                add('{{')\n                continue\n            if i >= n or template[i] != '}':\n                raise ValueError(\"Unclosed tag\")\n\n            if tag_type == 'value':\n                path = tag_data\n                value = parse_path(path)\n                if value is None:\n                    add(\"\")\n                else:\n                    add(str(value))\n            elif tag_type == 'filter':\n                path, filter_name = tag_data\n                value = parse_path(path)\n                try:\n                    filtered_value = apply_filter(value, filter_name)\n                    add(filtered_value)\n                except ValueError:\n                    raise\n            elif tag_type == 'if':\n                is_not, path = tag_data\n                value = parse_path(path)\n                if (not is_not and value) or (is_not and not value):\n                    # Find the matching endif\n                    depth = 1\n                    j = i + 1\n                    while j < n and depth > 0:\n                        if template[j] == '{' and j + 1 < n and template[j+1] == '%':\n                            j += 2\n                            if template[j:j+6] == 'endif':\n                                depth -= 1\n                                j += 6\n                            elif template[j:j+4] == 'else':\n                                depth += 1\n                                j += 4\n                            else:\n                                j += 1\n                        else:\n                            j += 1\n                    if depth != 0:\n                        raise ValueError(\"Unmatched if tag\")\n                    # Render the content between if and endif\n                    content = template[i+1:j]\n                    add(render(content, context))\n                    i = j\n                else:\n                    # Check for else\n                    if template[i+1:].startswith('{% else %}'):\n                        j = i + 8\n                        # Find the matching endif\n                        depth = 1\n                        while j < n and depth > 0:\n                            if template[j] == '{' and j + 1 < n and template[j+1] == '%':\n                                j += 2\n                                if template[j:j+6] == 'endif':\n                                    depth -= 1\n                                    j += 6\n                                elif template[j:j+4] == 'else':\n                                    depth += 1\n                                    j += 4\n                                else:\n                                    j += 1\n                            else:\n                                j += 1\n                        if depth != 0:\n                            raise ValueError(\"Unmatched else tag\")\n                        content = template[i+8:j]\n                        add(render(content, context))\n                        i = j\n                    else:\n                        i += 1\n            elif template[i+1:].startswith('{% else %}'):\n                i += 8\n                # Find the matching endif\n                depth = 1\n                j = i\n                while j < n and depth > 0:\n                    if template[j] == '{' and j + 1 < n and template[j+1] == '%':\n                        j += 2\n                        if template[j:j+6] == 'endif':\n                            depth -= 1\n                            j += 6\n                        elif template[j:j+4] == 'else':\n                            depth += 1\n                            j += 4\n                        else:\n                            j += 1\n                    else:\n                        j += 1\n                if depth != 0:\n                    raise ValueError(\"Unmatched else tag\")\n                content = template[i:j]\n                add(render(content, context))\n                i = j\n            elif tag_type == 'for':\n                name, path = tag_data\n                value = parse_path(path)\n                if value is None or not isinstance(value, list):\n                    i += 1\n                    continue\n                # Find the matching endfor\n                depth = 1\n                j = i + 1\n                while j < n and depth > 0:\n                    if template[j] == '{' and j + 1 < n and template[j+1] == '%':\n                        j += 2\n                        if template[j:j+6] == 'endfor':\n                            depth -= 1\n                            j += 6\n                        elif template[j:j+4] == 'for ':\n                            depth += 1\n                            j += 4\n                        else:\n                            j += 1\n                    else:\n                        j += 1\n                if depth != 0:\n                    raise ValueError(\"Unmatched endfor tag\")\n                content = template[i+1:j]\n                for item in value:\n                    context[name] = item\n                    add(render(content, context))\n                i = j\n            i += 1\n        else:\n            add(template[i])\n            i += 1\n\n    return ''.join(output)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 20.72,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 1,
+      "failed": 7,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 8 items\n\n../tests/test_task.py::test_plain_text_exact FAILED                      [ 12%]\n../tests/test_task.py::test_dotted_lookup_dict_and_list FAILED           [ 25%]\n../tests/test_task.py::test_numbers_and_falsy_values_render FAILED       [ 37%]\n../tests/test_task.py::test_unknown_filter PASSED                        [ 50%]\n../tests/test_task.py::test_if_not FAILED                                [ 62%]\n../tests/test_task.py::test_for_sees_outer_context_and_restores_it FAILED [ 75%]\n../tests/test_task.py::test_nested_loops FAILED                          [ 87%]\n../tests/test_task.py::test_unclosed_braces_are_text FAILED              [100%]\n\n=================================== FAILURES ===================================\n____________________________ test_plain_text_exact _____________________________\n/tests/test_task.py:5: in test_plain_text_exact\n    assert render('  hello\\n world  ', {}) == '  hello\\n world  '\nE   AssertionError: assert ' hlo ol ' == '  hello\\n world  '\nE     \nE     +  hlo ol \nE     -   hello\nE     -  world\n_______________________ test_dotted_lookup_dict_and_list _______________________\n/tests/test_task.py:9: in test_dotted_lookup_dict_and_list\n    assert render('{{ user.name }} {{ user.tags.1 }}', ctx) == 'Bo y'\nE   AssertionError: assert '}}' == 'Bo y'\nE     \nE     - Bo y\nE     + }}\n_____________________ test_numbers_and_falsy_values_render _____________________\n/tests/test_task.py:12: in test_numbers_and_falsy_values_render\n    assert render('{{ n }}/{{ z }}/{{ f }}', {'n': 3, 'z': 0, 'f': False}) == '3/0/False'\nE   AssertionError: assert '{{/{z}/{f}' == '3/0/False'\nE     \nE     - 3/0/False\nE     + {{/{z}/{f}\n_________________________________ test_if_not __________________________________\n/tests/test_task.py:20: in test_if_not\n    assert render(t, {'items': []}) == 'empty'\nE   AssertionError: assert '{ fnties%epy%edf%' == 'empty'\nE     \nE     - empty\nE     + { fnties%epy%edf%\n_________________ test_for_sees_outer_context_and_restores_it __________________\n/tests/test_task.py:25: in test_for_sees_outer_context_and_restores_it\n    assert render('{% for x in xs %}{{ x }}{{ sep }}{% endfor %}{{ x }}', ctx) == 'a-b-outer'\nE   AssertionError: assert '{ o  nx }{x}}%edo }{x}' == 'a-b-outer'\nE     \nE     - a-b-outer\nE     + { o  nx }{x}}%edo }{x}\n______________________________ test_nested_loops _______________________________\n/tests/test_task.py:30: in test_nested_loops\n    assert render(t, {'rows': [[1, 2], [3]]}) == '[12][3]'\nE   AssertionError: assert '{ o  nrw }{ ...{ nfr%]%edo }' == '[12][3]'\nE     \nE     - [12][3]\nE     + { o  nrw }{ o  nr%{{{ nfr%]%edo }\n________________________ test_unclosed_braces_are_text _________________________\n/tests/test_task.py:33: in test_unclosed_braces_are_text\n    assert render('a {{ b', {'b': 1}) == 'a {{ b'\nE   AssertionError: assert 'a{{' == 'a {{ b'\nE     \nE     - a {{ b\nE     + a{{\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_plain_text_exact - AssertionError: assert ...\nFAILED ../tests/test_task.py::test_dotted_lookup_dict_and_list - AssertionErr...\nFAILED ../tests/test_task.py::test_numbers_and_falsy_values_render - Assertio...\nFAILED ../tests/test_task.py::test_if_not - AssertionError: assert '{ fnties%...\nFAILED ../tests/test_task.py::test_for_sees_outer_context_and_restores_it - A...\nFAILED ../tests/test_task.py::test_nested_loops - AssertionError: assert '{ o...\nFAILED ../tests/test_task.py::test_unclosed_braces_are_text - AssertionError:...\n========================= 7 failed, 1 passed in 0.02s ==========================\n",
+      "tail": "k.py::test_for_sees_outer_context_and_restores_it - A...\nFAILED ../tests/test_task.py::test_nested_loops - AssertionError: assert '{ o...\nFAILED ../tests/test_task.py::test_unclosed_braces_are_text - AssertionError:...\n========================= 7 failed, 1 passed in 0.02s ==========================\n"
+     }
+    }
+   ],
+   "accepted": false,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 1,
+     "failed": 14
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 0,
+     "failed": 7
+    }
+   },
+   "done": true
+  }
+ }
+}

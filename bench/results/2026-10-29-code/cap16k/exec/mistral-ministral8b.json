@@ -1,0 +1,14 @@
+{
+ "model": "mistral-ministral8b",
+ "tasks": {
+  "cx_template": {
+   "kind": "wrong_answer",
+   "passed": 2,
+   "failed": 13,
+   "rc": 1,
+   "elapsed": 0.57,
+   "collection_error": false,
+   "tail": "ture_errors[{% for i in xs %}a{% endif %}]\nFAILED ../tests/test_task.py::test_structure_errors[{% while x %}{% endwhile %}]\nFAILED ../tests/test_task.py::test_structure_errors[{% if x %}{% else %}{% else %}{% endif %}]\n========================= 22 failed, 2 passed in 0.03s =========================\n"
+  }
+ }
+}

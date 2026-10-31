@@ -1,0 +1,23 @@
+{
+ "model": "groq-gptoss20b",
+ "tasks": {
+  "cx_expression": {
+   "kind": "wrong_answer",
+   "passed": 7,
+   "failed": 2,
+   "rc": 1,
+   "elapsed": 0.56,
+   "collection_error": false,
+   "tail": "============ short test summary info ============================\nFAILED ../tests/test_task.py::test_power_rules - ValueError: Missing operand\nFAILED ../tests/test_task.py::test_variables - ValueError: Unknown name: _a\n========================= 2 failed, 29 passed in 0.02s =========================\n"
+  },
+  "cx_template": {
+   "kind": "wrong_answer",
+   "passed": 15,
+   "failed": 0,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": "=== short test summary info ============================\nFAILED ../tests/test_task.py::test_structure_errors[{% if x %}a] - Failed: DI...\nFAILED ../tests/test_task.py::test_structure_errors[{% for i in xs %}a] - Fai...\n========================= 2 failed, 22 passed in 0.02s =========================\n"
+  }
+ }
+}
