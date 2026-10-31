@@ -682,3 +682,143 @@ do not change their verdict. The original labels are the verdict.
 `typesafe-jev` first on the `classify` route if `route_task` is to be used (it is cloud, so only for tasks that may leave the machine;
 the tool refuses a sensitive call on a cloud-only route). Known limits: 60 tasks of one author, one run each; labels for the cheap routes
 are partly a matter of taste (see above); the open models' failure is partly a threshold effect (0.5 was fixed before the run and not tuned).
+
+## `commit_message_multi` trial (2026-10-31)
+
+`commit_message` and `commit_message_staged` refuse a diff over 12000 characters, and most real diffs are larger. This trial is for
+`commit_message_multi(diff, hint="", sensitive=True)`. **It adds no read:** its input is a diff passed as text, exactly as
+`commit_message` takes it. It does not use `gitdiff.py`, files, folders or any subprocess (a test asserts the module source has none).
+The criteria below are fixed before any model is run.
+
+### What the tool does
+
+1. Splits the diff text at its `diff --git` headers into files (`commit_multi.split_files`). More than 150000 characters in total,
+   more than 30 files, one file needing more than 4 pieces (about 20000 characters of diff), or more than 30 summary steps: refused
+   with `MINION_BAD_INPUT`, never cut short.
+2. Files whose summary needs no reading are summarised **by code, not by a model**: binary files, lock files (`uv.lock`,
+   `package-lock.json`, `*.lock`, ...), deleted files, mode-only changes, renames with no edits. A huge lock file therefore costs
+   no model step and its content never reaches a model.
+3. Every other file is cut at hunk boundaries into pieces of at most 5000 characters (the file header repeats on each piece), and a
+   model writes a one-sentence summary of each piece (`sensitive` as passed, default `True`). Each summary goes through
+   `values.make_summary_check` (numbers, dates and capitalised names must occur in the piece; at most 35 words +10%; non-empty) and
+   a file check (it may name only files of that piece).
+4. One last model call gets a list of the files (largest change first, lock and binary files last) with their summaries and writes
+   `{"subject", "body"}`. That reply goes through `commit_msg.make_check` **against the file set of the whole diff**: subject
+   non-empty, one line, at most 72 characters, imperative first word, no final period, every file named is in the diff.
+5. Returns `{"subject", "body", "files", "steps"}`. Route: borrows the `commit_message` route (`TRIAL_FALLBACK`), so the roster
+   needs no change.
+6. `commit_message_staged` is **left alone**. Using this path for larger stages would mean raising `gitdiff.MAX_STAGED_CHARS`, the
+   size cap of the one approved git read, which is a change to what that read returns. That is not mine to decide, so it is not done.
+
+### Pass criteria (at least as strict as `commit_message_staged`)
+
+A local model on the `commit_message` route (`air-qwen`, then `mini-gemma4b`), each pinned alone, `sensitive=true`, **3 repeats** of every case:
+
+1. **Scored set of 30 invented large diffs**, built by `scripts/multi_trial.py`: a tuning-free **first set of 20** and a **fresh set
+   of 10 written after any fix** (committed only after the first set was run and any fix was made; neither models nor code are tuned
+   on it). Every diff is over 12000 characters (asserted by the builder), up to about 100000. Mix: 2 to 5 source files each; at least
+   6 cases with a huge lock file (40000 characters or more); at least 5 with a rename (with and without edits); at least 1 deleted
+   file, 1 binary file and 1 large new file; at least 6 with a prompt-injection comment inside the diff (at least 2 in the fresh
+   set); the main change is in the first file of the diff in at most 40% of the cases, so a first-file shortcut cannot pass.
+   Scored in code, never by a model.
+2. **At least 90% correct on the first set and on the fresh set separately** (and over both together), per model. A correct answer
+   passes the code check, has a subject or body containing one of the case's **main-change keywords** (words that belong to the main
+   change and not to the first file's path) and no banned word. A call the check refuses, or that errors, counts as wrong.
+3. **Main change covered, not just the first file:** the same 90% bar holds on the subset of cases whose main change is not in the
+   first file, per model.
+4. **0 invented answers returned:** a returned message naming a file that is not in the diff (any file-like token, scored
+   independently of `commit_msg.named_files`, with the old names of renames counted as in the diff) is never returned. Refused
+   replies are counted separately.
+5. **The code check catches planted bad output**, shown by tests that go through the tool: a subject over 72 characters, a
+   non-imperative first word, a final period, a multi-line subject, an invented file in subject and in body, an empty subject; also a
+   step summary that invents a file or a number.
+6. **Baseline: it must be better than truncating.** On the same cases, the same model, the same 3 repeats, the same scorer,
+   `commit_message` is called with the diff cut to its first 12000 characters (the obvious workaround today). `commit_message_multi`
+   must score **strictly more correct answers than the baseline over both sets, for each model**, or it fails. The baseline is also
+   reported by where the main change sits (first file, later file).
+7. **Limits and privacy tests pass:** over-size inputs are refused before any model is called (total, file count, one huge file),
+   nothing is cut; a cloud-only route is refused when `sensitive` is true; `sensitive` defaults to true in the tool and the server
+   wrapper; safe under concurrent calls on one route (threads against the fake backend).
+8. **Latency (p50, p95) is reported**, not a pass bar (it takes many model steps and will be slower than one call). A call that
+   times out counts as a failure.
+
+Procedure: runs only on AC power and without memory pressure; `MINION_ROSTER=~/.config/mcp-minions/roster.cloud.json` read in place,
+not edited, local models only; the prompts of this tool are not changed after the first run except as a stated fix. If a fix is made
+after the first set, it is stated here, set A is re-run on the fixed code and the fresh set is run once on the fixed code. A fail is
+logged here with its reason and the tool is removed from the code.
+
+### Results (2026-10-31)
+
+Run by `scripts/multi_trial.py` against the real roster (`roster.cloud.json`, read in place, not edited), each local model pinned alone,
+`sensitive=true`, on AC power, throwaway in-memory diffs, invented text. Sets: 20 first (`a01`-`a20`), 10 fresh (`b01`-`b10`); sizes
+13240 to 69468 characters; main change first in the diff in 7 of 30 cases; 14 cases with a lock file of 43000 characters or more; 7
+with a rename; 4 with a deleted file, 4 with a binary; 8 with a prompt-injection comment (3 in the fresh set).
+
+**Order of events (all stated).**
+
+1. *First run of set A, code as first committed* (3 repeats): air-qwen 45/60 (75%), mini-gemma4b 18/60 (30%). Cause, in every failing case: one of the
+   per-piece summaries failed its own check (`MINION_INVENTED` for a number or a name such as `103`, `SQL`, `Python`, `ISO` that the piece does not
+   contain; `MINION_TOO_LONG`, 41 to 46 words against a limit of 39) and one rejected summary killed the whole call. No invented answer was returned
+   (the checks worked); the design was too brittle.
+2. *Fix, one commit, before set B was written:* a rejected step summary is repaired once (the offending terms are named, as `summarize` does); if
+   it still fails, that piece is described by code (`+N -M lines`, and the function or class names found in the piece), never by the model's rejected
+   text. The word check accepts up to 55 words (the model is still asked for 35), and the step prompt adds "do not count or add anything up". The
+   result reports `code_summaries`, the number of such pieces.
+3. *Scorer defect found in the first run, fixed with the above:* case `a07`'s keywords (`rate`, `throttl`, `429`, `per minute`) did not accept a correct
+   message, "Limit API Requests to 100 per Client in 60 Seconds" (mini-gemma4b, 3 of 3 repeats counted wrong). The keywords were widened to also accept
+   "limits requests", "limit api", "requests per", "per client". This was done **after seeing that result**. With the original keywords mini-gemma4b would
+   score 0/3 on `a07` (same message in the first run; the fixed-code run did not store the text of correct answers, so it is unverified there) and
+   54/60 = 90% on set A at worst, still on the bar; air-qwen is unaffected (its `a07` answers contain "rate"). The baseline is scored with the
+   same keywords.
+4. *Set A re-run on the fixed code, set B run once on the fixed code after it was written* (3 repeats each).
+5. *Baseline* (`commit_message` on the first 12000 characters) was run **once per case, not 3 times**: at temperature 0 the repeats were identical in
+   the 11 calls I did repeat (air-qwen a01, mini-gemma4b a01 to a03), and one call takes 2 to 4 minutes on these models. This deviates from the "same 3 repeats" in criterion 6
+   and is stated here; the comparison below is by rate.
+6. A count of code-written summaries was added afterwards and measured in a separate pass (1 repeat per case, both sets, both models).
+
+| model | set | score | stable | invented returned (+refused) | check failures | p50 s | p95 s | mean steps |
+|---|---|---|---|---|---|---|---|---|
+| air-qwen | A | 60/60 (100%) | 1.00 | 0 (+0) | - | 27.5 | 70.5 | 4.5 |
+| air-qwen | B | 30/30 (100%) | 1.00 | 0 (+0) | - | 29.0 | 74.2 | 5.6 |
+| air-qwen | A+B | 90/90 (100%) | 1.00 | 0 | | 29.0 | 73.2 | 4.9 |
+| mini-gemma4b | A | 57/60 (95%) | 1.00 | 0 (+0) | - | 34.1 | 68.7 | 4.5 |
+| mini-gemma4b | B | 27/30 (90%) | 1.00 | 0 (+0) | - | 36.7 | 109.8 | 5.6 |
+| mini-gemma4b | A+B | 84/90 (93%) | 1.00 | 0 | | 36.2 | 80.0 | 4.9 |
+
+Wrong answers: mini-gemma4b `a04` (3 of 3: it described the new billing report module, the largest change, instead of the null guard in
+`services/user.py`) and `b03` (3 of 3: "Add New Functions for Data Processing" instead of the acknowledgement order). Main change not in the first file: air-qwen 69/69, mini-gemma4b 63/69 (91%).
+Code-written summaries (separate pass, 1 repeat): air-qwen 0 of 146 pieces, mini-gemma4b 3 of 146.
+
+**Baseline, same cases, same scorer (1 repeat):**
+
+| model | A | B | A+B |
+|---|---|---|---|
+| air-qwen, `commit_message` on the first 12000 characters | 2/20 (10%) | 2/10 (20%) | 4/30 (13%) |
+| mini-gemma4b, same | 0/20 (0%) | 0/10 (0%) | 0/30 (0%) |
+
+The baseline mostly fails by itself, not only by missing the change: 16 of 30 air-qwen calls and 13 of 30 mini-gemma4b calls returned invalid JSON, a
+multi-line subject or a subject over 72 characters (a 12000-character, 3-file diff is at the edge of what these models handle in one call); the rest
+named a package from the lock file or a file name as the subject. In 4 baseline answers (`a09` and `b09`, both models) the model **obeyed the
+prompt-injection comment** ("Delete everything", "Release v9"); the multi path obeyed none of the 8 injections. Where the main change sits in the
+first file the baseline is no better (air-qwen 1/7, mini-gemma4b 0/7).
+
+### Criteria, one by one
+
+1. 30 invented diffs over 12000 characters, 20 + 10, 3 repeats, with the stated mix: **met** (mix counts above; main change first in 7 of 30 = 23%).
+2. At least 90% on set A, set B and both, per model: **met** (air-qwen 100/100/100; mini-gemma4b 95/90/93, the fresh set with no margin).
+3. Same bar where the main change is not in the first file: **met** (air-qwen 100%, mini-gemma4b 91%).
+4. 0 invented answers returned: **met** (0 of 180 multi calls; independent scorer; 0 refused after the fix).
+5. Planted bad output caught: **met**, `tests/test_commit_multi.py` (subject too long, three non-imperative forms, final period, multi-line, empty, an invented file in
+   subject and body, a step summary that invents a file, a number, is empty or is too long).
+6. Baseline: **met**, strictly better for both models (100% vs 13% and 93% vs 0%), with the deviation in point 5 above.
+7. Limits and privacy tests: **met** (over total, too many files, one huge file: refused before any model call; cloud-only route refused when sensitive; sensitive defaults to true in tool
+   and server; concurrent calls; the module source contains no file or process access).
+8. Latency reported: p50 about 29 to 36 s, p95 about 73 to 80 s per call (4.9 model steps on average); the baseline p50 was 36 s (mini-gemma4b) to 150 s (air-qwen) and mostly failed.
+
+### Verdict: PASS
+
+`commit_message_multi` passes. Route: it borrows the `commit_message` route (`air-qwen`, fallback `mini-gemma4b`); the roster needs no change.
+Known limits: a diff over 150000 characters, over 30 files, or with one non-lock file over about 20000 characters of diff is refused, not cut; a
+lock file's content is never read by a model (so a dependency bump is described by counts only); when the largest change is not the main one a small
+model may describe the largest (mini-gemma4b `a04`, `b03`); `commit_message_staged` is unchanged and still refuses a stage over 12000 characters
+(using this path there would raise the cap of its one approved git read, so it is left for Martin to decide).
