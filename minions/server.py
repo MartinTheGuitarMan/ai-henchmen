@@ -111,6 +111,16 @@ def commit_message(diff: str, hint: str = "", sensitive: bool = True) -> dict:
 
 @mcp.tool()
 @guarded
+def commit_message_multi(diff: str, hint: str = "", sensitive: bool = True) -> dict:
+    """Draft a git commit message from a large diff (up to 150000 characters, at most 30 files). The diff is split by
+    file, each part is summarised in one step, and one subject and body are written from the summaries. Returns
+    {"subject", "body", "files", "steps"}, checked like commit_message against the whole diff. A diff over the limits
+    is refused, never cut short."""
+    return tools.commit_message_multi(Roster.from_env(), diff, hint, sensitive)
+
+
+@mcp.tool()
+@guarded
 def commit_message_staged(folder: str, hint: str = "") -> dict:
     """Draft a git commit message from the staged changes of a git work tree (git diff --cached; at most 12000
     characters, binary files skipped and listed). Returns {"subject", "body", "files", "skipped"}, checked like
