@@ -24,6 +24,10 @@ def test_baseline_rules():
     assert t.baseline("Fix the failing test") == "sonnet"
 
 
+def test_first_set_has_40_labelled_tasks():
+    assert len(t.SET_A) == 40
+
+
 def test_set_sizes_and_labels():
     ids = [c["id"] for s in t.SETS.values() for c in s]
     assert len(ids) == len(set(ids))
