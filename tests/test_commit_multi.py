@@ -117,19 +117,38 @@ def test_final_check_catches_an_invented_file_in_the_body(fake, cfg):
         tools.commit_message_multi(cfg, BIG)
 
 
-def test_a_step_summary_cannot_invent_a_file_or_a_number(fake, cfg):
-    answer(fake, summary="Rewrites src/engine.py.")
-    with pytest.raises(Invented):
-        tools.commit_message_multi(cfg, BIG)
-    answer(fake, summary="Raises the limit to 9999.")
-    with pytest.raises(Invented):
-        tools.commit_message_multi(cfg, BIG)
+def test_a_step_summary_that_invents_never_reaches_the_final_step(fake, cfg):
+    for bad in ("Rewrites src/engine.py.", "Raises the limit to 9999.", "  ", "word " * 70):
+        seen = answer(fake, summary=bad)
+        out = tools.commit_message_multi(cfg, BIG)
+        assert out["code_summaries"] == out["steps"] >= 3 and seen["final"] == 1
+        data = seen["data"][0]
+        assert "no model summary" in data and "src/engine.py" not in data and "9999" not in data and "word word" not in data
+        assert "functions or classes added" not in data   # BIG has no def lines; names only come from the diff itself
 
 
-def test_an_empty_step_summary_fails(fake, cfg):
-    answer(fake, summary="  ")
-    with pytest.raises(EmptyValue):
-        tools.commit_message_multi(cfg, BIG)
+def test_a_rejected_summary_gets_one_repair_try(fake, cfg):
+    state = {"n": 0}
+    seen = answer(fake)
+    inner = fake.dynamic
+
+    def dyn(req):
+        text = req["messages"][-1]["content"]
+        if "previous summary used terms" in text:
+            state["n"] += 1
+            return json.dumps({"summary": "Adds value computations."})
+        if "lists the files of a large git diff" not in text and state["n"] == 0 and "src/pager.py" in text:
+            return json.dumps({"summary": "Raises the limit to 9999."})
+        return inner(req)
+    fake.dynamic = dyn
+    out = tools.commit_message_multi(cfg, BIG)
+    assert state["n"] == 1 and out["code_summaries"] == 0
+
+
+def test_code_summary_uses_only_the_pieces_own_names_and_counts():
+    piece = "diff --git a/a.py b/a.py\n--- a/a.py\n+++ b/a.py\n@@ -1 +1,3 @@\n-x = 1\n+def parse(a):\n+    return a\n+class Box:\n"
+    s = cm.code_summary(piece)
+    assert "+3 -1" in s and "parse, Box" in s
 
 
 def test_input_checks_refuse_and_never_cut(fake, cfg):

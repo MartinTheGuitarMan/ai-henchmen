@@ -659,7 +659,8 @@ def commit_message(cfg, diff: str, hint: str = "", sensitive: bool = True) -> di
 
 def commit_message_multi(cfg, diff: str, hint: str = "", sensitive: bool = True) -> dict:
     """commit_message for a diff too large for it (see commit_multi.py): one model summary per file piece, then one
-    subject and body. Returns {"subject", "body", "files", "steps"}. The final message gets commit_message's checks
+    subject and body. Returns {"subject", "body", "files", "steps", "code_summaries"} (the number of pieces whose model summary failed the checks twice and was
+    replaced by one written by code). The final message gets commit_message's checks
     against the whole diff. A diff over the size limits is refused (MINION_BAD_INPUT), never cut short."""
     from . import commit_msg, commit_multi as cm
     _check_text(diff)
@@ -669,20 +670,31 @@ def commit_message_multi(cfg, diff: str, hint: str = "", sensitive: bool = True)
     roster = _routed(cfg, "commit_message_multi")
     router._gate(roster.route("commit_message_multi"), "commit_message_multi", sensitive)   # refuse before any step runs
     summaries: dict[str, list[str]] = {}
-    steps = 0
+    steps = by_code = 0
+
+    def repair(e):
+        terms = ", ".join(repr(t) for t in getattr(e, "terms", [])) or "the terms it named"
+        again = (f"{cm.SUMMARY_TASK} Your previous summary used terms that the data does not contain: {terms}. Write the "
+                 "summary again without them: do not add acronyms or numbers; use only words from the data.")
+        return lambda order=None: (again, cm.SUMMARY_SCHEMA)
+
     for f in files:
         for piece in f.pieces:
             paths = {f.path} | ({f.old} if f.old else set())
-            sc = values.make_summary_check(piece, cm.SUMMARY_WORDS)
-            out = _go(roster, "commit_message_multi", lambda order=None: (cm.SUMMARY_TASK, cm.SUMMARY_SCHEMA), piece,
-                      "summary", None, sensitive, check=cm.make_step_check(piece, paths, sc))
-            summaries.setdefault(f.path, []).append(out["summary"])
+            sc = values.make_summary_check(piece, cm.SUMMARY_CHECK_WORDS)
+            try:
+                out = _go(roster, "commit_message_multi", lambda order=None: (cm.SUMMARY_TASK, cm.SUMMARY_SCHEMA), piece,
+                          "summary", None, sensitive, check=cm.make_step_check(piece, paths, sc), repair=repair)
+                text = out["summary"]
+            except SchemaError:   # the summary failed the checks twice: use a summary written by code, never the model's
+                text, by_code = cm.code_summary(piece), by_code + 1
+            summaries.setdefault(f.path, []).append(text)
             steps += 1
     data = cm.final_data(files, summaries)
     out = _go(roster, "commit_message_multi", lambda order=None: (cm.FINAL_TASK + (f" {hint}" if hint else ""),
                                                                  commit_msg.SCHEMA), data, "commit", None, sensitive,
               check=cm.make_final_check(diff))
-    return {**out, "files": [f.path for f in files], "steps": steps}
+    return {**out, "files": [f.path for f in files], "steps": steps, "code_summaries": by_code}
 
 
 def commit_message_staged(cfg, folder: str, hint: str = "") -> dict:
