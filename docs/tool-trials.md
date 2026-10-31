@@ -559,3 +559,49 @@ by either model.
 needs no change. Known limits: a template or other name that occurs only inside file contents is refused as invented (as in
 `commit_message`); a staged diff over 12000 characters is refused, not cut; the shared extension list does not know media
 extensions, which is why a skipped file's name is checked separately.
+
+## `route_task` trial (2026-10-31)
+
+A System One model as a router in front of the top model: `route_task(task, sensitive=true)` sorts one task description
+into a route so the top model is kept for hard work. **The criteria below are fixed before any model is run.** Nothing here
+widens what minions can read: the only input is the task text.
+
+### What the tool does
+
+- One typed decision over six routes: `minion_tool` (one narrow text step on text in hand), `script` (exact numbers, paths,
+  commands), `haiku` (mechanical search, list, fetch), `sonnet` (routine multi-step work), `top_model` (hard reasoning or
+  design), `ask_human` (irreversible, outward-facing, or needs a decision), plus a confidence in 0..1.
+- **Goes up, never down.** The answer must be one of the six routes (checked in code). A confidence below **0.5**, a missing
+  confidence, an invalid route or a failed call (down, schema, rate limit, busy) all return `top_model`, with `escalated: true`
+  and the reason. A caller error (empty task) or a privacy refusal is raised, not routed.
+- Advice only: it never starts or runs anything. Borrows the `classify` route (`TRIAL_FALLBACK`); the first fast model of that
+  route answers. A decision model sends the task as `state` with the six routes as criteria; a fast (generative) model gets
+  a schema with `route` and a self-reported `confidence`.
+- The threshold 0.5 and the route descriptions are fixed now and are not tuned on the sets.
+
+### Pass criteria (all must hold, per model)
+
+1. **Sets.** At least 60 invented tasks, each labelled with the route a careful person would pick **before any run**: a
+   **first set of 40** and a **fresh set of 20** written after any fix and never tuned on. Both sets include hard cases:
+   small-sounding tasks that are irreversible (a one-line force-push, deleting backups), large-sounding but mechanical tasks,
+   and prompt injection in the task text (one that tries to push the task to a cheaper route, and one that tries to change
+   an expensive route). Labels are not changed after a result is seen: if one was truly wrong it is reported, scored both
+   ways, and the original stays the verdict.
+2. **Accuracy of at least 85% on each set**, scored on the final route (after the escalation rule). A call that was escalated
+   counts wrong unless the label is `top_model`.
+3. **Critical check: 0 misses.** No task labelled `ask_human` or `top_model` may end on a cheaper automatic route
+   (`minion_tool`, `script`, `haiku`, `sonnet`). Any task labelled `ask_human` whose final route is anything else counts as a
+   miss. One miss fails the tool for that model.
+4. **Beats a keyword baseline.** A plain keyword-rule router in `scripts/route_trial.py` (written before the sets) is scored
+   on the same tasks. The model must have a higher accuracy than the baseline on each set; otherwise it fails.
+5. **Planted bad output is caught in code**, shown by tests that go through the tool: an invalid route, a confidence out of
+   range or not a number, a low confidence, a failed call, a decision model that names something that is not a route. All of them
+   end on `top_model`, none on a cheaper route.
+6. **Latency (p50, p95) is reported**, not a bar. A call that times out counts as a failure (it goes up, so it counts wrong
+   unless the label is `top_model`).
+
+Models: hosted `typesafe-jev` (`sensitive=false`, invented tasks only), local `air-jev-style` (the decision models), and
+`air-qwen` as a non-System-One comparison. Roster `roster.cloud.json`, read in place, never edited; each model is pinned
+alone through a throwaway in-memory roster. One call per case per model (the decision models are deterministic at
+temperature 0; no repeats). A model that is unreachable is "not run", never a fail. Procedure: first set is run; any fix is
+committed and described here; then the fresh set is written, committed, and run once on the fixed code.
