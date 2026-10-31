@@ -605,3 +605,9 @@ Models: hosted `typesafe-jev` (`sensitive=false`, invented tasks only), local `a
 alone through a throwaway in-memory roster. One call per case per model (the decision models are deterministic at
 temperature 0; no repeats). A model that is unreachable is "not run", never a fail. Procedure: first set is run; any fix is
 committed and described here; then the fresh set is written, committed, and run once on the fixed code.
+
+**Amendment, 2026-10-31 (disclosed after the first set had started running on the first model).** Martin: an error here does no
+harm, because the router only advises and the real gates live elsewhere. He allows a relaxed critical check: at most 5% of the
+tasks labelled `top_model` or `ask_human` may end on a cheaper automatic route (instead of zero). Models had already run when this
+arrived, so **criterion 3 as written above (0 misses) stays the verdict**; the relaxed bar is reported next to it, and every miss
+is named either way. The relaxed bar changes no label, threshold or prompt.
