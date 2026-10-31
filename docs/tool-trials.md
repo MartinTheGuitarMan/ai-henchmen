@@ -822,3 +822,67 @@ Known limits: a diff over 150000 characters, over 30 files, or with one non-lock
 lock file's content is never read by a model (so a dependency bump is described by counts only); when the largest change is not the main one a small
 model may describe the largest (mini-gemma4b `a04`, `b03`); `commit_message_staged` is unchanged and still refuses a stage over 12000 characters
 (using this path there would raise the cap of its one approved git read, so it is left for Martin to decide).
+
+## Idea batch 3 (2026-10-31): the four remaining logged tool ideas
+
+Martin asked on 2026-10-31 for all remaining ideas to be evaluated. The rule of the idea evals above applies: if plain code does
+it exactly, it stays a script in `scripts/` and no model is used. All criteria below are fixed before anything is built or run.
+Local models only (`air-qwen`, then `mini-gemma4b`, each pinned alone), invented data, no personal data.
+
+### 1. `commit_message_files(folder, range, hint="")` (model tool; one new read, approved by Martin 2026-10-31)
+
+What it is: writes the commit message for a git range. The read is **one fixed `git diff` over a checked range**, nothing else:
+it reuses the guards of `scan_diff` (`gitdiff.py`): both refs match the ref pattern and are resolved to commit ids first
+(`rev-parse --verify --end-of-options <ref>^{commit}`), the diff runs from the merge base to the head with commit ids only, no shell, the
+caller supplies only the folder, the range and a hint, `GIT_*` dropped, the safe `-c` options, `--no-ext-diff --no-textconv`, a raw
+output cap, binary and non-UTF-8 files left out and listed in `skipped`, and a diff over 150000 characters is refused, never cut.
+Always local (no `sensitive` parameter, gate before the read). Up to 12000 characters it calls `commit_message`; above that it calls
+`commit_message_multi` (same checks, 30 files at most). It borrows the route of `commit_message`. Nothing else in `gitdiff.py`
+changes behaviour.
+
+Pass criteria, per model, `sensitive=true` only, **2 repeats** (temperature 0; the earlier trials found repeats identical):
+
+1. **Scored set of 30 invented ranges** in throwaway repos (`scripts/files_trial.py`): a first set of **20** and a **fresh set of 10
+   written after any fix**. Each range has 2 to 4 commits. At least 40% of the cases are over 12000 characters of diff (the multi path),
+   the rest are under it. Mix: renames, a deletion, a binary file, a lock file, a mode change, a prompt-injection comment, the main
+   change not in the first file in at least 40% of cases, and base given as `HEAD~n`, as a tag and as a single ref (`A` meaning `A..HEAD`).
+2. **At least 90% correct** on the first set, the fresh set and both together, per model (a correct answer passes the tool's checks,
+   has a subject or body with one of the case's main-change keywords and no banned word). A refused or failed call counts as wrong.
+3. **0 invented answers returned**: no returned message names a file that is not in the range's diff (independent scorer).
+4. **Planted bad output is caught** by tests through the tool (subject too long, non-imperative, final period, invented file in
+   subject and body, a skipped binary the model never saw named, empty subject), on both the small and the large path.
+5. **Equivalence:** against the fake backend, the files tool and the matching `commit_message` / `commit_message_multi` call on the
+   same diff text get the same prompts (small path, large path).
+6. **Hostile-repo and ref tests** (as in the `commit_message_staged` trial): `diff.external`, textconv, `core.fsmonitor`, `core.pager`,
+   aliases, `include.path`, hooks run nothing; option-like refs (`--output=x`, `-x`), `HEAD:path`, `A...B`, spaces, shell characters,
+   a ref naming a blob, an unknown ref, `GIT_DIR`/`GIT_WORK_TREE`/`GIT_INDEX_FILE` in the environment, a non-repo and a missing folder
+   are all refused or ignored; an over-size diff and an empty range are refused, not cut; the repo is identical before and after.
+7. Latency reported, not a bar. Concurrency test on one route. A cloud-only route is refused before git is called.
+
+A fail is logged here with the reason and the tool is removed.
+
+### 2. `failure_histogram` (expected: plain script)
+
+Ranks the scorer failure codes in JSONL run logs (the `status`/`code` records that `tool_trials.py`, `staged_trial.py` and
+`multi_trial.py` write) into a table. Counting is exact in code, so **no model**: `scripts/failure_histogram.py`.
+Pass: on 12 or more cases (real record shapes from this repo's runners, invented values), the table equals an independent
+`collections.Counter` count (100%); planted bad input (a line that is not JSON, a record with no `status`, an empty file, a folder
+with no `.jsonl`, `not_run` records) gives the right error or is counted separately and never miscounted; a fresh set of 6 further
+inputs after any fix; deterministic ordering (count down, then code).
+
+### 3. `compare_digest` (expected: plain script)
+
+Turns a paired comparison (two result sets, as `trial_compare.py` reads them) into journal table lines. The numbers are
+arithmetic, so **no model**: `scripts/compare_digest.py`, built on `trial_compare.per_case` / `compare`. It must add something that
+`trial_compare`'s own table lacks, or it fails as redundant: one line per tool and model with the old and new rate in percent, the
+change in percentage points, the counts of better and worse cases, and the worse cases named.
+Pass: 12 or more paired inputs (identical, better, worse, only on one side, `not_run` only, mixed statuses) give lines equal to a
+hand-worked expected text (100%); every number in the output is recomputed independently from the raw records; planted bad input (invalid
+JSON, no overlap, empty side) is caught; a fresh set of 6 after any fix.
+
+### 4. `physics_check` (closed without a build if its definition is too thin)
+
+Sources allowed: one line in the local minions fit log (2026-10-29: "check a label against a stream's kind signatures (duration,
+magnitude)"), and the SkyLink backlog and journal if they mention it. The test is whether those define an input, an output and a
+rule that this repo could test with invented data. If the signatures and stream kinds exist only inside another project and a
+check would be a lookup table of ranges, it is that project's script, not a minion, and it is closed here with the reason.
