@@ -9,7 +9,7 @@ import jsonschema
 
 import time
 
-from . import calllog, engine, fetch, gitdiff, lifecycle, manage, ratelimit, router, tokens, values
+from . import calllog, engine, fetch, gitdiff, lifecycle, manage, privacy, ratelimit, router, tokens, values
 from .config import ASK, Roster
 from .errors import (BadConfig, BadInput, Busy, Invented, MinionDown, MinionError, NoQuorum, NotInSource, PrivacyRefused,
                      RateLimited, SchemaError)
@@ -341,14 +341,14 @@ def classify_files(cfg, folder: str, pattern: str, labels: list[str], hint: str 
     """classify_batch over the files of a folder matching a glob (ids are relative paths). Always sensitive."""
     _check_classify_args(labels, descriptions)
     roster = Roster.coerce(cfg)
-    return _classify_pairs(roster, read_folder(roster, folder, pattern), labels, hint, True, descriptions)
+    return _classify_pairs(roster, read_folder(roster, folder, pattern), labels, hint, privacy.tighten(True, folder), descriptions)
 
 
 def tag_files(cfg, folder: str, pattern: str, labels: list[str], max_labels: int = 3, hint: str = "") -> dict:
     """tag_batch over the files of a folder matching a glob (ids are relative paths). Always sensitive."""
     _check_tag_args(labels, max_labels)
     roster = _routed(cfg, "tag")
-    return _tag_pairs(roster, read_folder(roster, folder, pattern), labels, max_labels, hint, True)
+    return _tag_pairs(roster, read_folder(roster, folder, pattern), labels, max_labels, hint, privacy.tighten(True, folder))
 
 
 SENSITIVE_KINDS = ["name", "email", "phone", "id", "address", "secret", "other"]
@@ -427,6 +427,7 @@ def scan_diff(cfg, folder: str, range: str, chunk_chars: int = SCAN_CHUNK_CHARS)
         raise BadInput(f"chunk_chars must be an integer between 500 and {CHUNK_CHARS}")
     roster = _routed(cfg, "find_sensitive")
     router._gate(roster.route("find_sensitive"), "find_sensitive", True)   # no local model: refuse before reading
+    sens = privacy.tighten(True, folder)
     rng = gitdiff.read_range(folder, range)
     total = sum(len(t) + 1 for u in rng.files + rng.messages for _, t in u.lines)
     if total > SCAN_MAX_CHARS:
@@ -440,7 +441,7 @@ def scan_diff(cfg, folder: str, range: str, chunk_chars: int = SCAN_CHUNK_CHARS)
         try:
             if stop is not None:
                 raise stop
-            out = find_sensitive(roster, text, True)
+            out = find_sensitive(roster, text, sens)
             row.update(found=out["found"], spans=[{**s, "where": _where(s["text"], chunk)} for s in out["spans"]])
         except MinionError as e:
             # the model's answer is lost, but the patterns need no model: report what they see
@@ -705,6 +706,7 @@ def commit_message_staged(cfg, folder: str, hint: str = "") -> dict:
         raise BadInput("hint must be a string of at most 300 characters")
     roster = _routed(cfg, "commit_message_staged")
     router._gate(roster.route("commit_message_staged"), "commit_message_staged", True)   # no local model: refuse before reading
+    sens = privacy.tighten(True, folder)
     staged = gitdiff.read_staged(folder)
     files = commit_msg.check_diff(staged.diff)
     base_check = commit_msg.make_check(files)
@@ -719,7 +721,7 @@ def commit_message_staged(cfg, folder: str, hint: str = "") -> dict:
 
     out = _go(roster, "commit_message_staged", lambda order=None: (commit_msg.TASK + (f" {hint}" if hint else ""),
                                                                   commit_msg.SCHEMA), staged.diff, "commit", None,
-              True, check=check)
+              sens, check=check)
     return {**out, "files": staged.files, "skipped": staged.skipped}
 
 

@@ -924,3 +924,50 @@ The SkyLink journal shows what the signatures are (for example a gust of 3 to 15
 project's own findings and change as it learns; a label check is then a lookup of a duration and magnitude range per stream kind, which is plain code
 and already written there as a short script. There is nothing for a model to do and no input format here to test against with invented data, so it
 belongs in that project, not in this repo.
+
+## `privacy_class_of` and the tighten-only gate trial (2026-10-31)
+
+### What it does
+An optional map file (env `MINION_PRIVACY_MAP`, default `~/.config/minions/privacy-map.json`) labels absolute paths `low`, `personal` or `restricted`:
+`{"version": 1, "default": "personal", "paths": [{"path": "/absolute/path", "class": "low"}]}`. The tool `privacy_class_of(path)` resolves the real path
+(symlinks and `..` followed), takes the longest prefix that matches on a path boundary, and answers by script, with no model. Unlabelled paths get the map's
+default. The gate is `privacy.tighten(sensitive, *sources)`: it returns True when the caller said sensitive or any source is not `low`, and never the other way
+round. Plain-text tools take an optional `source_path` (named `source_path`, not `source`, because `grounded` and `check_claims` already have a `source`
+text); the path-aware tools (`*_file`, `classify_files`, `tag_files`, `scan_diff`, `commit_message_staged`) ask the map about their own path. No map file:
+behaviour is unchanged. A map that exists but cannot be read, parsed or validated (unknown version, bad class, relative path): everything counts as `personal`.
+Plain text with no `source_path` still relies on the caller.
+
+### Pass criteria (set before running)
+1. A `personal` or `restricted` source with `sensitive=false` never reaches a cloud model: 100% of cases, for every plain-text tool taking `sensitive` and
+   every path-aware tool (tested with a cloud-only roster whose fake backend records requests; zero requests allowed).
+2. Unlabelled paths count as the map's default.
+3. Symlinks, `..`, trailing slashes, prefix look-alikes (`repo` against `repo-other`) cannot dodge the check.
+4. A corrupt, unreadable or unknown-version map fails closed (`personal`).
+5. A `low` source with `sensitive=true` stays local; `low` with `sensitive=false` and no source are not changed (the map does not block more than it should).
+6. Tighten only: never turns True into False; no map file keeps today's behaviour exactly; `scan_diff` and the other always-local tools stay local.
+7. A planted bad gate (ignores the map, or loosens) is caught by the tests.
+8. All existing tests still pass.
+There is no model in this tool, so the invented-entity test does not apply.
+
+### Results (2026-10-31)
+`tests/test_privacy_map.py`: 147 tests, all pass; full suite 1007 passed (nothing existing changed). Invented paths and notes only.
+
+1. **Never reaches cloud: met.** 15 plain-text tools x 6 non-low sources (labelled personal, labelled restricted, unlabelled, nonexistent, `..` into restricted,
+   `..` out of a low folder) = 90 cases, each refused with `MINION_PRIVACY` and 0 requests at the backend (100%). The 7 path-aware tools were run on a
+   restricted and on a low folder against a cloud-only roster: all refused, 0 requests. They are always local already, so for them the gate is a second lock;
+   a separate test checks that each of the 7 really asks the map about its path.
+2. **Unlabelled counts as default: met** (default `personal` and default `low` both tested).
+3. **No dodging: met** (trailing slash, `..`, look-alike `repo-b-lookalike` against `repo-b`, a link in a low folder pointing into a restricted one, a link in a
+   restricted folder pointing to a low one (real path decides), a symlinked map entry, relative input).
+4. **Fail closed: met** (not JSON, wrong top-level type, missing or unknown version, bool version, bad default, bad class, relative path, non-list paths,
+   non-object entry, unreadable file: all `personal`, and `tighten` returns True).
+5. **Low source: met.** `low` + `sensitive=true`, and `low` with no flag, stay local (refused on a cloud-only roster, 0 requests); `low` + `sensitive=false` and no source still reach the cloud model.
+6. **Tighten only: met.** `tighten(True, ...)` is True for every source, low included; no map file returns the caller's flag in all cases; `scan_diff` and `commit_message_staged` still refuse on a cloud-only roster.
+7. **Planted bad gate: met** (`test_planted_loosening_gate_is_caught`: a gate that ignores the map lets a restricted source reach the backend, which the 90-case test would flag; a gate that returns False for True contradicts `test_never_loosens`).
+8. **Existing tests: met** (1007 passed).
+
+Limits: plain text without `source_path` still depends on the caller; a map named by `MINION_PRIVACY_MAP` that does not exist counts as no map (today's behaviour), not as corrupt; on macOS and Windows paths are compared without regard to case.
+Invented-entity test: not applicable, there is no model in this tool.
+
+### Verdict: PASS
+Not merged: a gate change needs Martin's go.
