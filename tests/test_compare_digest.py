@@ -108,3 +108,21 @@ def test_main_prints_a_table(tmp_path, capsys):
     assert cd.main([a, b, "--label", "claims fix"]) == 0
     out = capsys.readouterr().out
     assert out.startswith("| claims fix: tool |") and "-100.0 pts" in out
+
+
+# ---------------------------------------------------------------- fresh set (written after the empty-side fix)
+FRESH = [
+    ({T: {"c1": ["ok", "wrong"]}}, {T: {"c1": ["ok", "ok"]}}, ["| t | m | 1/2 (50%) | 2/2 (100%) | +50.0 pts | 1 | 0 | - |"]),
+    ({T: {"c1": ["ok"], "c2": ["ok"], "c3": ["ok"], "c4": ["wrong"]}}, {T: {"c1": ["ok"], "c2": ["ok"], "c3": ["wrong"], "c4": ["wrong"]}},
+     ["| t | m | 3/4 (75%) | 2/4 (50%) | -25.0 pts | 0 | 1 | c3 |"]),
+    ({T: {"c1": ["check_failed:A"]}}, {T: {"c1": ["wrong"]}}, ["| t | m | 0/1 (0%) | 0/1 (0%) | +0.0 pts | 0 | 0 | - |"]),
+    ({T: {"c1": ["ok"]}, ("u", "m"): {"c1": ["ok"]}}, {("u", "m"): {"c1": ["ok"]}},
+     ["| t | m | 1/1 (100%) | - | - | 0 | 0 | - |", "| u | m | 1/1 (100%) | 1/1 (100%) | +0.0 pts | 0 | 0 | - |"]),
+    ({T: {"c1": ["ok"] * 3}}, {T: {"c1": ["ok", "wrong", "wrong"]}}, ["| t | m | 3/3 (100%) | 1/3 (33%) | -66.7 pts | 0 | 1 | c1 |"]),
+    ({T: {"c1": ["wrong"]}}, {T: {"c1": ["wrong"], "c2": ["ok"]}}, ["| t | m | 0/1 (0%) | 1/2 (50%) | +50.0 pts | 0 | 0 | - |"]),
+]
+
+
+@pytest.mark.parametrize("old,new,expected", FRESH)
+def test_fresh_set(tmp_path, old, new, expected):
+    assert lines(tmp_path, old, new) == expected
