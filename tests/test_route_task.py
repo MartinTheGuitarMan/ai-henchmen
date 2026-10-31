@@ -163,3 +163,10 @@ def test_the_tool_only_advises_it_starts_nothing(fake, monkeypatch):
     monkeypatch.setattr(subprocess, "Popen", lambda *a, **k: pytest.fail("route_task started a process"))
     fake.by_model["d"] = [jev("script")]
     assert rt.route_task(decision_roster(fake), "x", sensitive=False)["route"] == "script"
+
+
+def test_a_decision_model_may_serve_only_its_own_tools():
+    from minions.config import Config
+    jev = Config(name="jev", backend="systemone", model="m", kind="decision", base_url="http://x/v1")
+    assert jev.serves("route_task") and jev.serves("classify") and not jev.serves("extract")
+

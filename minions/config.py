@@ -117,7 +117,7 @@ class Config:
     def serves(self, tool: str) -> bool:
         if tool == ASK and not self.knowledge:
             return False
-        if self.kind == "decision" and tool not in VOTING_TOOLS:
+        if self.kind == "decision" and tool not in VOTING_TOOLS + ("route_task",):
             return False
         return self.caps is None or tool in self.caps
 
