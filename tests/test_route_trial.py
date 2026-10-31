@@ -25,7 +25,7 @@ def test_baseline_rules():
 
 
 def test_first_set_has_40_labelled_tasks():
-    assert len(t.SET_A) == 40
+    assert len(t.SET_A) == 40 and len(t.SET_B) == 20
 
 
 def test_set_sizes_and_labels():
