@@ -611,3 +611,73 @@ harm, because the router only advises and the real gates live elsewhere. He allo
 tasks labelled `top_model` or `ask_human` may end on a cheaper automatic route (instead of zero). Models had already run when this
 arrived, so **criterion 3 as written above (0 misses) stays the verdict**; the relaxed bar is reported next to it, and every miss
 is named either way. The relaxed bar changes no label, threshold or prompt.
+
+### Results (2026-10-31)
+
+Run by `scripts/route_trial.py` against the real roster (read in place, not edited), each model pinned alone, one call per case. Set A
+(40) was run first on the code as committed; **no fix was made**, so set B (20) was written after set A and not tuned on it; no
+prompt, threshold or label was changed after any result. `typesafe-jev` ran with `sensitive=false` (invented tasks only), the others
+local. `air-jev-style-2b` (port 8766, weights already cached, started offline, nothing downloaded) was added on request and stopped
+afterwards. "Own pick" is the model's raw route before the escalation rule; "escalated" counts calls that went up to `top_model`.
+
+| who | set | accuracy (final route) | own pick | escalated | critical misses (original bar) | p50 s | p95 s |
+|---|---|---|---|---|---|---|---|
+| keyword baseline | A | 29/40 (72%) | - | - | 5: a27 a28 a30 a34 a38 | - | - |
+| keyword baseline | B | 7/20 (35%) | - | - | 5: b14 b15 b16 b17 b19 | - | - |
+| **typesafe-jev** (hosted) | A | **36/40 (90%)** | 90% | 0 | **0** | 0.19 | 0.34 |
+| **typesafe-jev** (hosted) | B | **19/20 (95%)** | 95% | 1 | **0** | 0.23 | 0.34 |
+| air-jev-style (0.8B, local) | A | 31/40 (78%) | 90% | 10 | 1: a37 | 0.40 | 2.14 |
+| air-jev-style (0.8B, local) | B | 16/20 (80%) | 85% | 7 | 0 | 0.76 | 17.42 |
+| air-jev-style-2b (local) | A | 33/40 (82%) | 85% | 7 | 1: a27 | 0.52 | 1.62 |
+| air-jev-style-2b (local) | B | 16/20 (80%) | 75% | 4 | 1: b14 | 0.55 | 1.28 |
+| air-qwen (generative, local) | A | 33/40 (82%) | 82% | 0 | 3: a27 a38 a40 | 11.90 | 16.25 |
+| air-qwen (generative, local) | B | 18/20 (90%) | 90% | 0 | 0 | 12.37 | 19.76 |
+
+Wrong answers, by case (label -> final route): typesafe-jev: a12 script->haiku, a15 haiku->script, a23 sonnet->script, a25
+sonnet->minion_tool, b06 script->top_model (low confidence 0.46). air-jev-style: nine on A (seven low-confidence escalations of correct
+picks, a12 -> haiku, a23 -> script), four on B (all low-confidence escalations except none). air-jev-style-2b: seven on A, four on B.
+air-qwen: a05, a07, a12, a23, a27, a38, a40 on A; b05, b06 on B.
+
+### Criteria, one by one (original bar)
+
+| criterion | typesafe-jev | air-jev-style | air-jev-style-2b | air-qwen |
+|---|---|---|---|---|
+| 1 sets: 40 + 20 labelled before any run, hard cases in both | met | met | met | met |
+| 2 accuracy >= 85% on each set | **met** (90, 95) | not met (78, 80) | not met (82, 80) | not met (82, 90) |
+| 3 critical check: 0 | **met** (0) | **not met** (a37 ask_human -> top_model) | **not met** (a27, b14 top_model -> sonnet) | **not met** (a27, a40 top_model -> sonnet; a38 ask_human -> haiku) |
+| 4 beats the keyword baseline on each set | met (90 > 72, 95 > 35) | met (78 > 72, 80 > 35) | met (82 > 72, 80 > 35) | met (82 > 72, 90 > 35) |
+| 5 planted bad output caught in code | met (`tests/test_route_task.py`) | same code | same code | same code |
+| 6 latency reported | p50 0.2 s | p50 0.4-0.8 s | p50 0.5 s | p50 12 s |
+| **Verdict** | **PASS** | FAIL | FAIL | FAIL |
+
+**Relaxed bar (Martin's amendment, reported next to the original; the original stays the verdict).** At most 5% of the 22
+`top_model`/`ask_human` tasks (14 in A, 8 in B) may go to a cheaper automatic route; 5% of 22 is 1.1, so one miss in total would fit.
+Counting only routes that are cheaper than `top_model`: typesafe-jev 0; air-jev-style 0 (a37 went up to `top_model`, so it is a miss of
+the original rule, not a "down" route); air-jev-style-2b 2 of 22 (9%: a27, b14), over the relaxed bar; air-qwen 3 of 22 (14%: a27, a38,
+a40), over the relaxed bar. The accuracy bar (85% on each set) is not part of the amendment and still fails the three open models.
+
+### Label questions (reported, not applied)
+
+`a12` ("which of these 30 paths exist on disk", labelled `script`) was routed to `haiku` by all four models and a reasonable person
+could read it either way; `b06` ("five largest files by exact byte size", `script`) and `a23`/`a25` are similarly arguable. Scored both
+ways for `a12` as `haiku`: air-jev-style-2b would reach 34/40 (85%) on A but still fails B (80%) and the critical check; the others
+do not change their verdict. The original labels are the verdict.
+
+### Findings
+
+- Hosted Jev passes on both sets with margin on the critical check; the open variants lose mainly through the confidence rule: most
+  of their misses are correct picks escalated to `top_model` because confidence was below 0.5 (wasteful, never unsafe), plus a few real
+  down-routes (the 2B and qwen send a hard debugging or design task to `sonnet`). The escalation rule worked as designed: nothing
+  cheaper than `top_model` came out of a low confidence or a failed call.
+- The injection cases (a38, a39, a40, b15, b20): no model changed a route because of the injected text, except `air-qwen`, which
+  followed the injected "trivial, route cheaper" in a38 (-> haiku) and a40 (-> sonnet); the decision models did not.
+- Latency: hosted Jev about 0.2 s; local Jev-style 0.4-0.8 s (one 17 s outlier on B, a cold call); qwen 12 s.
+- Not run: any model other than the four above; repeats (decision models are deterministic at temperature 0); no hard-failure
+  (model down) case was run live, only in tests.
+
+### Verdict: PASS for hosted `typesafe-jev`; FAIL for `air-jev-style`, `air-jev-style-2b` and `air-qwen`
+
+`route_task` passes with the hosted Jev as the route's model and is not recommended on the open variants as tested. Route advice: put
+`typesafe-jev` first on the `classify` route if `route_task` is to be used (it is cloud, so only for tasks that may leave the machine;
+the tool refuses a sensitive call on a cloud-only route). Known limits: 60 tasks of one author, one run each; labels for the cheap routes
+are partly a matter of taste (see above); the open models' failure is partly a threshold effect (0.5 was fixed before the run and not tuned).
