@@ -305,7 +305,7 @@ def one_call(roster: Roster, case: dict, kind: str) -> dict:
     try:
         if kind == "multi":
             out = tools.commit_message_multi(roster, case["diff"])
-            rec["steps"] = out["steps"]
+            rec["steps"], rec["code_summaries"] = out["steps"], out["code_summaries"]
         else:
             out = tools.commit_message(roster, case["diff"][:commit_msg.MAX_DIFF])
         ok, inv = score(out, case)
@@ -376,8 +376,10 @@ def report(args) -> int:
         nr = dict(Counter(r["reason"] for r in recs if r["status"] == "not_run"))
         lat = [r["latency_s"] for r in done]
         steps = [r["steps"] for r in done if r["steps"] is not None]
+        coded = [r["code_summaries"] for r in done if r.get("code_summaries") is not None]
+        extra = f" (pieces by code: {sum(coded)}/{sum(r['steps'] for r in done if r.get('code_summaries') is not None)})" if coded else ""
         return (f"| {label} | {ok}/{len(done)} ({round(100 * ok / len(done)) if done else 0}%) | {stable:.2f} | {inv} (+{refused}) | "
-                f"{codes or '-'} | {nr or '-'} | {pct(lat, 0.5)} | {pct(lat, 0.95)} | {round(sum(steps) / len(steps), 1) if steps else '-'} |")
+                f"{codes or '-'} | {nr or '-'} | {pct(lat, 0.5)} | {pct(lat, 0.95)} | {round(sum(steps) / len(steps), 1) if steps else '-'}{extra} |")
 
     print("| kind, model, set | score | stable | invented returned (+refused) | check failures | not run | p50 s | p95 s | mean steps |")
     print("|---|---|---|---|---|---|---|---|---|")
