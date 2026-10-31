@@ -1,0 +1,234 @@
+{
+ "model": "stub-do-nothing",
+ "backend_model": "stub",
+ "cloud": false,
+ "machine": "baseline",
+ "note": "baseline: does nothing; not a model",
+ "tasks": {
+  "merge_intervals": {
+   "code": "def merge_intervals(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "parse_duration": {
+   "code": "def parse_duration(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "slugify": {
+   "code": "def slugify(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "business_days": {
+   "code": "def business_days(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "parse_csv_line": {
+   "code": "def parse_csv_line(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "wrap_text": {
+   "code": "def wrap_text(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "compare_versions": {
+   "code": "def _key(*args, **kwargs):\n    return None\n\ndef _cmp(*args, **kwargs):\n    return None\n\ndef compare_versions(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "toposort": {
+   "code": "def toposort(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "lru_cache": {
+   "code": "class LRUCache:\n    def __init__(self, *args, **kwargs):\n        pass\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "flatten_dict": {
+   "code": "def flatten_dict(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "fix_median": {
+   "code": "def median(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "fix_chunked": {
+   "code": "def chunked(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "fix_unique_bucket": {
+   "code": "def append_unique(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "fix_top_words": {
+   "code": "def top_words(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "re_hex_color": {
+   "code": "PATTERN = None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "re_dates_in_text": {
+   "code": "PATTERN = None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "re_ipv4": {
+   "code": "OCTET = None\n\nPATTERN = None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "cx_ttl_cache": {
+   "code": "class TTLCache:\n    def __init__(self, *args, **kwargs):\n        pass\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "cx_scheduler": {
+   "code": "class Scheduler:\n    def __init__(self, *args, **kwargs):\n        pass\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "cx_expression": {
+   "code": "TOKEN = None\n\ndef evaluate(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "cx_ini_parser": {
+   "code": "ESC = None\n\ndef _quoted(*args, **kwargs):\n    return None\n\ndef parse_ini(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "cx_shortest_path": {
+   "code": "def shortest_path(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "cx_schedule_algos": {
+   "code": "def max_profit(*args, **kwargs):\n    return None\n\ndef min_rooms(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "cx_inventory_fix": {
+   "code": "class OutOfStock:\n    def __init__(self, *args, **kwargs):\n        pass\n\nclass Inventory:\n    def __init__(self, *args, **kwargs):\n        pass\n\ndef fulfil(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  },
+  "cx_template": {
+   "code": "TAG = None\n\ndef _lookup(*args, **kwargs):\n    return None\n\ndef render(*args, **kwargs):\n    return None\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": "",
+   "latency": 0.0,
+   "finish": "stop",
+   "raw": ""
+  }
+ }
+}

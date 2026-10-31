@@ -1,0 +1,23 @@
+{
+ "model": "mini-gemma4e4b",
+ "tasks": {
+  "merge_intervals": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "slugify": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": ""
+  }
+ }
+}

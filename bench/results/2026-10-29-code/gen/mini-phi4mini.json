@@ -61,7 +61,7 @@
   "compare_versions": {
    "error": "MINION_BACKEND_ERROR",
    "detail": "MINION_BACKEND_ERROR: ollama/phi4-mini:latest timed out after 300.0s",
-   "latency": 300.02
+   "latency": 300.01
   },
   "toposort": {
    "raw": "```python\ndef toposort(deps):\n    from collections import defaultdict, deque\n\n    def dfs(node, visited, stack):\n        if visited[node] == 1:\n            raise ValueError(\"Cycle detected\")\n        if not visited[node]:\n            visited[node] = 1\n            for neighbor in deps[node]:\n                dfs(neighbor, visited, stack)\n            visited[node] = 2\n            stack.append(node)\n\n    visited = {key: 0 for key in deps}\n    stack = []\n\n    for node in deps:\n        if not visited[node]:\n            dfs(node, visited, stack)\n\n    stack.reverse()\n    return stack\n```",

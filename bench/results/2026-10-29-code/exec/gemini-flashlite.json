@@ -216,6 +216,15 @@
    "elapsed": 0.52,
    "collection_error": false,
    "tail": ""
+  },
+  "cx_template": {
+   "kind": "ok",
+   "passed": 15,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.63,
+   "collection_error": false,
+   "tail": ""
   }
  }
 }

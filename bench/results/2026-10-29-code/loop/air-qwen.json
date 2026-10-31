@@ -1,0 +1,798 @@
+{
+ "model": "air-qwen",
+ "cloud": false,
+ "tasks": {
+  "merge_intervals": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def merge_intervals(intervals):\n    if not intervals:\n        return []\n    \n    # Sort intervals by start time\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n    \n    merged = [sorted_intervals[0]]\n    \n    for current_start, current_end in sorted_intervals[1:]:\n        last_start, last_end = merged[-1]\n        \n        # Check if intervals overlap or touch\n        if current_start <= last_end:\n            # Merge them by updating the end of the last interval\n            merged[-1] = (last_start, max(last_end, current_end))\n        else:\n            # No overlap, add the current interval to the list\n            merged.append((current_start, current_end))\n    \n    return merged\n",
+     "failure": null,
+     "detail": "",
+     "latency": 14.52,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 25%]\n../tests/test_task.py::test_touching_merge PASSED                        [ 50%]\n../tests/test_task.py::test_contained PASSED                             [ 75%]\n../tests/test_task.py::test_input_not_modified PASSED                    [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 8,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "parse_duration": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def parse_duration(text):\n    \"\"\"\n    Converts a duration string into a whole number of seconds.\n    \n    The string consists of one or more <integer><unit> parts with no spaces.\n    Valid units: d (86400 s), h (3600 s), m (60 s), s (1 s).\n    Units must appear in order: days, hours, minutes, seconds.\n    Each unit can appear at most once.\n    \n    Raises ValueError for:\n        - Empty string\n        - Number without a unit\n        - Repeated or out-of-order units\n        - Decimals\n        - Spaces\n        - Negative numbers\n        - Unknown units\n    \"\"\"\n    if not text:\n        raise ValueError(\"Empty string\")\n    \n    # Check for spaces\n    if ' ' in text:\n        raise ValueError(\"Spaces are not allowed\")\n    \n    # Define unit values and expected order\n    unit_values = {\n        'd': 86400,\n        'h': 3600,\n        'm': 60,\n        's': 1\n    }\n    \n    valid_units = ['d', 'h', 'm', 's']\n    seen_units = set()\n    total_seconds = 0\n    \n    i = 0\n    while i < len(text):\n        # Check if current character is a digit\n        if text[i].isdigit():\n            # Parse the number\n            j = i\n            while j < len(text) and text[j].isdigit():\n                j += 1\n            \n            number_str = text[i:j]\n            \n            # Check for negative numbers (handled by checking first char, but let's be safe)\n            if not number_str:\n                raise ValueError(\"Number without a unit\")\n                \n            # Check for decimals (if there's a dot in the original segment before the unit)\n            # Actually, we need to check if the next character is a dot or a valid unit\n            if j < len(text) and text[j] == '.':\n                raise ValueError(\"Decimals are not allowed\")\n            \n            number = int(number_str)\n            \n            # Check if there's a unit following the number\n            if j >= len(text):\n                raise ValueError(\"Number without a unit\")\n            \n            unit_char = text[j]\n            \n            # Validate unit\n            if unit_char not in unit_values:\n                raise ValueError(f\"Unknown unit: {unit_char}\")\n            \n            # Check for repeated units\n            if unit_char in seen_units:\n                raise ValueError(f\"Repeated unit: {unit_char}\")\n            \n            # Check order (units must appear in d, h, m, s order)\n            current_unit_index = valid_units.index(unit_char)\n            if seen_units:\n                last_seen_unit = list(seen_units)[-1]\n                last_unit_index = valid_units.index(last_seen_unit)\n                if current_unit_index < last_unit_index:\n                    raise ValueError(f\"Units must appear in order (days, hours, minutes, seconds)\")\n            \n            # Add to total\n            total_seconds += number * unit_values[unit_char]\n            \n            # Mark unit as seen\n            seen_units.add(unit_char)\n            \n            # Move index past the unit\n            i = j + 1\n        else:\n            # Non-digit, non-unit character (shouldn't happen with valid input, but for safety)\n            raise ValueError(f\"Invalid character: {text[i]}\")\n    \n    return total_seconds\n",
+     "failure": null,
+     "detail": "",
+     "latency": 40.57,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_single_units PASSED                          [ 25%]\n../tests/test_task.py::test_zero PASSED                                  [ 50%]\n../tests/test_task.py::test_invalid_missing_or_unknown_unit PASSED       [ 75%]\n../tests/test_task.py::test_invalid_syntax PASSED                        [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 8,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "slugify": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import unicodedata\nimport re\n\n\ndef slugify(text):\n    \"\"\"\n    Convert a title into a URL slug.\n    \n    - Accented letters are reduced to their plain ASCII letter (e.g., '\u00e9' -> 'e').\n    - Everything is lower case.\n    - Every run of non-ASCII-alphanumeric characters becomes a single '-'.\n    - Leading and trailing '-' are removed.\n    - If nothing remains, return an empty string.\n    \n    :param text: Input string to convert.\n    :return: URL slug as a string.\n    \"\"\"\n    if not isinstance(text, str):\n        raise TypeError(\"Input must be a string.\")\n\n    # Normalize accents (NFKD decomposes characters into base + combining marks)\n    normalized = unicodedata.normalize('NFKD', text)\n    \n    # Encode to ASCII, ignoring errors (drops non-ASCII parts like remaining combining marks)\n    ascii_text = normalized.encode('ascii', 'ignore').decode('ascii')\n    \n    # Convert to lowercase\n    ascii_text = ascii_text.lower()\n    \n    # Replace any sequence of non-alphanumeric characters with a single '-'\n    slug = re.sub(r'[^a-z0-9]+', '-', ascii_text)\n    \n    # Strip leading and trailing hyphens\n    slug = slug.strip('-')\n    \n    return slug if slug else ''\n",
+     "failure": null,
+     "detail": "",
+     "latency": 17.57,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 25%]\n../tests/test_task.py::test_runs_and_edges PASSED                        [ 50%]\n../tests/test_task.py::test_empty_results PASSED                         [ 75%]\n../tests/test_task.py::test_digits_kept PASSED                           [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 7,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "business_days": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "from datetime import date, timedelta\n\ndef business_days(start: date, end: date) -> int:\n    \"\"\"\n    Calculate the number of weekdays (Monday-Friday) between start (inclusive)\n    and end (exclusive).\n\n    Args:\n        start: The starting date.\n        end: The ending date (exclusive).\n\n    Returns:\n        The count of business days. Returns 0 if end is on or before start.\n    \"\"\"\n    if end <= start:\n        return 0\n\n    # Calculate the total number of days in the range\n    delta = end - start\n    current_date = start\n    count = 0\n\n    # Iterate through each day in the range\n    for _ in range(delta.days):\n        if current_date.weekday() < 5:  # Monday is 0, Friday is 4\n            count += 1\n        current_date += timedelta(days=1)\n\n    return count\n",
+     "failure": null,
+     "detail": "",
+     "latency": 12.36,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_one_full_week PASSED                         [ 25%]\n../tests/test_task.py::test_weekend_only PASSED                          [ 50%]\n../tests/test_task.py::test_end_excluded_start_included PASSED           [ 75%]\n../tests/test_task.py::test_partial_weeks PASSED                         [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 7,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "parse_csv_line": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def parse_csv_line(line):\n    \"\"\"\n    Parse a single CSV line into a list of field strings.\n    \n    Rules:\n    - Fields are separated by commas.\n    - Quoted fields start/end with double quotes.\n    - Inside quoted fields: ',' is literal, '\"\"' becomes '\"'.\n    - Unquoted fields are returned as-is (spaces kept).\n    - Empty line -> [\"\"]\n    - Trailing comma -> trailing empty field\n    - Unclosed quote -> ValueError\n    \n    Args:\n        line (str): A single line of CSV text (no newlines).\n    \n    Returns:\n        List[str]: List of parsed field strings.\n    \n    Raises:\n        ValueError: If a double quote is never closed.\n    \"\"\"\n    fields = []\n    current_field = []\n    in_quotes = False\n    \n    i = 0\n    n = len(line)\n    \n    while i < n:\n        char = line[i]\n        \n        if in_quotes:\n            if char == '\"':\n                # Check for escaped quote \"\"\n                if i + 1 < n and line[i + 1] == '\"':\n                    current_field.append('\"')\n                    i += 2\n                    continue\n                else:\n                    # End of quoted field\n                    in_quotes = False\n            else:\n                current_field.append(char)\n        else:\n            if char == '\"':\n                # Start of a quoted field (only allowed at start or after comma)\n                # We assume valid CSV structure where quotes don't appear mid-unquoted field\n                in_quotes = True\n            elif char == ',':\n                # End of current field\n                fields.append(''.join(current_field))\n                current_field = []\n            else:\n                current_field.append(char)\n        \n        i += 1\n    \n    # Append the last field\n    fields.append(''.join(current_field))\n    \n    return fields\n",
+     "failure": null,
+     "detail": "",
+     "latency": 21.84,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_plain PASSED                                 [ 25%]\n../tests/test_task.py::test_escaped_quote PASSED                         [ 50%]\n../tests/test_task.py::test_spaces_kept PASSED                           [ 75%]\n../tests/test_task.py::test_unterminated_quote FAILED                    [100%]\n\n=================================== FAILURES ===================================\n___________________________ test_unterminated_quote ____________________________\n/tests/test_task.py:14: in test_unterminated_quote\n    with pytest.raises(ValueError):\nE   Failed: DID NOT RAISE <class 'ValueError'>\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_unterminated_quote - Failed: DID NOT RAISE...\n========================= 1 failed, 3 passed in 0.01s ==========================\n",
+      "tail": "ueError):\nE   Failed: DID NOT RAISE <class 'ValueError'>\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_unterminated_quote - Failed: DID NOT RAISE...\n========================= 1 failed, 3 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "truncated",
+     "detail": "token budget ran out or fence never closed",
+     "latency": 40.17
+    },
+    {
+     "n": 3,
+     "code": "def parse_csv_line(line):\n    fields = []\n    current_field = []\n    in_quotes = False\n    \n    i = 0\n    n = len(line)\n    \n    while i < n:\n        char = line[i]\n        \n        if in_quotes:\n            if char == '\"':\n                # Check for escaped quote \"\"\n                if i + 1 < n and line[i + 1] == '\"':\n                    current_field.append('\"')\n                    i += 2\n                    continue\n                else:\n                    # End of quoted field\n                    in_quotes = False\n            else:\n                current_field.append(char)\n        else:\n            if char == '\"':\n                # Start of a quoted field\n                in_quotes = True\n            elif char == ',':\n                # End of current field\n                fields.append(''.join(current_field))\n                current_field = []\n            else:\n                current_field.append(char)\n        \n        i += 1\n    \n    # After loop, if we are still inside quotes, it's an error\n    if in_quotes:\n        raise ValueError(\"Unclosed quote\")\n    \n    # Append the last field\n    fields.append(''.join(current_field))\n    \n    return fields\n",
+     "failure": null,
+     "detail": "",
+     "latency": 16.55
+    }
+   ]
+  },
+  "wrap_text": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def wrap_text(text, width):\n    if not text or not text.strip():\n        return []\n    \n    words = text.split()\n    lines = []\n    current_line = []\n    current_length = 0\n    \n    for word in words:\n        word_len = len(word)\n        \n        # Check if adding this word exceeds width\n        # If the line is empty, we just need to check if the word fits\n        # If the line is not empty, we need space + word length\n        if current_line:\n            required_length = current_length + 1 + word_len\n        else:\n            required_length = word_len\n            \n        if required_length <= width or (current_line and word_len > width):\n            # Either it fits, or it's a long word that must go on its own line\n            # Note: The condition \"word_len > width\" implies we are adding to an empty line effectively\n            # because a non-empty line with a long word would exceed width.\n            # So if current_line is not empty and word_len > width, required_length > width.\n            # Thus, the only case where a long word is added is when current_line is empty.\n            current_line.append(word)\n            current_length = required_length\n        else:\n            # Flush the current line\n            lines.append(' '.join(current_line))\n            current_line = [word]\n            current_length = word_len\n    \n    # Don't forget the last line if there are words left\n    if current_line:\n        lines.append(' '.join(current_line))\n    \n    return lines\n",
+     "failure": null,
+     "detail": "",
+     "latency": 19.99,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 3,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 25%]\n../tests/test_task.py::test_long_word_alone FAILED                       [ 50%]\n../tests/test_task.py::test_empty PASSED                                 [ 75%]\n../tests/test_task.py::test_all_fits_one_line PASSED                     [100%]\n\n=================================== FAILURES ===================================\n_____________________________ test_long_word_alone _____________________________\n/tests/test_task.py:7: in test_long_word_alone\n    assert wrap_text('a extraordinarily b', 5) == ['a', 'extraordinarily', 'b']\nE   AssertionError: assert ['a extraordinarily', 'b'] == ['a', 'extraordinarily', 'b']\nE     \nE     At index 0 diff: 'a extraordinarily' != 'a'\nE     Right contains one more item: 'b'\nE     \nE     Full diff:\nE       [\nE     -     'a',...\nE     \nE     ...Full output truncated (5 lines hidden), use '-vv' to show\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_long_word_alone - AssertionError: assert [...\n========================= 1 failed, 3 passed in 0.01s ==========================\n",
+      "tail": "ull output truncated (5 lines hidden), use '-vv' to show\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_long_word_alone - AssertionError: assert [...\n========================= 1 failed, 3 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.34
+    },
+    {
+     "n": 3,
+     "code": "def wrap_text(text, width):\n    if not text or not text.strip():\n        return []\n    \n    words = text.split()\n    lines = []\n    current_line = []\n    current_length = 0\n    \n    for word in words:\n        word_len = len(word)\n        \n        # Calculate the length if we add this word to the current line\n        if current_line:\n            required_length = current_length + 1 + word_len\n        else:\n            required_length = word_len\n            \n        # Check if the word fits on the current line\n        if required_length <= width:\n            current_line.append(word)\n            current_length = required_length\n        else:\n            # Word doesn't fit. Flush current line if it's not empty.\n            if current_line:\n                lines.append(' '.join(current_line))\n                current_line = []\n                current_length = 0\n            \n            # Now try to put the word on a new line (which is effectively empty)\n            # Since we are starting a new line, required_length becomes just word_len\n            if word_len <= width:\n                current_line.append(word)\n                current_length = word_len\n            else:\n                # Word is longer than width. It must go on its own line.\n                # We treat it as fitting on an empty line.\n                current_line.append(word)\n                current_length = word_len\n    \n    # Don't forget the last line if there are words left\n    if current_line:\n        lines.append(' '.join(current_line))\n    \n    return lines\n",
+     "failure": null,
+     "detail": "",
+     "latency": 16.44
+    }
+   ]
+  },
+  "compare_versions": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def compare_versions(a: str, b: str) -> int:\n    \"\"\"\n    Compare two version strings by Semantic Versioning precedence.\n    \n    Returns:\n        -1 if a < b\n         0 if a == b\n         1 if a > b\n    \n    Format: MAJOR.MINOR.PATCH[-pre-release][+build-metadata]\n    Build metadata is ignored.\n    \"\"\"\n    def parse_version(version_str):\n        # Split into core and optional parts\n        pre_release = None\n        build_metadata = None\n        \n        # Check for pre-release\n        if '-' in version_str:\n            core, rest = version_str.split('-', 1)\n            # Check for build metadata after pre-release\n            if '+' in rest:\n                pre_release, build_metadata = rest.split('+', 1)\n            else:\n                pre_release = rest\n        elif '+' in version_str:\n            # Only build metadata, no pre-release\n            core, build_metadata = version_str.split('+', 1)\n        else:\n            core = version_str\n        \n        # Parse core version (MAJOR.MINOR.PATCH)\n        parts = core.split('.')\n        major = int(parts[0])\n        minor = int(parts[1])\n        patch = int(parts[2])\n        \n        return (major, minor, patch, pre_release, build_metadata)\n\n    def compare_pre_release(pre_a, pre_b):\n        # If one is None, the one without pre-release is higher\n        if pre_a is None and pre_b is None:\n            return 0\n        if pre_a is None:\n            return 1  # a > b (a has no pre-release)\n        if pre_b is None:\n            return -1  # a < b (b has no pre-release)\n        \n        # Split into identifiers\n        ids_a = pre_a.split('.')\n        ids_b = pre_b.split('.')\n        \n        min_len = min(len(ids_a), len(ids_b))\n        \n        for i in range(min_len):\n            id_a = ids_a[i]\n            id_b = ids_b[i]\n            \n            # Check if identifiers are numeric\n            is_num_a = id_a.isdigit()\n            is_num_b = id_b.isdigit()\n            \n            if is_num_a and is_num_b:\n                # Both numeric, compare as integers\n                num_a = int(id_a)\n                num_b = int(id_b)\n                if num_a < num_b:\n                    return -1\n                elif num_a > num_b:\n                    return 1\n            else:\n                # At least one is text, compare as strings\n                if id_a < id_b:\n                    return -1\n                elif id_a > id_b:\n                    return 1\n        \n        # All shared identifiers are equal, shorter list is lower\n        if len(ids_a) < len(ids_b):\n            return -1\n        elif len(ids_a) > len(ids_b):\n            return 1\n        \n        return 0\n\n    ver_a = parse_version(a)\n    ver_b = parse_version(b)\n    \n    # Compare major, minor, patch\n    if ver_a[0] != ver_b[0]:\n        return -1 if ver_a[0] < ver_b[0] else 1\n    if ver_a[1] != ver_b[1]:\n        return -1 if ver_a[1] < ver_b[1] else 1\n    if ver_a[2] != ver_b[2]:\n        return -1 if ver_a[2] < ver_b[2] else 1\n    \n    # Compare pre-release\n    return compare_pre_release(ver_a[3], ver_b[3])\n",
+     "failure": null,
+     "detail": "",
+     "latency": 41.81,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_core_numeric PASSED                          [ 25%]\n../tests/test_task.py::test_prerelease_lower_than_release PASSED         [ 50%]\n../tests/test_task.py::test_numeric_vs_text_identifier PASSED            [ 75%]\n../tests/test_task.py::test_text_compared_as_ascii PASSED                [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 7,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "toposort": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def toposort(deps):\n    # Build a set of all nodes (both keys and values in deps)\n    all_nodes = set(deps.keys())\n    for v in deps.values():\n        all_nodes.update(v)\n    \n    # Build the adjacency list for the graph where an edge A -> B means A depends on B.\n    # In topological sort, we want to process B before A.\n    # So if A depends on B, there is a directed edge from B to A in our processing graph.\n    # However, standard Kahn's algorithm works with edges representing \"must come before\".\n    # If A depends on B, then B must come before A. So we have an edge B -> A.\n    \n    # Let's re-verify the logic:\n    # Input: {\"app\": [\"lib\", \"util\"], \"lib\": [\"util\"]}\n    # app depends on lib and util.\n    # lib depends on util.\n    # Order should be: util, lib, app (or util, app, lib? No, lib must come before app).\n    # So edges: util -> lib, util -> app, lib -> app.\n    # In the input dict, \"app\" lists [\"lib\", \"util\"]. This means app depends on them.\n    # So in our graph for topological sort (where edge u->v means u must precede v):\n    # We need edges: util -> lib, util -> app, lib -> app.\n    # The input gives us dependencies: for node N, list D = deps[N].\n    # This means for each d in D, we have an edge d -> N.\n    \n    graph = {node: [] for node in all_nodes}\n    in_degree = {node: 0 for node in all_nodes}\n    \n    for node, dependencies in deps.items():\n        for dep in dependencies:\n            # If 'dep' is not in our known nodes (shouldn't happen based on problem desc but good to be safe), skip or handle?\n            # Problem says \"including names that only appear inside dependency lists\", so all are in all_nodes.\n            if dep not in graph:\n                continue\n            graph[dep].append(node)\n            in_degree[node] += 1\n            \n    # Kahn's algorithm with a min-heap to ensure alphabetical order for ties\n    import heapq\n    \n    queue = []\n    for node, degree in in_degree.items():\n        if degree == 0:\n            heapq.heappush(queue, node)\n            \n    result = []\n    \n    while queue:\n        # Pop the alphabetically smallest node with in-degree 0\n        current = heapq.heappop(queue)\n        result.append(current)\n        \n        # Reduce in-degree of neighbors\n        for neighbor in graph[current]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                heapq.heappush(queue, neighbor)\n                \n    # Check for cycles\n    if len(result) != len(all_nodes):\n        raise ValueError(\"Cycle detected\")\n        \n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 34.74,
+     "vis": {
+      "kind": "ok",
+      "passed": 5,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 5 items\n\n../tests/test_task.py::test_chain PASSED                                 [ 20%]\n../tests/test_task.py::test_alphabetical_tie_break PASSED                [ 40%]\n../tests/test_task.py::test_late_small_name_goes_first_when_ready PASSED [ 60%]\n../tests/test_task.py::test_cycle PASSED                                 [ 80%]\n../tests/test_task.py::test_input_not_modified PASSED                    [100%]\n\n============================== 5 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 10,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 5,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "lru_cache": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "from collections import OrderedDict\n\n\nclass LRUCache:\n    def __init__(self, capacity):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key in self.cache:\n            # Move the accessed item to the end (most recently used)\n            self.cache.move_to_end(key)\n            return self.cache[key]\n        return None\n\n    def put(self, key, value):\n        if key in self.cache:\n            # Update the value and move to the end (most recently used)\n            self.cache[key] = value\n            self.cache.move_to_end(key)\n        else:\n            # Insert new item at the end\n            self.cache[key] = value\n            # If over capacity, remove the least recently used item (first item)\n            if len(self.cache) > self.capacity:\n                self.cache.popitem(last=False)\n\n    def __len__(self):\n        return len(self.cache)\n\n    def keys(self):\n        # Return keys from least recently used to most recently used\n        return list(self.cache.keys())\n",
+     "failure": null,
+     "detail": "",
+     "latency": 11.86,
+     "vis": {
+      "kind": "ok",
+      "passed": 4,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_basic_eviction PASSED                        [ 25%]\n../tests/test_task.py::test_update_refreshes_and_replaces PASSED         [ 50%]\n../tests/test_task.py::test_update_does_not_grow PASSED                  [ 75%]\n../tests/test_task.py::test_bad_capacity PASSED                          [100%]\n\n============================== 4 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 8,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "flatten_dict": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def flatten_dict(d, sep=\".\"):\n    \"\"\"\n    Flattens a nested dictionary into a single-level dictionary.\n    \n    Args:\n        d (dict): The input dictionary to flatten.\n        sep (str): The separator to use between keys in the flattened result.\n        \n    Returns:\n        dict: A flattened dictionary where nested keys are joined with the separator.\n    \"\"\"\n    result = {}\n    \n    def _flatten(current_dict, prefix=\"\"):\n        for key, value in current_dict.items():\n            new_key = f\"{prefix}{sep}{key}\" if prefix else key\n            \n            if isinstance(value, dict):\n                # If the nested dictionary is empty, keep it as an empty dict under its key\n                if not value:\n                    result[new_key] = {}\n                else:\n                    _flatten(value, new_key)\n            else:\n                # Lists and other values are kept as they are\n                result[new_key] = value\n    \n    _flatten(d)\n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 10.85,
+     "vis": {
+      "kind": "ok",
+      "passed": 3,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_basic PASSED                                 [ 33%]\n../tests/test_task.py::test_lists_kept PASSED                            [ 66%]\n../tests/test_task.py::test_empty_input PASSED                           [100%]\n\n============================== 3 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 6,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "fix_median": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def median(values):\n    if not values:\n        raise ValueError(\"median() arg is an empty list\")\n    s = sorted(values)\n    n = len(s)\n    if n % 2 == 1:\n        return s[n // 2]\n    else:\n        return (s[n // 2 - 1] + s[n // 2]) / 2\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.36,
+     "vis": {
+      "kind": "ok",
+      "passed": 3,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_odd PASSED                                   [ 33%]\n../tests/test_task.py::test_single PASSED                                [ 66%]\n../tests/test_task.py::test_not_modified PASSED                          [100%]\n\n============================== 3 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 6,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "fix_chunked": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def chunked(items, size):\n    if size < 1:\n        raise ValueError(\"size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.94,
+     "vis": {
+      "kind": "ok",
+      "passed": 3,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_remainder_kept PASSED                        [ 33%]\n../tests/test_task.py::test_size_larger_than_list PASSED                 [ 66%]\n../tests/test_task.py::test_size_one PASSED                              [100%]\n\n============================== 3 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 6,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 3,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "fix_unique_bucket": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "def append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.51,
+     "vis": {
+      "kind": "ok",
+      "passed": 2,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 2 items\n\n../tests/test_task.py::test_fresh_list_each_call PASSED                  [ 50%]\n../tests/test_task.py::test_no_duplicates PASSED                         [100%]\n\n============================== 2 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 2,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "fix_top_words": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import string\n\ndef top_words(text, n):\n    counts = {}\n    punctuations = set(string.punctuation.replace('-', '').replace('_', ''))\n    \n    for w in text.split():\n        # Strip punctuation from start and end of the word\n        clean_word = w.strip(punctuations)\n        \n        # Ignore empty strings after stripping (e.g., \"...\" or \"   \")\n        if not clean_word:\n            continue\n            \n        # Convert to lowercase for case-insensitive comparison\n        clean_word = clean_word.lower()\n        \n        counts[clean_word] = counts.get(clean_word, 0) + 1\n    \n    # Sort by count (descending), then alphabetically for ties\n    sorted_words = sorted(counts.keys(), key=lambda x: (-counts[x], x))\n    \n    return sorted_words[:n]\n",
+     "failure": null,
+     "detail": "",
+     "latency": 8.65,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 0,
+      "failed": 4,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 4 items\n\n../tests/test_task.py::test_case_insensitive FAILED                      [ 25%]\n../tests/test_task.py::test_tie_break_alphabetical FAILED                [ 50%]\n../tests/test_task.py::test_empty_and_zero FAILED                        [ 75%]\n../tests/test_task.py::test_inner_punctuation_kept FAILED                [100%]\n\n=================================== FAILURES ===================================\n____________________________ test_case_insensitive _____________________________\n/tests/test_task.py:4: in test_case_insensitive\n    assert top_words('The cat and the dog and THE bird', 2) == ['the', 'and']\nsolution.py:9: in top_words\n    clean_word = w.strip(punctuations)\nE   TypeError: strip arg must be None or str\n_________________________ test_tie_break_alphabetical __________________________\n/tests/test_task.py:7: in test_tie_break_alphabetical\n    assert top_words('pear apple pear apple fig', 3) == ['apple', 'pear', 'fig']\nsolution.py:9: in top_words\n    clean_word = w.strip(punctuations)\nE   TypeError: strip arg must be None or str\n_____________________________ test_empty_and_zero ______________________________\n/tests/test_task.py:11: in test_empty_and_zero\n    assert top_words('a b', 0) == []\nsolution.py:9: in top_words\n    clean_word = w.strip(punctuations)\nE   TypeError: strip arg must be None or str\n_________________________ test_inner_punctuation_kept __________________________\n/tests/test_task.py:14: in test_inner_punctuation_kept\n    assert top_words(\"don't don't stop\", 1) == [\"don't\"]\nsolution.py:9: in top_words\n    clean_word = w.strip(punctuations)\nE   TypeError: strip arg must be None or str\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_case_insensitive - TypeError: strip arg mu...\nFAILED ../tests/test_task.py::test_tie_break_alphabetical - TypeError: strip ...\nFAILED ../tests/test_task.py::test_empty_and_zero - TypeError: strip arg must...\nFAILED ../tests/test_task.py::test_inner_punctuation_kept - TypeError: strip ...\n============================== 4 failed in 0.01s ===============================\n",
+      "tail": "k.py::test_tie_break_alphabetical - TypeError: strip ...\nFAILED ../tests/test_task.py::test_empty_and_zero - TypeError: strip arg must...\nFAILED ../tests/test_task.py::test_inner_punctuation_kept - TypeError: strip ...\n============================== 4 failed in 0.01s ===============================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.06
+    },
+    {
+     "n": 3,
+     "code": "import string\n\ndef top_words(text, n):\n    # Define the specific punctuation characters to strip from start/end\n    # The problem specifies: .,;:!?\n    punctuations = set(\".,;:?\")\n    \n    counts = {}\n    for w in text.split():\n        # Strip only the specified punctuation from start and end\n        clean_word = w.strip(punctuations)\n        \n        # Ignore empty strings after stripping (e.g., \"...\" or \"   \")\n        if not clean_word:\n            continue\n            \n        # Convert to lowercase for case-insensitive comparison\n        clean_word = clean_word.lower()\n        \n        counts[clean_word] = counts.get(clean_word, 0) + 1\n    \n    # Sort by count (descending), then alphabetically for ties\n    sorted_words = sorted(counts.keys(), key=lambda x: (-counts[x], x))\n    \n    return sorted_words[:n]\n",
+     "failure": null,
+     "detail": "",
+     "latency": 11.52
+    }
+   ]
+  },
+  "re_hex_color": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\nPATTERN = re.compile(r'^#[0-9a-fA-F]{3}$|^[#][0-9a-fA-F]{6}$')\n",
+     "failure": null,
+     "detail": "",
+     "latency": 2.39,
+     "vis": {
+      "kind": "ok",
+      "passed": 2,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 2 items\n\n../tests/test_task.py::test_is_compiled PASSED                           [ 50%]\n../tests/test_task.py::test_bad PASSED                                   [100%]\n\n============================== 2 passed in 0.00s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 4,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 2,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "re_dates_in_text": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\nPATTERN = re.compile(r'(?<![0-9])(?:(?:1[3-9]|[2-9]\\d)?\\d{2})-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|02-(?:0[1-9]|1\\d|2[0-8])))(?![0-9])')\n",
+     "failure": null,
+     "detail": "",
+     "latency": 6.12,
+     "vis": {
+      "kind": "import_error",
+      "passed": 0,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 0 items / 1 error\n\n==================================== ERRORS ====================================\n________________________ ERROR collecting test_task.py _________________________\n/tests/test_task.py:2: in <module>\n    from solution import PATTERN\nsolution.py:3: in <module>\n    PATTERN = re.compile(r'(?<![0-9])(?:(?:1[3-9]|[2-9]\\d)?\\d{2})-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|02-(?:0[1-9]|1\\d|2[0-8])))(?![0-9])')\n/usr/local/lib/python3.12/re/__init__.py:228: in compile\n    return _compile(pattern, flags)\n/usr/local/lib/python3.12/re/__init__.py:307: in _compile\n    p = _compiler.compile(pattern, flags)\n/usr/local/lib/python3.12/re/_compiler.py:750: in compile\n    p = _parser.parse(p, flags)\n/usr/local/lib/python3.12/re/_parser.py:984: in parse\n    raise source.error(\"unbalanced parenthesis\")\nE   re.error: unbalanced parenthesis at position 145\n=========================== short test summary info ============================\nERROR ../tests/test_task.py - re.error: unbalanced parenthesis at position 145\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n=============================== 1 error in 0.06s ===============================\n",
+      "tail": "===== short test summary info ============================\nERROR ../tests/test_task.py - re.error: unbalanced parenthesis at position 145\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n=============================== 1 error in 0.06s ===============================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.06
+    },
+    {
+     "n": 3,
+     "code": "import re\n\nPATTERN = re.compile(r'(?<![0-9])(?:(?:1[3-9]|[2-9]\\d)?\\d{2})-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|02-(?:0[1-9]|1\\d|2[0-8])))(?![0-9])')\n",
+     "failure": null,
+     "detail": "",
+     "latency": 7.9
+    }
+   ]
+  },
+  "re_ipv4": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\nPATTERN = re.compile(\n    r\"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$\"\n)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 4.61,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 2,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 3 items\n\n../tests/test_task.py::test_is_compiled PASSED                           [ 33%]\n../tests/test_task.py::test_bad FAILED                                   [ 66%]\n../tests/test_task.py::test_non_ascii_digits_rejected PASSED             [100%]\n\n=================================== FAILURES ===================================\n___________________________________ test_bad ___________________________________\n/tests/test_task.py:11: in test_bad\n    assert not PATTERN.fullmatch(s), s\nE   AssertionError: 01.2.3.4\nE   assert not <re.Match object; span=(0, 8), match='01.2.3.4'>\nE    +  where <re.Match object; span=(0, 8), match='01.2.3.4'> = <built-in method fullmatch of re.Pattern object at 0xca9346ac4b60>('01.2.3.4')\nE    +    where <built-in method fullmatch of re.Pattern object at 0xca9346ac4b60> = re.compile('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$').fullmatch\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_bad - AssertionError: 01.2.3.4\n========================= 1 failed, 2 passed in 0.01s ==========================\n",
+      "tail": "0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$').fullmatch\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_bad - AssertionError: 01.2.3.4\n========================= 1 failed, 2 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.06
+    },
+    {
+     "n": 3,
+     "code": "import re\n\nPATTERN = re.compile(\n    r\"^(?:(?:25[0-5]|2[0-4][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|[1-9][0-9]|[0-9])$\"\n)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 6.26
+    }
+   ]
+  },
+  "cx_ttl_cache": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import time\nfrom collections import OrderedDict\n\n\nclass TTLCache:\n    def __init__(self, capacity, ttl, clock=time.monotonic):\n        if capacity < 1:\n            raise ValueError(\"capacity must be at least 1\")\n        if ttl <= 0:\n            raise ValueError(\"ttl must be greater than 0\")\n        \n        self._capacity = capacity\n        self._ttl = ttl\n        self._clock = clock\n        self._cache = OrderedDict()\n\n    def _is_expired(self, key):\n        current_time = self._clock()\n        return current_time >= self._cache[key]['expiry']\n\n    def _remove_expired(self):\n        # Remove all expired entries from the cache\n        keys_to_remove = [key for key in self._cache if self._is_expired(key)]\n        for key in keys_to_remove:\n            del self._cache[key]\n\n    def put(self, key, value):\n        current_time = self._clock()\n        \n        # If key exists, update expiry time and move to end (most recently used)\n        if key in self._cache:\n            self._cache[key]['expiry'] = current_time + self._ttl\n            self._cache.move_to_end(key)\n        else:\n            # New entry\n            self._cache[key] = {'value': value, 'expiry': current_time + self._ttl}\n        \n        # Check capacity and evict if necessary\n        while len(self._cache) > self._capacity:\n            # First, try to remove expired entries\n            expired_keys = [key for key in self._cache if self._is_expired(key)]\n            \n            if expired_keys:\n                # Remove the oldest expired entry (first in OrderedDict)\n                # We need to find the first expired key and remove it\n                for key in list(self._cache.keys()):\n                    if self._is_expired(key):\n                        del self._cache[key]\n                        break\n            else:\n                # No expired entries, remove the least recently used (first in OrderedDict)\n                oldest_key = next(iter(self._cache))\n                del self._cache[oldest_key]\n\n    def get(self, key):\n        if key not in self._cache:\n            return None\n        \n        if self._is_expired(key):\n            del self._cache[key]\n            return None\n        \n        # Move to end (most recently used)\n        self._cache.move_to_end(key)\n        return self._cache[key]['value']\n\n    def __len__(self):\n        current_time = self._clock()\n        count = 0\n        for key in self._cache:\n            if current_time < self._cache[key]['expiry']:\n                count += 1\n        return count\n\n    def keys(self):\n        current_time = self._clock()\n        valid_keys = []\n        for key in self._cache:\n            if current_time < self._cache[key]['expiry']:\n                valid_keys.append(key)\n        \n        # Sort by time of last use (position in OrderedDict)\n        # Since OrderedDict maintains insertion order, and we move to end on access,\n        # the order is already from least recently used to most recently used\n        return valid_keys\n",
+     "failure": null,
+     "detail": "",
+     "latency": 31.98,
+     "vis": {
+      "kind": "ok",
+      "passed": 5,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 5 items\n\n../tests/test_task.py::test_basic_get_put PASSED                         [ 20%]\n../tests/test_task.py::test_len_counts_only_live_entries PASSED          [ 40%]\n../tests/test_task.py::test_get_does_not_extend_expiry PASSED            [ 60%]\n../tests/test_task.py::test_expired_entries_dropped_before_live_lru PASSED [ 80%]\n../tests/test_task.py::test_bad_arguments PASSED                         [100%]\n\n============================== 5 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "wrong_answer",
+     "passed": 9,
+     "failed": 1
+    },
+    "hold": {
+     "kind": "wrong_answer",
+     "passed": 4,
+     "failed": 1
+    }
+   },
+   "done": true
+  },
+  "cx_scheduler": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import time\nimport threading\nfrom collections import OrderedDict\n\nclass Scheduler:\n    def __init__(self):\n        self._tasks = OrderedDict()  # name -> task_info\n        self._errors = []\n        self._lock = threading.Lock()\n\n    def schedule(self, name, run_at, callback, every=None):\n        with self._lock:\n            if name in self._tasks:\n                raise ValueError(f\"Task '{name}' already exists\")\n            \n            task_info = {\n                'run_at': run_at,\n                'callback': callback,\n                'every': every,\n                'is_repeating': every is not None,\n                'order': len(self._tasks)  # insertion order for tie-breaking\n            }\n            self._tasks[name] = task_info\n\n    def cancel(self, name):\n        with self._lock:\n            if name in self._tasks:\n                del self._tasks[name]\n                return True\n            return False\n\n    def pending(self):\n        with self._lock:\n            # Return list of (run_at, name) sorted by run_at then by insertion order\n            result = []\n            for name, info in self._tasks.items():\n                result.append((info['run_at'], name))\n            \n            # Sort by run_at, then by original insertion order (which we can infer from the fact \n            # that OrderedDict preserves insertion order, but we need to sort by 'order' field)\n            # However, since we are iterating over an OrderedDict, the relative order of items with same run_at\n            # is already preserved. We just need to sort primarily by run_at.\n            result.sort(key=lambda x: (x[0], self._tasks[x[1]]['order']))\n            return result\n\n    def run_due(self, now):\n        with self._lock:\n            names_run = []\n            \n            # Create a list of tasks to process based on current state\n            # We must process them in order: by run_at, then by insertion order\n            items_to_process = []\n            for name, info in self._tasks.items():\n                if info['run_at'] <= now:\n                    items_to_process.append((info['run_at'], name))\n            \n            # Sort by run_at, then by the stored 'order' field to maintain FIFO for same time\n            items_to_process.sort(key=lambda x: (x[0], self._tasks[x[1]]['order']))\n            \n            for run_at, name in items_to_process:\n                info = self._tasks[name]\n                \n                # Check if task was cancelled by a previous callback in this run_due call\n                # Since we hold the lock and iterate over a snapshot-like list derived from current state,\n                # we need to check if the task still exists in self._tasks.\n                # However, the problem says: \"A task cancelled by an earlier callback in the same call is not run.\"\n                # So we must check existence again before running.\n                if name not in self._tasks:\n                    continue\n                \n                try:\n                    info['callback']()\n                except Exception as e:\n                    self._errors.append((name, e))\n                \n                names_run.append(name)\n                \n                # Update task state\n                if info['is_repeating']:\n                    # Move run_at forward by 'every' until > now\n                    new_run_at = info['run_at'] + info['every']\n                    while new_run_at <= now:\n                        new_run_at += info['every']\n                    info['run_at'] = new_run_at\n                else:\n                    # Remove one-time task\n                    del self._tasks[name]\n            \n            return names_run\n",
+     "failure": null,
+     "detail": "",
+     "latency": 36.76,
+     "vis": {
+      "kind": "timeout",
+      "passed": 2,
+      "failed": 2,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_runs_due_tasks_in_time_then_insertion_order PASSED [ 16%]\n../tests/test_task.py::test_duplicate_name_and_bad_every FAILED          [ 33%]\n../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed PASSED [ 50%]\n../tests/test_task.py::test_exception_is_recorded_and_others_continue FAILED [ 66%]\n../tests/test_task.py::test_task_added_by_callback_waits_for_next_call ",
+      "tail": "test_duplicate_name_and_bad_every FAILED          [ 33%]\n../tests/test_task.py::test_repeating_runs_once_per_call_and_skips_missed PASSED [ 50%]\n../tests/test_task.py::test_exception_is_recorded_and_others_continue FAILED [ 66%]\n../tests/test_task.py::test_task_added_by_callback_waits_for_next_call "
+     }
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.06
+    },
+    {
+     "n": 3,
+     "code": "import threading\nfrom collections import OrderedDict\n\nclass Scheduler:\n    def __init__(self):\n        self._tasks = OrderedDict()  # name -> task_info\n        self._errors = []\n        self._lock = threading.Lock()\n\n    def schedule(self, name, run_at, callback, every=None):\n        with self._lock:\n            if name in self._tasks:\n                raise ValueError(f\"Task '{name}' already exists\")\n            \n            task_info = {\n                'run_at': float(run_at),\n                'callback': callback,\n                'every': float(every) if every is not None else None,\n                'is_repeating': every is not None,\n                'order': len(self._tasks)  # insertion order for tie-breaking\n            }\n            self._tasks[name] = task_info\n\n    def cancel(self, name):\n        with self._lock:\n            if name in self._tasks:\n                del self._tasks[name]\n                return True\n            return False\n\n    def pending(self):\n        with self._lock:\n            result = []\n            for name, info in self._tasks.items():\n                result.append((info['run_at'], name))\n            \n            # Sort by run_at, then by the stored 'order' field to maintain FIFO for same time\n            result.sort(key=lambda x: (x[0], self._tasks[x[1]]['order']))\n            return result\n\n    def run_due(self, now):\n        with self._lock:\n            names_run = []\n            \n            # Create a list of tasks to process based on current state\n            items_to_process = []\n            for name, info in self._tasks.items():\n                if info['run_at'] <= float(now):\n                    items_to_process.append((info['run_at'], name))\n            \n            # Sort by run_at, then by the stored 'order' field to maintain FIFO for same time\n            items_to_process.sort(key=lambda x: (x[0], self._tasks[x[1]]['order']))\n            \n            for run_at, name in items_to_process:\n                # Check if task was cancelled by a previous callback in this run_due call\n                if name not in self._tasks:\n                    continue\n                \n                info = self._tasks[name]\n                \n                try:\n                    info['callback']()\n                except Exception as e:\n                    self._errors.append((name, e))\n                \n                names_run.append(name)\n                \n                # Update task state\n                if info['is_repeating']:\n                    # Move run_at forward by 'every' until > now\n                    step = info['every']\n                    new_run_at = run_at + step\n                    while new_run_at <= float(now):\n                        new_run_at += step\n                    info['run_at'] = new_run_at\n                else:\n                    # Remove one-time task\n                    del self._tasks[name]\n            \n            return names_run\n",
+     "failure": null,
+     "detail": "",
+     "latency": 41.89
+    }
+   ]
+  },
+  "cx_expression": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": null,
+     "failure": "truncated",
+     "detail": "token budget ran out or fence never closed",
+     "latency": 180.91
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.02
+    },
+    {
+     "n": 3,
+     "code": "import re\nfrom typing import Dict, List, Tuple, Union, Optional\n\nclass Token:\n    def __init__(self, type_: str, value: Union[str, float]):\n        self.type = type_\n        self.value = value\n\ndef tokenize(expr: str) -> List[Token]:\n    tokens = []\n    i = 0\n    while i < len(expr):\n        c = expr[i]\n        if c.isspace():\n            i += 1\n            continue\n        if c.isdigit() or c == '.':\n            start = i\n            has_dot = False\n            while i < len(expr) and (expr[i].isdigit() or expr[i] == '.'):\n                if expr[i] == '.':\n                    if has_dot:\n                        raise ValueError(\"Multiple decimal points in number\")\n                    has_dot = True\n                i += 1\n            num_str = expr[start:i]\n            # Validate number format: no leading dot without digit, no trailing dot\n            if num_str.startswith('.') or num_str.endswith('.'):\n                raise ValueError(f\"Invalid number format: {num_str}\")\n            tokens.append(Token('NUMBER', float(num_str)))\n            continue\n        if c.isalpha() or c == '_':\n            start = i\n            while i < len(expr) and (expr[i].isalnum() or expr[i] == '_'):\n                i += 1\n            name = expr[start:i]\n            tokens.append(Token('NAME', name))\n            continue\n        if c in '+-*/^()':\n            tokens.append(Token(c, c))\n            i += 1\n            continue\n        raise ValueError(f\"Unknown character: {c}\")\n    return tokens\n\ndef parse(tokens: List[Token], variables: Dict[str, float]) -> Tuple[float, int]:\n    pos = [0]\n    \n    def peek() -> Optional[Token]:\n        if pos[0] < len(tokens):\n            return tokens[pos[0]]\n        return None\n    \n    def consume() -> Token:\n        t = tokens[pos[0]]\n        pos[0] += 1\n        return t\n    \n    def parse_primary() -> float:\n        t = peek()\n        if not t:\n            raise ValueError(\"Missing operand\")\n        \n        if t.type == 'NUMBER':\n            consume()\n            return t.value\n        \n        if t.type == 'NAME':\n            name = t.value\n            consume()\n            if name not in variables:\n                raise ValueError(f\"Unknown name: {name}\")\n            val = variables[name]\n            # Check for implicit multiplication with next token\n            next_t = peek()\n            if next_t and next_t.type == 'NUMBER':\n                raise ValueError(\"Implicit multiplication\")\n            return val\n        \n        if t.type == 'LPAREN':\n            consume() # '('\n            val, _ = parse_expression()\n            t = peek()\n            if not t or t.type != 'RPAREN':\n                raise ValueError(\"Unbalanced parentheses\")\n            consume() # ')'\n            return val\n        \n        if t.type == 'MINUS':\n            consume()\n            val = -parse_primary()\n            return val\n        \n        if t.type == 'PLUS':\n            consume()\n            return parse_primary()\n        \n        raise ValueError(f\"Unexpected token: {t}\")\n\n    def parse_power() -> float:\n        left = parse_primary()\n        t = peek()\n        if t and t.type == 'CARET':\n            consume()\n            right = parse_power() # Right associative\n            return left ** right\n        return left\n\n    def parse_mul_div() -> float:\n        left = parse_power()\n        while True:\n            t = peek()\n            if not t:\n                break\n            if t.type == 'STAR':\n                consume()\n                right = parse_power()\n                left *= right\n            elif t.type == 'SLASH':\n                consume()\n                right = parse_power()\n                if right == 0:\n                    raise ValueError(\"Division by zero\")\n                left /= right\n            else:\n                break\n        return left\n\n    def parse_add_sub() -> float:\n        left = parse_mul_div()\n        while True:\n            t = peek()\n            if not t:\n                break\n            if t.type == 'PLUS':\n                consume()\n                right = parse_mul_div()\n                left += right\n            elif t.type == 'MINUS':\n                consume()\n                right = parse_mul_div()\n                left -= right\n            else:\n                break\n        return left\n\n    def parse_function_call() -> float:\n        t = peek()\n        if not t or t.type != 'NAME':\n            raise ValueError(f\"Expected function name, got {t}\")\n        \n        func_name = consume().value\n        if func_name not in ('min', 'max', 'abs'):\n            raise ValueError(f\"Unknown function: {func_name}\")\n        \n        args = []\n        t = peek()\n        if not t or t.type != 'LPAREN':\n            raise ValueError(\"Expected '(' after function name\")\n        consume() # '('\n        \n        while True:\n            arg, _ = parse_expression()\n            args.append(arg)\n            t = peek()\n            if not t or t.type == 'RPAREN':\n                break\n            if t.type != 'COMMA':\n                raise ValueError(\"Expected ',' between arguments\")\n            consume() # ','\n        \n        t = peek()\n        if not t or t.type != 'RPAREN':\n            raise ValueError(\"Unbalanced parentheses in function call\")\n        consume() # ')'\n        \n        if func_name == 'abs' and len(args) != 1:\n            raise ValueError(f\"Function abs expects exactly 1 argument, got {len(args)}\")\n        if func_name in ('min', 'max') and len(args) < 1:\n            raise ValueError(f\"Functions min/max expect at least 1 argument, got {len(args)}\")\n        \n        if func_name == 'abs':\n            return abs(args[0])\n        elif func_name == 'min':\n            return min(args)\n        else: # max\n            return max(args)\n\n    def parse_expression() -> Tuple[float, int]:\n        val = parse_add_sub()\n        t = peek()\n        if not t:\n            return val, 0\n        if t.type == 'COMMA':\n            raise ValueError(\"Unexpected comma at top level\")\n        # Check for trailing garbage\n        while t and (t.type in ('NUMBER', 'NAME', 'PLUS', 'MINUS', 'STAR', 'SLASH', 'CARET', 'LPAREN')):\n             raise ValueError(f\"Trailing garbage after expression: {t.value}\")\n        return val, 0\n\n    if not tokens:\n        raise ValueError(\"Empty expression\")\n    \n    result, _ = parse_expression()\n    if pos[0] != len(tokens):\n        raise ValueError(\"Trailing garbage in expression\")\n    \n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 104.54
+    }
+   ]
+  },
+  "cx_ini_parser": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import re\n\ndef parse_ini(text):\n    \"\"\"\n    Parse a small INI dialect into a dictionary of sections.\n    \n    Returns:\n        dict: Maps section names (strings) to dicts of key-value pairs.\n              Section names are strings; the default section is named \"\".\n    \n    Raises:\n        ValueError: If the input text violates the specified rules.\n    \"\"\"\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    \n    for line_num, raw_line in enumerate(lines, start=1):\n        # Strip leading and trailing whitespace\n        line = raw_line.strip()\n        \n        # Skip empty lines\n        if not line:\n            continue\n        \n        # Check for comments (first non-whitespace char is ; or #)\n        if line[0] in (';', '#'):\n            continue\n        \n        # Check for section header [name]\n        if line.startswith('['):\n            # Find the closing bracket\n            close_idx = line.find(']')\n            if close_idx == -1:\n                raise ValueError(f\"line {line_num}: malformed section header (missing ']')\")\n            \n            name_part = line[1:close_idx]\n            # Trim the name\n            name = name_part.strip()\n            \n            if not name:\n                raise ValueError(f\"line {line_num}: empty section name\")\n            \n            current_section = name\n            \n            # Initialize section in result if not present\n            if current_section not in result:\n                result[current_section] = {}\n            continue\n        \n        # Must be a key = value line\n        if '=' not in line:\n            raise ValueError(f\"line {line_num}: missing '='\")\n        \n        eq_idx = line.index('=')\n        key = line[:eq_idx].strip()\n        raw_value = line[eq_idx + 1:]\n        \n        if not key:\n            raise ValueError(f\"line {line_num}: empty key\")\n        \n        # Process value\n        if raw_value.startswith('\"'):\n            # Quoted value\n            if not raw_value.endswith('\"'):\n                raise ValueError(f\"line {line_num}: unterminated quoted value\")\n            \n            # Find the closing quote that is not escaped\n            # We need to find the first \" that is not preceded by an odd number of backslashes\n            value_content = \"\"\n            i = 1\n            while i < len(raw_value):\n                if raw_value[i] == '\"':\n                    # Check for escape\n                    backslash_count = 0\n                    j = i - 1\n                    while j >= 0 and raw_value[j] == '\\\\':\n                        backslash_count += 1\n                        j -= 1\n                    \n                    if backslash_count % 2 == 1:\n                        # Escaped quote, continue\n                        value_content += '\"'\n                        i += 1\n                        continue\n                \n                # Check for text after closing quote (error condition)\n                # We are looking for the first unescaped \"\n                if raw_value[i] != '\"':\n                    value_content += raw_value[i]\n                \n                # Check if this is the end of the quoted string\n                # We need to count backslashes before current position\n                backslash_count = 0\n                j = i - 1\n                while j >= 0 and raw_value[j] == '\\\\':\n                    backslash_count += 1\n                    j -= 1\n                \n                if raw_value[i] == '\"' and backslash_count % 2 == 0:\n                    # Found closing quote\n                    break\n                \n                i += 1\n            \n            else:\n                # Loop completed without breaking, meaning no closing quote found\n                raise ValueError(f\"line {line_num}: unterminated quoted value\")\n            \n            # Now check for text after the closing quote\n            remaining = raw_value[i+1:].strip()\n            if remaining:\n                # Check if it's a comment (starts with ; or #)\n                if not remaining[0] in (';', '#'):\n                    raise ValueError(f\"line {line_num}: text after closing quote\")\n            \n            value = value_content\n            \n        else:\n            # Unquoted value\n            # Find inline comment: first ; or # that has whitespace before it\n            value = raw_value\n            for i, char in enumerate(value):\n                if char in (';', '#'):\n                    # Check if there is whitespace before this character\n                    if i > 0 and value[i-1] in (' ', '\\t', '\\r', '\\n'):\n                        # Inline comment starts here\n                        value = value[:i].strip()\n                        break\n            \n            # Backslashes are kept as they are (no special processing for unquoted)\n        \n        # Store the key-value pair\n        result[current_section][key] = value\n    \n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 51.15,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 2,
+      "failed": 5,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 15 items\n\n../tests/test_task.py::test_basic_sections FAILED                        [  6%]\n../tests/test_task.py::test_global_keys_go_to_empty_section_only_if_present FAILED [ 13%]\n../tests/test_task.py::test_repeated_section_merges_and_later_key_wins PASSED [ 20%]\n../tests/test_task.py::test_first_equals_splits FAILED                   [ 26%]\n../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars FAILED [ 33%]\n../tests/test_task.py::test_comment_after_quoted_value_allowed FAILED    [ 40%]\n../tests/test_task.py::test_section_name_trimmed PASSED                  [ 46%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx=1\\nnovalue\\n-3] PASSED [ 53%]\n../tests/test_task.py::test_errors_name_the_line[[a\\nx=1\\n-1] PASSED     [ 60%]\n../tests/test_task.py::test_errors_name_the_line[[]\\n-1] PASSED          [ 66%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\n= 5\\n-2] PASSED    [ 73%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"open\\n-2] FAILED [ 80%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2] FAILED [ 86%]\n../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2] FAILED [ 93%]\n../tests/test_task.py::test_errors_name_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5] FAILED [100%]\n\n=================================== FAILURES ===================================\n_____________________________ test_basic_sections ______________________________\n/tests/test_task.py:6: in test_basic_sections\n    assert parse_ini(text) == {'a': {'x': '1', 'y': 'two words'}, 'b': {'z': '3'}}\nE   AssertionError: assert {'a': {'x': '...: {'z': ' 3'}} == {'a': {'x': '...': {'z': '3'}}\nE     \nE     Differing items:\nE     {'b': {'z': ' 3'}} != {'b': {'z': '3'}}\nE     {'a': {'x': ' 1', 'y': 'two words'}} != {'a': {'x': '1', 'y': 'two words'}}\nE     \nE     Full diff:\nE       {...\nE     \nE     ...Full output truncated (12 lines hidden), use '-vv' to show\n_____________ test_global_keys_go_to_empty_section_only_if_present _____________\n/tests/test_task.py:9: in test_global_keys_go_to_empty_section_only_if_present\n    assert parse_ini('k = v\\n[a]\\nx=1') == {'': {'k': 'v'}, 'a': {'x': '1'}}\nsolution.py:134: in parse_ini\n    result[current_section][key] = value\nE   KeyError: ''\n___________________________ test_first_equals_splits ___________________________\n/tests/test_task.py:17: in test_first_equals_splits\n    assert parse_ini('[a]\\nformula = a=b+c\\n') == {'a': {'formula': 'a=b+c'}}\nE   AssertionError: assert {'a': {'formula': ' a=b+c'}} == {'a': {'formula': 'a=b+c'}}\nE     \nE     Differing items:\nE     {'a': {'formula': ' a=b+c'}} != {'a': {'formula': 'a=b+c'}}\nE     \nE     Full diff:\nE       {\nE           'a': {...\nE     \nE     ...Full output truncated (5 lines hidden), use '-vv' to show\n_______________ test_quoted_values_keep_spaces_and_comment_chars _______________\n/tests/test_task.py:21: in test_quoted_values_keep_spaces_and_comment_chars\n    assert parse_ini(text) == {'a': {'x': '  padded ; not a comment  ', 'y': '# also kept'}}\nE   assert {'a': {'x': '... also kept\"'}} == {'a': {'x': '...# also kept'}}\nE     \nE     Differing items:\nE     {'a': {'x': '\"  padded', 'y': ' \"# also kept\"'}} != {'a': {'x': '  padded ; not a comment  ', 'y': '# also kept'}}\nE     \nE     Full diff:\nE       {\nE           'a': {...\nE     \nE     ...Full output truncated (7 lines hidden), use '-vv' to show\n___________________ test_comment_after_quoted_value_allowed ____________________\n/tests/test_task.py:24: in test_comment_after_quoted_value_allowed\n    assert parse_ini('[a]\\nx = \"v\"   ; note\\n') == {'a': {'x': 'v'}}\nE   assert {'a': {'x': '\"v\"'}} == {'a': {'x': 'v'}}\nE     \nE     Differing items:\nE     {'a': {'x': '\"v\"'}} != {'a': {'x': 'v'}}\nE     \nE     Full diff:\nE       {\nE           'a': {...\nE     \nE     ...Full output truncated (5 lines hidden), use '-vv' to show\n________________ test_errors_name_the_line[[a]\\nx = \"open\\n-2] _________________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n___________ test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2] ___________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n___________ test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2] ____________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n____________ test_errors_name_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5] ____________\n/tests/test_task.py:31: in test_errors_name_the_line\n    with pytest.raises(ValueError) as e:\nE   Failed: DID NOT RAISE <class 'ValueError'>\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_basic_sections - AssertionError: assert {'...\nFAILED ../tests/test_task.py::test_global_keys_go_to_empty_section_only_if_present\nFAILED ../tests/test_task.py::test_first_equals_splits - AssertionError: asse...\nFAILED ../tests/test_task.py::test_quoted_values_keep_spaces_and_comment_chars\nFAILED ../tests/test_task.py::test_comment_after_quoted_value_allowed - asser...\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"open\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5]\n========================= 9 failed, 6 passed in 0.03s ==========================\n",
+      "tail": "rs_name_the_line[[a]\\nx = \"bad \\\\q escape\"\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[[a]\\nx = \"done\" trailing\\n-2]\nFAILED ../tests/test_task.py::test_errors_name_the_line[\\n\\n[a]\\nok=1\\n[b] junk\\n-5]\n========================= 9 failed, 6 passed in 0.03s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.04
+    },
+    {
+     "n": 3,
+     "code": "def parse_ini(text):\n    \"\"\"\n    Parse a small INI dialect into a dictionary of sections.\n    \n    Returns:\n        dict: Maps section names (strings) to dicts of key-value pairs.\n              Section names are strings; the default section is named \"\".\n    \n    Raises:\n        ValueError: If the input text violates the specified rules.\n    \"\"\"\n    lines = text.split('\\n')\n    result = {}\n    current_section = \"\"\n    \n    for line_num, raw_line in enumerate(lines, start=1):\n        # Strip leading and trailing whitespace\n        line = raw_line.strip()\n        \n        # Skip empty lines\n        if not line:\n            continue\n        \n        # Check for comments (first non-whitespace char is ; or #)\n        if line[0] in (';', '#'):\n            continue\n        \n        # Check for section header [name]\n        if line.startswith('['):\n            # Find the closing bracket\n            close_idx = line.find(']')\n            if close_idx == -1:\n                raise ValueError(f\"line {line_num}: malformed section header (missing ']')\")\n            \n            name_part = line[1:close_idx]\n            # Trim the name\n            name = name_part.strip()\n            \n            if not name:\n                raise ValueError(f\"line {line_num}: empty section name\")\n            \n            current_section = name\n            \n            # Initialize section in result if not present\n            if current_section not in result:\n                result[current_section] = {}\n            continue\n        \n        # Must be a key = value line\n        if '=' not in line:\n            raise ValueError(f\"line {line_num}: missing '='\")\n        \n        eq_idx = line.index('=')\n        key = line[:eq_idx].strip()\n        raw_value = line[eq_idx + 1:]\n        \n        if not key:\n            raise ValueError(f\"line {line_num}: empty key\")\n        \n        # Process value\n        if raw_value.startswith('\"'):\n            # Quoted value\n            # Find the closing quote that is not escaped\n            value_content = \"\"\n            i = 1\n            while i < len(raw_value):\n                if raw_value[i] == '\"':\n                    # Check for escape: count backslashes before this position\n                    backslash_count = 0\n                    j = i - 1\n                    while j >= 0 and raw_value[j] == '\\\\':\n                        backslash_count += 1\n                        j -= 1\n                    \n                    if backslash_count % 2 == 1:\n                        # Escaped quote, include it in content and continue\n                        value_content += '\"'\n                        i += 1\n                        continue\n                \n                # Not a closing quote or escaped\n                value_content += raw_value[i]\n                i += 1\n            \n            if i >= len(raw_value):\n                raise ValueError(f\"line {line_num}: unterminated quoted value\")\n            \n            # Now check for text after the closing quote\n            remaining = raw_value[i+1:]\n            # Strip whitespace from remaining\n            remaining_stripped = remaining.lstrip()\n            \n            if remaining_stripped:\n                # Check if it's a comment (starts with ; or #)\n                if not remaining_stripped[0] in (';', '#'):\n                    raise ValueError(f\"line {line_num}: text after closing quote\")\n            \n            value = value_content\n            \n        else:\n            # Unquoted value\n            # Find inline comment: first ; or # that has whitespace before it\n            value = raw_value\n            for i, char in enumerate(value):\n                if char in (';', '#'):\n                    # Check if there is whitespace immediately before this character\n                    if i > 0 and value[i-1] in (' ', '\\t', '\\r', '\\n'):\n                        # Inline comment starts here\n                        value = value[:i].rstrip()\n                        break\n            \n            # Backslashes are kept as they are (no special processing for unquoted)\n        \n        # Store the key-value pair\n        if current_section not in result:\n            result[current_section] = {}\n        result[current_section][key] = value\n    \n    return result\n",
+     "failure": null,
+     "detail": "",
+     "latency": 63.32
+    }
+   ]
+  },
+  "cx_shortest_path": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import heapq\nfrom copy import deepcopy\n\ndef shortest_path(graph, src, dst):\n    # Validate inputs: check for zero or negative weights\n    for node, neighbors in graph.items():\n        for neighbor, weight in neighbors.items():\n            if not isinstance(weight, (int, float)) or weight <= 0:\n                raise ValueError(\"All weights must be strictly positive.\")\n    \n    # Collect all nodes that appear as keys or values in the graph\n    all_nodes = set(graph.keys())\n    for neighbors in graph.values():\n        all_nodes.update(neighbors.keys())\n    \n    # Check if src and dst exist in the graph\n    if src not in all_nodes:\n        raise ValueError(f\"Source node '{src}' does not appear in the graph.\")\n    if dst not in all_nodes:\n        raise ValueError(f\"Destination node '{dst}' does not appear in the graph.\")\n\n    # If source is destination, return immediately\n    if src == dst:\n        return (0, [src])\n\n    # Priority queue stores tuples of (distance, path)\n    # We use a custom comparison logic to handle lexicographical tie-breaking.\n    # Since heapq compares tuples element by element, and our paths are lists,\n    # we need to ensure that if distances are equal, the list comparison works as desired.\n    # However, standard list comparison in Python is lexicographical, which matches the requirement.\n    pq = [(0, [src])]\n    \n    # To avoid re-processing nodes with worse or equal paths, we track visited states.\n    # Since we need the lexicographically smallest path for equal distances, \n    # a simple 'visited' set isn't enough if we arrive at a node via a different path \n    # with the same distance but better lexicographical order later.\n    # However, Dijkstra's property ensures that once we pop a node from the heap,\n    # we have found the shortest path to it. But here, \"shortest\" includes lexicographical order.\n    # If we reach a node with the same distance via a lexicographically smaller path first,\n    # that is the one we want. If we reach it later with the same distance but larger path, ignore.\n    # If we reach it with a larger distance, ignore.\n    \n    # We store best known distance and best known path for each node to prune.\n    # best[node] = (distance, path)\n    best = {node: None for node in all_nodes}\n    \n    while pq:\n        dist, path = heapq.heappop(pq)\n        current = path[-1]\n        \n        # If we have already found a better or equal way to 'current', skip.\n        # \"Better\" means strictly smaller distance, OR same distance and lexicographically smaller path.\n        if best[current] is not None:\n            prev_dist, prev_path = best[current]\n            if dist > prev_dist:\n                continue\n            if dist == prev_dist and path > prev_path:\n                continue\n        \n        # Update best known for current node\n        best[current] = (dist, path)\n        \n        # If we reached the destination, return immediately because Dijkstra guarantees optimality\n        # (shortest distance first, then lexicographical order due to heap properties and tie-breaking).\n        if current == dst:\n            return (dist, path)\n        \n        # Explore neighbors\n        if current in graph:\n            for neighbor, weight in graph[current].items():\n                new_dist = dist + weight\n                new_path = path + [neighbor]\n                \n                # Check if this new path is worth adding to the heap\n                if best[neighbor] is None:\n                    heapq.heappush(pq, (new_dist, new_path))\n                else:\n                    prev_dist, prev_path = best[neighbor]\n                    if new_dist < prev_dist or (new_dist == prev_dist and new_path < prev_path):\n                        # We found a better path to neighbor. \n                        # Note: We don't remove the old entry from the heap immediately (lazy deletion),\n                        # but we update our 'best' record so future pops of the worse path will be ignored.\n                        heapq.heappush(pq, (new_dist, new_path))\n\n    # If the queue is exhausted and dst was not reached\n    return None\n",
+     "failure": null,
+     "detail": "",
+     "latency": 46.04,
+     "vis": {
+      "kind": "ok",
+      "passed": 7,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 7 items\n\n../tests/test_task.py::test_classic PASSED                               [ 14%]\n../tests/test_task.py::test_unreachable PASSED                           [ 28%]\n../tests/test_task.py::test_node_only_as_neighbour PASSED                [ 42%]\n../tests/test_task.py::test_tie_decided_late_in_the_path PASSED          [ 57%]\n../tests/test_task.py::test_prefers_cheaper_over_fewer_hops PASSED       [ 71%]\n../tests/test_task.py::test_cycles_do_not_hang PASSED                    [ 85%]\n../tests/test_task.py::test_bad_weights_even_when_unused PASSED          [100%]\n\n============================== 7 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 14,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 7,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "cx_schedule_algos": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "import heapq\n\ndef max_profit(jobs):\n    \"\"\"\n    Calculates the maximum profit from a set of non-overlapping jobs.\n    \n    Args:\n        jobs (List[Tuple[int, int, int]]): List of (start, end, profit) tuples.\n        \n    Returns:\n        int: Maximum total profit.\n    \"\"\"\n    if not jobs:\n        return 0\n\n    # Sort jobs by start time\n    sorted_jobs = sorted(jobs, key=lambda x: x[0])\n    \n    # Min-heap to store (end_time, profit) of compatible jobs processed so far\n    # We will use a different approach for the standard Weighted Interval Scheduling DP\n    # which involves sorting by finish time and using binary search or a heap.\n    # However, the most efficient standard way without external libs is:\n    # Sort by end time, then iterate and keep track of max profit up to each job's start time.\n    \n    # Let's re-sort by end time for the DP approach\n    jobs_by_end = sorted(jobs, key=lambda x: x[1])\n    \n    n = len(jobs_by_end)\n    # dp[i] will store the max profit considering jobs up to index i (in sorted list)\n    # But standard algorithm uses an array of profits and binary search on finish times.\n    \n    # Alternative efficient approach:\n    # Sort by start time? No, sort by end time is better for finding the latest non-overlapping job.\n    # Let's stick to the classic DP with sorting by finish time.\n    \n    # jobs_by_end is sorted by end time.\n    # We need an array of (end_time, profit) to binary search? \n    # Actually, we can just store the max profit achievable at each step.\n    \n    # Let's use the approach:\n    # 1. Sort jobs by finish time.\n    # 2. Create a list of profits where profit[i] is the max profit using a subset of first i+1 jobs.\n    # 3. For each job, find the latest job that finishes before current job starts.\n    \n    # To do binary search efficiently, we can store just the finish times in a separate list \n    # corresponding to the sorted jobs.\n    \n    finish_times = [job[1] for job in jobs_by_end]\n    profits = [0] * n\n    \n    # profits[i] = max profit considering jobs 0..i\n    # But we need to map back to the original logic.\n    # Let's define:\n    # dp[i] = max profit using a subset of jobs[0...i] (where jobs is sorted by end time)\n    \n    current_max_profit = 0\n    \n    # We will build a list where index i corresponds to jobs_by_end[i]\n    # But we need to quickly find the best previous job.\n    # Since n might be large, O(N^2) is bad. We need O(N log N).\n    # We can store (finish_time, max_profit_at_that_time) in a list and binary search.\n    \n    # Let's refine:\n    # jobs_sorted = sorted(jobs, key=lambda x: x[1])\n    # finish_times = [j[1] for j in jobs_sorted]\n    # dp array where dp[i] is the max profit considering jobs 0..i\n    \n    # However, the standard algorithm computes:\n    # P(i) = max(P(i-1), profit_i + P(j)) where j is the largest index such that finish_times[j] <= start_i\n    \n    # We can implement binary search manually.\n    \n    def find_latest_job(start_time):\n        \"\"\"Binary search for the latest job that finishes <= start_time.\"\"\"\n        low, high = 0, n - 1\n        result = -1\n        while low <= high:\n            mid = (low + high) // 2\n            if finish_times[mid] <= start_time:\n                result = mid\n                low = mid + 1\n            else:\n                high = mid - 1\n        return result\n\n    # Pre-calculate profits? No, we compute iteratively.\n    # Let's store the max profit achievable at each step in a list `dp`.\n    # dp[i] will be the max profit using a subset of jobs[0...i].\n    \n    # Initialize\n    # We need to handle the case where no previous job fits.\n    \n    # Let's restart the logic cleanly inside the function\n    \n    sorted_jobs = sorted(jobs, key=lambda x: x[1])\n    n = len(sorted_jobs)\n    if n == 0:\n        return 0\n        \n    finish_times = [job[1] for job in sorted_jobs]\n    \n    # dp[i] stores the max profit considering jobs from index 0 to i\n    # But actually, we want an array where index i corresponds to the i-th job in sorted list.\n    # Let's make a list `max_profit_list` where max_profit_list[i] is the max profit \n    # considering the first i+1 jobs (sorted by end time).\n    \n    # However, the recurrence is:\n    # P(i) = max(P(i-1), profit_i + P(j))\n    # where j is the index found by binary search.\n    # P(-1) = 0.\n    \n    # We need an array `P` of size n.\n    # P[i] corresponds to the max profit using a subset of jobs[0...i].\n    \n    P = [0] * n\n    \n    for i in range(n):\n        start, end, profit = sorted_jobs[i]\n        \n        # Option 1: Skip current job -> profit is P[i-1] (if i>0 else 0)\n        include_prev = P[i-1] if i > 0 else 0\n        \n        # Option 2: Include current job -> profit + max profit from jobs ending <= start\n        # Find j such that finish_times[j] <= start\n        j = find_latest_job(start)\n        \n        if j != -1:\n            include_curr = profit + P[j]\n        else:\n            include_curr = profit\n            \n        P[i] = max(include_prev, include_curr)\n        \n    return P[-1]\n\n\ndef min_rooms(meetings):\n    \"\"\"\n    Calculates the minimum number of rooms needed for a set of meetings.\n    \n    Args:\n        meetings (List[Tuple[int, int]]): List of (start, end) tuples.\n        \n    Returns:\n        int: Minimum number of rooms required.\n    \"\"\"\n    if not meetings:\n        return 0\n\n    # Sort meetings by start time\n    sorted_meetings = sorted(meetings, key=lambda x: x[0])\n    \n    # Min-heap to store the end times of meetings currently in progress\n    # Each element is (end_time,)\n    rooms = []\n    \n    for start, end in sorted_meetings:\n        # Check if a room becomes free\n        if rooms and rooms[0][0] <= start:\n            # Reuse the room that finishes earliest\n            heapq.heappop(rooms)\n        \n        # Assign current meeting to a room (either reused or new)\n        heapq.heappush(rooms, (end,))\n        \n    return len(rooms)\n",
+     "failure": null,
+     "detail": "",
+     "latency": 80.84,
+     "vis": {
+      "kind": "ok",
+      "passed": 6,
+      "failed": 0,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_profit_basic PASSED                          [ 16%]\n../tests/test_task.py::test_profit_prefers_one_big_job PASSED            [ 33%]\n../tests/test_task.py::test_profit_unsorted_input_and_not_modified PASSED [ 50%]\n../tests/test_task.py::test_rooms_basic PASSED                           [ 66%]\n../tests/test_task.py::test_rooms_all_overlap PASSED                     [ 83%]\n../tests/test_task.py::test_rooms_many_small_between_a_long_one PASSED   [100%]\n\n============================== 6 passed in 0.01s ===============================\n",
+      "tail": ""
+     }
+    }
+   ],
+   "accepted": true,
+   "final": {
+    "full": {
+     "kind": "ok",
+     "passed": 11,
+     "failed": 0
+    },
+    "hold": {
+     "kind": "ok",
+     "passed": 5,
+     "failed": 0
+    }
+   },
+   "done": true
+  },
+  "cx_inventory_fix": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": "class OutOfStock(Exception):\n    pass\n\n\nclass Inventory:\n    def __init__(self, stock=None):\n        self._stock = dict(stock) if stock is not None else {}\n\n    def stock(self, item):\n        return self._stock.get(item, 0)\n\n    def add(self, item, qty):\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        self._stock[item] = self.stock(item) + qty\n\n    def remove(self, item, qty):\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        current = self.stock(item)\n        if current < qty:\n            raise OutOfStock()\n        self._stock[item] = current - qty\n\n\ndef fulfil(inventory, order):\n    total = 0\n    for item, qty in order.items():\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        try:\n            inventory.remove(item, qty)\n            total += qty\n        except OutOfStock:\n            return total\n    return total\n",
+     "failure": null,
+     "detail": "",
+     "latency": 13.52,
+     "vis": {
+      "kind": "wrong_answer",
+      "passed": 5,
+      "failed": 1,
+      "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-8.3.5, pluggy-1.7.0 -- /usr/local/bin/python\nrootdir: /tests\ncollecting ... collected 6 items\n\n../tests/test_task.py::test_stock_of_unknown_item_is_zero PASSED         [ 16%]\n../tests/test_task.py::test_remove_too_much_raises_and_changes_nothing PASSED [ 33%]\n../tests/test_task.py::test_constructor_dict_is_copied PASSED            [ 50%]\n../tests/test_task.py::test_fulfil_success_returns_total PASSED          [ 66%]\n../tests/test_task.py::test_fulfil_failure_when_the_failing_line_is_first FAILED [ 83%]\n../tests/test_task.py::test_fulfil_empty_order PASSED                    [100%]\n\n=================================== FAILURES ===================================\n______________ test_fulfil_failure_when_the_failing_line_is_first ______________\n/tests/test_task.py:26: in test_fulfil_failure_when_the_failing_line_is_first\n    with pytest.raises(OutOfStock):\nE   Failed: DID NOT RAISE <class 'solution.OutOfStock'>\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_fulfil_failure_when_the_failing_line_is_first\n========================= 1 failed, 5 passed in 0.01s ==========================\n",
+      "tail": "\nE   Failed: DID NOT RAISE <class 'solution.OutOfStock'>\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_fulfil_failure_when_the_failing_line_is_first\n========================= 1 failed, 5 passed in 0.01s ==========================\n"
+     }
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.03
+    },
+    {
+     "n": 3,
+     "code": "class OutOfStock(Exception):\n    pass\n\n\nclass Inventory:\n    def __init__(self, stock=None):\n        self._stock = dict(stock) if stock is not None else {}\n\n    def stock(self, item):\n        return self._stock.get(item, 0)\n\n    def add(self, item, qty):\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        self._stock[item] = self.stock(item) + qty\n\n    def remove(self, item, qty):\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        current = self.stock(item)\n        if current < qty:\n            raise OutOfStock()\n        self._stock[item] = current - qty\n\n\ndef fulfil(inventory, order):\n    total = 0\n    for item, qty in order.items():\n        if qty <= 0:\n            raise ValueError(\"Quantity must be positive\")\n        try:\n            inventory.remove(item, qty)\n            total += qty\n        except OutOfStock:\n            return total\n    return total\n",
+     "failure": null,
+     "detail": "",
+     "latency": 17.9
+    }
+   ]
+  },
+  "cx_template": {
+   "attempts": [
+    {
+     "n": 1,
+     "code": null,
+     "failure": "truncated",
+     "detail": "token budget ran out or fence never closed",
+     "latency": 193.37
+    },
+    {
+     "n": 2,
+     "code": null,
+     "failure": "no_code_block",
+     "detail": "",
+     "latency": 0.01
+    },
+    {
+     "n": 3,
+     "code": null,
+     "failure": "truncated",
+     "detail": "token budget ran out or fence never closed",
+     "latency": 219.91
+    }
+   ],
+   "accepted": false,
+   "final": {
+    "full": null,
+    "hold": null
+   },
+   "done": true
+  }
+ }
+}

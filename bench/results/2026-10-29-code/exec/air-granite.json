@@ -1,0 +1,149 @@
+{
+ "model": "air-granite",
+ "tasks": {
+  "merge_intervals": {
+   "kind": "wrong_answer",
+   "passed": 7,
+   "failed": 1,
+   "rc": 1,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": "est_returns_tuples_negative PASSED               [100%]\n\n=========================== short test summary info ============================\nFAILED ../tests/test_task.py::test_adjacent_but_apart - AssertionError: asser...\n========================= 1 failed, 7 passed in 0.01s ==========================\n"
+  },
+  "business_days": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.49,
+   "collection_error": false,
+   "tail": ""
+  },
+  "parse_csv_line": {
+   "kind": "wrong_answer",
+   "passed": 1,
+   "failed": 7,
+   "rc": 1,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": "k.py::test_spaces_kept - AssertionError: assert [' a ...\nFAILED ../tests/test_task.py::test_quoted_empty - AssertionError: assert ['',...\nFAILED ../tests/test_task.py::test_quote_only_field_with_escape_at_end - asse...\n========================= 7 failed, 1 passed in 0.01s ==========================\n"
+  },
+  "wrap_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": ""
+  },
+  "compare_versions": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": ""
+  },
+  "toposort": {
+   "kind": "ok",
+   "passed": 10,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.62,
+   "collection_error": false,
+   "tail": ""
+  },
+  "lru_cache": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.49,
+   "collection_error": false,
+   "tail": ""
+  },
+  "flatten_dict": {
+   "kind": "wrong_answer",
+   "passed": 1,
+   "failed": 5,
+   "rc": 1,
+   "elapsed": 0.5,
+   "collection_error": false,
+   "tail": "tests/test_task.py::test_lists_kept - AssertionError: assert None =...\nFAILED ../tests/test_task.py::test_empty_nested_dict_kept - AssertionError: a...\nFAILED ../tests/test_task.py::test_empty_input - assert None == {}\n========================= 5 failed, 1 passed in 0.01s ==========================\n"
+  },
+  "fix_median": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.61,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_chunked": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.53,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_unique_bucket": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_top_words": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_hex_color": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.54,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_ipv4": {
+   "kind": "wrong_answer",
+   "passed": 3,
+   "failed": 2,
+   "rc": 1,
+   "elapsed": 0.52,
+   "collection_error": false,
+   "tail": "================= short test summary info ============================\nFAILED ../tests/test_task.py::test_bad - AssertionError: 256.1.1.1\nFAILED ../tests/test_task.py::test_non_ascii_digits_rejected - AssertionError...\n========================= 2 failed, 3 passed in 0.01s ==========================\n"
+  },
+  "cx_schedule_algos": {
+   "kind": "ok",
+   "passed": 11,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.65,
+   "collection_error": false,
+   "tail": ""
+  },
+  "cx_inventory_fix": {
+   "kind": "wrong_answer",
+   "passed": 7,
+   "failed": 5,
+   "rc": 1,
+   "elapsed": 0.51,
+   "collection_error": false,
+   "tail": "k.py::test_fulfil_is_all_or_nothing - Failed: DID NOT...\nFAILED ../tests/test_task.py::test_fulfil_failure_when_the_failing_line_is_first\nFAILED ../tests/test_task.py::test_fulfil_bad_quantity_removes_nothing - Fail...\n========================= 5 failed, 7 passed in 0.01s ==========================\n"
+  }
+ }
+}

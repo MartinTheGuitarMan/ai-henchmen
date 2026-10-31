@@ -5,3 +5,20 @@
 11:23:13 groq-gptoss20b/cx_expression: code 16.8s
 11:23:50 groq-gptoss20b/cx_ini_parser: truncated 23.74s
 11:24:22 groq-gptoss20b/cx_template: code 16.49s
+11:25:55 air-qwen/cx_expression: truncated 178.7s
+11:29:04 air-qwen/cx_template: truncated 189.93s
+11:29:04 air-qwen: unloaded
+16:48:50 second protocol: max_tokens 16000, pairs 6: ['air-qwen', 'groq-gptoss20b', 'mistral-ministral8b']
+16:49:53 second protocol: max_tokens 16000, pairs 6: ['air-qwen', 'groq-gptoss20b', 'mistral-ministral8b']
+16:49:54 models: ['groq-gptoss20b', 'groq-gptoss120b', 'mistral-ministral8b', 'air-qwen', 'mini-gemma4b', 'or-nemotron120b', 'mini-phi4mini', 'mini-gemma4e4b', 'mini-nemotronmini', 'gemini-flashlite', 'air-gemma4-26b']; tasks: 25; groups: ['cloud', 'cloud', 'day-host', 'night-host', 'cloud', 'cloud']
+16:49:54 sandbox self-test: waiting (outside the night host's allowed windows (22:00-23:00,06:00-07:00))
+18:13:28 second protocol: max_tokens 16000, pairs 6: ['air-qwen', 'groq-gptoss20b', 'mistral-ministral8b']
+18:13:28 models: ['groq-gptoss20b', 'groq-gptoss120b', 'mistral-ministral8b', 'air-qwen', 'mini-gemma4b', 'or-nemotron120b', 'mini-phi4mini', 'mini-gemma4e4b', 'mini-nemotronmini', 'gemini-flashlite', 'air-gemma4-26b', 'air-granite', 'air-qwen14b', 'air-gptoss20b']; tasks: 25; groups: ['cloud', 'cloud', 'day-host', 'night-host', 'cloud', 'cloud']
+18:13:28 sandbox self-test: waiting (outside the night host's allowed windows (22:00-23:00,06:00-07:00))
+18:14:41 second protocol: max_tokens 16000, pairs 6: ['air-qwen', 'groq-gptoss20b', 'mistral-ministral8b']
+18:14:42 models: ['groq-gptoss20b', 'groq-gptoss120b', 'mistral-ministral8b', 'air-qwen', 'mini-gemma4b', 'or-nemotron120b', 'mini-phi4mini', 'mini-gemma4e4b', 'mini-nemotronmini', 'gemini-flashlite', 'air-gemma4-26b']; tasks: 25; groups: ['cloud', 'cloud', 'day-host', 'night-host', 'cloud', 'cloud']
+18:14:42 sandbox self-test: waiting (outside the night host's allowed windows (22:00-23:00,06:00-07:00))
+22:07:38 exec groq-gptoss20b/cx_expression: wrong_answer 7/31 0.56s
+22:07:39 exec groq-gptoss20b/cx_template: wrong_answer 15/24 0.51s
+22:07:46 exec mistral-ministral8b/cx_template: wrong_answer 2/24 0.57s
+22:07:46 done
