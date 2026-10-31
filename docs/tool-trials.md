@@ -559,3 +559,68 @@ by either model.
 needs no change. Known limits: a template or other name that occurs only inside file contents is refused as invented (as in
 `commit_message`); a staged diff over 12000 characters is refused, not cut; the shared extension list does not know media
 extensions, which is why a skipped file's name is checked separately.
+
+
+## `commit_message_multi` trial (2026-10-31)
+
+`commit_message` and `commit_message_staged` refuse a diff over 12000 characters, and most real diffs are larger. This trial is for
+`commit_message_multi(diff, hint="", sensitive=True)`. **It adds no read:** its input is a diff passed as text, exactly as
+`commit_message` takes it. It does not use `gitdiff.py`, files, folders or any subprocess (a test asserts the module source has none).
+The criteria below are fixed before any model is run.
+
+### What the tool does
+
+1. Splits the diff text at its `diff --git` headers into files (`commit_multi.split_files`). More than 150000 characters in total,
+   more than 30 files, one file needing more than 4 pieces (about 20000 characters of diff), or more than 30 summary steps: refused
+   with `MINION_BAD_INPUT`, never cut short.
+2. Files whose summary needs no reading are summarised **by code, not by a model**: binary files, lock files (`uv.lock`,
+   `package-lock.json`, `*.lock`, ...), deleted files, mode-only changes, renames with no edits. A huge lock file therefore costs
+   no model step and its content never reaches a model.
+3. Every other file is cut at hunk boundaries into pieces of at most 5000 characters (the file header repeats on each piece), and a
+   model writes a one-sentence summary of each piece (`sensitive` as passed, default `True`). Each summary goes through
+   `values.make_summary_check` (numbers, dates and capitalised names must occur in the piece; at most 35 words +10%; non-empty) and
+   a file check (it may name only files of that piece).
+4. One last model call gets a list of the files (largest change first, lock and binary files last) with their summaries and writes
+   `{"subject", "body"}`. That reply goes through `commit_msg.make_check` **against the file set of the whole diff**: subject
+   non-empty, one line, at most 72 characters, imperative first word, no final period, every file named is in the diff.
+5. Returns `{"subject", "body", "files", "steps"}`. Route: borrows the `commit_message` route (`TRIAL_FALLBACK`), so the roster
+   needs no change.
+6. `commit_message_staged` is **left alone**. Using this path for larger stages would mean raising `gitdiff.MAX_STAGED_CHARS`, the
+   size cap of the one approved git read, which is a change to what that read returns. That is not mine to decide, so it is not done.
+
+### Pass criteria (at least as strict as `commit_message_staged`)
+
+A local model on the `commit_message` route (`air-qwen`, then `mini-gemma4b`), each pinned alone, `sensitive=true`, **3 repeats** of every case:
+
+1. **Scored set of 30 invented large diffs**, built by `scripts/multi_trial.py`: a tuning-free **first set of 20** and a **fresh set
+   of 10 written after any fix** (committed only after the first set was run and any fix was made; neither models nor code are tuned
+   on it). Every diff is over 12000 characters (asserted by the builder), up to about 100000. Mix: 2 to 5 source files each; at least
+   6 cases with a huge lock file (40000 characters or more); at least 5 with a rename (with and without edits); at least 1 deleted
+   file, 1 binary file and 1 large new file; at least 6 with a prompt-injection comment inside the diff (at least 2 in the fresh
+   set); the main change is in the first file of the diff in at most 40% of the cases, so a first-file shortcut cannot pass.
+   Scored in code, never by a model.
+2. **At least 90% correct on the first set and on the fresh set separately** (and over both together), per model. A correct answer
+   passes the code check, has a subject or body containing one of the case's **main-change keywords** (words that belong to the main
+   change and not to the first file's path) and no banned word. A call the check refuses, or that errors, counts as wrong.
+3. **Main change covered, not just the first file:** the same 90% bar holds on the subset of cases whose main change is not in the
+   first file, per model.
+4. **0 invented answers returned:** a returned message naming a file that is not in the diff (any file-like token, scored
+   independently of `commit_msg.named_files`, with the old names of renames counted as in the diff) is never returned. Refused
+   replies are counted separately.
+5. **The code check catches planted bad output**, shown by tests that go through the tool: a subject over 72 characters, a
+   non-imperative first word, a final period, a multi-line subject, an invented file in subject and in body, an empty subject; also a
+   step summary that invents a file or a number.
+6. **Baseline: it must be better than truncating.** On the same cases, the same model, the same 3 repeats, the same scorer,
+   `commit_message` is called with the diff cut to its first 12000 characters (the obvious workaround today). `commit_message_multi`
+   must score **strictly more correct answers than the baseline over both sets, for each model**, or it fails. The baseline is also
+   reported by where the main change sits (first file, later file).
+7. **Limits and privacy tests pass:** over-size inputs are refused before any model is called (total, file count, one huge file),
+   nothing is cut; a cloud-only route is refused when `sensitive` is true; `sensitive` defaults to true in the tool and the server
+   wrapper; safe under concurrent calls on one route (threads against the fake backend).
+8. **Latency (p50, p95) is reported**, not a pass bar (it takes many model steps and will be slower than one call). A call that
+   times out counts as a failure.
+
+Procedure: runs only on AC power and without memory pressure; `MINION_ROSTER=~/.config/mcp-minions/roster.cloud.json` read in place,
+not edited, local models only; the prompts of this tool are not changed after the first run except as a stated fix. If a fix is made
+after the first set, it is stated here, set A is re-run on the fixed code and the fresh set is run once on the fixed code. A fail is
+logged here with its reason and the tool is removed from the code.
