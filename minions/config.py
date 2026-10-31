@@ -18,7 +18,7 @@ TOOLS = CORE_TOOLS + OPTIONAL_TOOLS
 ROUTE_ALIASES = {"summarize_url": "summarize"}   # these tools share another tool's route (and its caps)
 # Trial tools: a roster with no route of their own for them borrows the route of an existing tool (the value here).
 # A route listed under the tool's own name wins. Every entry was added by its own commit (docs/tool-trials.md).
-TRIAL_FALLBACK: dict = {"check_claims": "extract", "commit_message": "summarize", "commit_message_staged": "commit_message", "score": "extract", "translate": "summarize"}
+TRIAL_FALLBACK: dict = {"check_claims": "extract", "commit_message": "summarize", "commit_message_staged": "commit_message", "score": "extract", "translate": "summarize", "route_task": "classify"}
 ASK = "ask"   # open questions: only models marked "knowledge" (they passed the hippo test) may serve it
 VOTING_TOOLS = ("classify", "grounded")   # several fast models vote (quorum), a decision model may vote or answer first
 KINDS = ("fast", "reasoning", "decision")   # decision: System One model, voting tools only

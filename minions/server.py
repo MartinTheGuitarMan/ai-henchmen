@@ -5,7 +5,7 @@ import functools
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
-from . import tools
+from . import route_task as route_task_mod, tools
 from .config import Roster
 from .errors import MinionError
 
@@ -116,6 +116,15 @@ def commit_message_staged(folder: str, hint: str = "") -> dict:
     characters, binary files skipped and listed). Returns {"subject", "body", "files", "skipped"}, checked like
     commit_message. Always local only."""
     return tools.commit_message_staged(Roster.from_env(), folder, hint)
+
+
+@mcp.tool()
+@guarded
+def route_task(task: str, sensitive: bool = True) -> dict:
+    """Advise which worker should take a task: minion_tool, script, haiku, sonnet, top_model or ask_human. Returns
+    {"route", "confidence", "model_route", "escalated", "reason", "model"}. Low confidence or a failed call goes up to
+    top_model, never down. Advice only: nothing is run. The input is the task text and nothing else."""
+    return route_task_mod.route_task(Roster.from_env(), task, sensitive)
 
 
 @mcp.tool()
