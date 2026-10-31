@@ -130,6 +130,15 @@ def commit_message_staged(folder: str, hint: str = "") -> dict:
 
 @mcp.tool()
 @guarded
+def commit_message_files(folder: str, range: str, hint: str = "") -> dict:
+    """Draft a git commit message for a commit range of a git work tree ('BASE..HEAD' or one base ref), from one fixed
+    git diff between the merge base and the head (up to 150000 characters; binary files skipped and listed). Returns
+    {"subject", "body", "files", "skipped", "commits", "steps"}, checked like commit_message. Always local only."""
+    return tools.commit_message_files(Roster.from_env(), folder, range, hint)
+
+
+@mcp.tool()
+@guarded
 def route_task(task: str, sensitive: bool = True) -> dict:
     """Advise which worker should take a task: minion_tool, script, haiku, sonnet, top_model or ask_human. Returns
     {"route", "confidence", "model_route", "escalated", "reason", "model"}. Low confidence or a failed call goes up to

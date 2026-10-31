@@ -723,6 +723,29 @@ def commit_message_staged(cfg, folder: str, hint: str = "") -> dict:
     return {**out, "files": staged.files, "skipped": staged.skipped}
 
 
+def commit_message_files(cfg, folder: str, range: str, hint: str = "") -> dict:
+    """The commit message for a git range (gitdiff.read_range_diff: one fixed `git diff` between two checked commits).
+    Always local only. Up to 12000 characters of diff it is commit_message, above that commit_message_multi (up to
+    150000). Returns {"subject", "body", "files", "skipped", "commits", "steps"}; a skipped file the model never saw named is refused."""
+    from . import commit_msg
+    if not isinstance(hint, str) or len(hint) > 300:
+        raise BadInput("hint must be a string of at most 300 characters")
+    roster = _routed(cfg, "commit_message_files")
+    router._gate(roster.route("commit_message_files"), "commit_message_files", True)   # no local model: refuse before reading
+    rd = gitdiff.read_range_diff(folder, range)
+    if len(rd.diff) <= gitdiff.MAX_STAGED_CHARS:
+        out, steps = commit_message(roster, rd.diff, hint, True), 1
+    else:
+        out = commit_message_multi(roster, rd.diff, hint, True)
+        steps = out.pop("steps")
+    text = out["subject"] + "\n" + out["body"]
+    left_out = [s["path"] for s in rd.skipped if (s["path"] in text or s["path"].rsplit("/", 1)[-1] in text)
+                and s["path"].rsplit("/", 1)[-1] not in rd.diff]
+    if left_out:
+        raise Invented(f"the message names files that were left out of the diff: {left_out[:4]}", str(out)[:200])
+    return {**out, "files": rd.files, "skipped": rd.skipped, "commits": rd.commits, "steps": steps}
+
+
 def score(cfg, text: str, criterion: str, hint: str = "", sensitive: bool = True) -> dict:
     """Rate text 1 to 5 on a criterion. Returns {"score": int, "quote": str}: the score is an integer in range (a
     bool or a float is a schema failure) and the quote occurs in the text (MINION_NOT_IN_SOURCE)."""

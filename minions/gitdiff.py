@@ -178,15 +178,8 @@ class Staged:
     skipped: list   # {"path", "reason"}
 
 
-def read_staged(folder) -> Staged:
-    """The staged changes of a work tree, for commit_message_staged: the one extra git read approved on 2026-10-31.
-    One fixed argument list, nothing the caller typed reaches git except the folder (the work directory). Binary and
-    non-UTF-8 files are skipped and reported; an empty stage and an over-size diff are refused."""
-    root = work_tree(folder)
-    raw = _git(root, "diff", "--cached", "--no-color", "--no-ext-diff", "--no-textconv", "--find-renames",
-               "--src-prefix=a/", "--dst-prefix=b/", "--")
-    if not raw.strip():
-        raise BadInput("nothing is staged; stage the changes with git add first")
+def _text_blocks(raw: bytes) -> tuple[list, list, list]:
+    """Split a git diff into per-file blocks: (UTF-8 text blocks, their paths, skipped {"path", "reason"})."""
     kept, files, skipped = [], [], []
     for block in re.split(rb"(?m)^(?=diff --git )", raw):
         if not block.startswith(b"diff --git "):
@@ -201,9 +194,58 @@ def read_staged(folder) -> Staged:
             skipped.append({"path": path, "reason": "not UTF-8"})
             continue
         files.append(path)
+    return kept, files, skipped
+
+
+def read_staged(folder) -> Staged:
+    """The staged changes of a work tree, for commit_message_staged: the one extra git read approved on 2026-10-31.
+    One fixed argument list, nothing the caller typed reaches git except the folder (the work directory). Binary and
+    non-UTF-8 files are skipped and reported; an empty stage and an over-size diff are refused."""
+    root = work_tree(folder)
+    raw = _git(root, "diff", "--cached", "--no-color", "--no-ext-diff", "--no-textconv", "--find-renames",
+               "--src-prefix=a/", "--dst-prefix=b/", "--")
+    if not raw.strip():
+        raise BadInput("nothing is staged; stage the changes with git add first")
+    kept, files, skipped = _text_blocks(raw)
     if not kept:
         raise BadInput("only binary or non-UTF-8 files are staged (" + ", ".join(s["path"] for s in skipped)[:200] + ")")
     diff = "".join(kept)
     if len(diff) > MAX_STAGED_CHARS:
         raise BadInput(f"the staged diff is {len(diff)} characters, limit is {MAX_STAGED_CHARS}; stage fewer files")
     return Staged(diff, files, skipped)
+
+
+MAX_RANGE_CHARS = 150_000   # the commit_message_multi limit: a bigger range diff is refused, not cut
+
+
+@dataclass
+class RangeDiff:
+    diff: str       # the text diff from the merge base to the head, binary and non-UTF-8 files left out
+    files: list     # paths in that diff
+    skipped: list   # {"path", "reason"}
+    commits: int
+
+
+def read_range_diff(folder, spec) -> RangeDiff:
+    """The diff of a commit range, for commit_message_files: one fixed `git diff` between two commit ids (the merge base
+    and the head), with the same guards as read_range. The caller supplies the folder and the range; refs are checked and
+    replaced by commit ids before git sees a diff command. Binary and non-UTF-8 files are skipped and reported; an empty
+    diff and an over-size one are refused, never cut."""
+    base_ref, head_ref = parse_range(spec)
+    root = work_tree(folder)
+    base, head = _commit(root, base_ref), _commit(root, head_ref)
+    mb = _git(root, "merge-base", base, head).decode().strip()
+    if not _SHA.fullmatch(mb):
+        raise BadInput(f"{base_ref} and {head_ref} have no common ancestor")
+    raw = _git(root, "diff", "--no-color", "--no-ext-diff", "--no-textconv", "--find-renames",
+               "--src-prefix=a/", "--dst-prefix=b/", mb, head, "--")
+    if not raw.strip():
+        raise BadInput("the range changes nothing (empty diff)")
+    count = _git(root, "rev-list", "--count", f"--max-count={MAX_COMMITS + 1}", f"{base}..{head}", "--").decode().strip()
+    kept, files, skipped = _text_blocks(raw)
+    if not kept:
+        raise BadInput("only binary or non-UTF-8 files changed (" + ", ".join(s["path"] for s in skipped)[:200] + ")")
+    diff = "".join(kept)
+    if len(diff) > MAX_RANGE_CHARS:
+        raise BadInput(f"the range diff is {len(diff)} characters, limit is {MAX_RANGE_CHARS}; use a narrower range")
+    return RangeDiff(diff, files, skipped, int(count) if count.isdigit() else 0)
