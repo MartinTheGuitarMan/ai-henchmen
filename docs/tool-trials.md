@@ -439,7 +439,7 @@ A fail is removed in its own commit and the result stays here. The prompt-tuning
 
 ### Logged ideas still without an eval (from the fit log, 2026-10-30)
 
-Not started here: `write_code` (the coding bench is evaluating it) and `link_entities` (failed its fresh set). Still open:
+Not started here: `write_code` (the coding bench evaluated it; see the last section of this file) and `link_entities` (failed its fresh set). Still open:
 
 - **grounded relevance check** (logged 2026-10-25): a decision model confirms the quoted passage actually supports the claim,
   not only that the quote exists. Model-based, so it would need the full bar above (12 or more invented cases, 90%, 0 invented,
@@ -970,4 +970,13 @@ Limits: plain text without `source_path` still depends on the caller; a map name
 Invented-entity test: not applicable, there is no model in this tool.
 
 ### Verdict: PASS
-Not merged: a gate change needs Martin's go.
+Merged into local main on 2026-10-31.
+
+## `write_code` decision (2026-10-31): stays out, for now
+
+The coding bench is done for this round. Its results and readings are in `bench/results/2026-10-29-code/` (`RESULTS.md`, `READING.md`, `LOOP.md`, `LOOP-READING.md`).
+
+- **Verdict: no tool.** No model passed the retry-loop criteria, so `write_code` stays out of the server. gemini-flashlite, groq-gptoss120b and groq-gptoss20b failed on lift (+0, +1, +0 tasks): they already solve 20 to 22 of 25 in one shot. mistral-ministral8b failed on trust, narrowly (83 %, bar 85 %), with a real lift of +4 tasks.
+- **Routing.** For narrow code steps on text that may leave the machine, use those three cloud models one-shot, with tests run by a person or a script. Treat mistral-ministral8b's passing tests as not enough alone. The 4B models and phi4-mini solved 0 of 8 complex tasks: easy tasks only. qwen3:14b solved 0 of 8 too, and air-qwen 2.
+- **No local verdict.** The local models did not finish the loop, and two night-host models and two laptop models have partial or no rows. Not run is not wrong.
+- **What would reopen it.** A design that runs the sandbox next to the model, because the loop was limited by the windows, not by the models. Until then, no more bench runs are queued.
