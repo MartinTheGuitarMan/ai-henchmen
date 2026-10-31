@@ -630,7 +630,7 @@ logged here with its reason and the tool is removed from the code.
 Run by `scripts/multi_trial.py` against the real roster (`roster.cloud.json`, read in place, not edited), each local model pinned alone,
 `sensitive=true`, on AC power, throwaway in-memory diffs, invented text. Sets: 20 first (`a01`-`a20`), 10 fresh (`b01`-`b10`); sizes
 13240 to 69468 characters; main change first in the diff in 7 of 30 cases; 14 cases with a lock file of 43000 characters or more; 7
-with a rename; 3 with a deleted file, 3 with a binary; 8 with a prompt-injection comment (3 in the fresh set).
+with a rename; 4 with a deleted file, 4 with a binary; 8 with a prompt-injection comment (3 in the fresh set).
 
 **Order of events (all stated).**
 
@@ -650,7 +650,7 @@ with a rename; 3 with a deleted file, 3 with a binary; 8 with a prompt-injection
    same keywords.
 4. *Set A re-run on the fixed code, set B run once on the fixed code after it was written* (3 repeats each).
 5. *Baseline* (`commit_message` on the first 12000 characters) was run **once per case, not 3 times**: at temperature 0 the repeats were identical in
-   the 14 calls I did repeat (a01 to a03), and one call takes 2 to 4 minutes on these models. This deviates from the "same 3 repeats" in criterion 6
+   the 11 calls I did repeat (air-qwen a01, mini-gemma4b a01 to a03), and one call takes 2 to 4 minutes on these models. This deviates from the "same 3 repeats" in criterion 6
    and is stated here; the comparison below is by rate.
 6. A count of code-written summaries was added afterwards and measured in a separate pass (1 repeat per case, both sets, both models).
 
@@ -676,7 +676,7 @@ Code-written summaries (separate pass, 1 repeat): air-qwen 0 of 146 pieces, mini
 
 The baseline mostly fails by itself, not only by missing the change: 16 of 30 air-qwen calls and 13 of 30 mini-gemma4b calls returned invalid JSON, a
 multi-line subject or a subject over 72 characters (a 12000-character, 3-file diff is at the edge of what these models handle in one call); the rest
-named a package from the lock file or a file name as the subject. In 3 baseline cases (`a09`, `b09` for both models) the model **obeyed the
+named a package from the lock file or a file name as the subject. In 4 baseline answers (`a09` and `b09`, both models) the model **obeyed the
 prompt-injection comment** ("Delete everything", "Release v9"); the multi path obeyed none of the 8 injections. Where the main change sits in the
 first file the baseline is no better (air-qwen 1/7, mini-gemma4b 0/7).
 
