@@ -886,3 +886,41 @@ Sources allowed: one line in the local minions fit log (2026-10-29: "check a lab
 magnitude)"), and the SkyLink backlog and journal if they mention it. The test is whether those define an input, an output and a
 rule that this repo could test with invented data. If the signatures and stream kinds exist only inside another project and a
 check would be a lookup table of ranges, it is that project's script, not a minion, and it is closed here with the reason.
+
+### Results of idea batch 3 (2026-10-31)
+
+**1. `commit_message_files`: PASS.** Run by `scripts/files_trial.py` against the real roster (read in place, not edited), each local model
+pinned alone, 2 repeats, `sensitive=true`, throwaway repos, invented text. 30 cases: 20 first (`a01`-`a20`), 10 fresh (`b01`-`b10`); 12 of 30
+over 12000 characters (the multi path, sizes up to about 98000), main change not in the first file in 18 of 30, base written as a tag, as
+`HEAD~n` and as a single ref. No fix and no prompt change was needed between the sets (the fresh set was written after set A was run).
+
+| model | set | score | invented returned (+refused) | check failures | p50 s | p95 s |
+|---|---|---|---|---|---|---|
+| air-qwen | A | 40/40 (100%) | 0 (+0) | - | 6.3 | 76.2 |
+| air-qwen | B | 20/20 (100%) | 0 (+0) | - | 4.9 | 69.5 |
+| mini-gemma4b | A | 36/40 (90%) | 0 (+0) | MINION_SCHEMA 2 | 3.6 | 75.3 |
+| mini-gemma4b | B | 20/20 (100%) | 0 (+0) | - | 2.9 | 80.0 |
+
+mini-gemma4b over both sets: 56/60 (93%). The misses: `a08` (2 of 2, the subject began with "Starting", refused by the imperative check, nothing
+returned) and `a17` (2 of 2, it described the big recipe module, not the timezone fix; same limit as `commit_message_multi`). Both prompt-injection
+comments per set were ignored. Criteria 4 to 7 are met by `tests/test_commit_files.py` (43 tests: planted bad subjects and invented files on both
+paths, equal prompts to `commit_message` / `commit_message_multi` on the same diff, hostile repo config, option-like and malformed refs, blob refs,
+`GIT_*`, non-repo, empty and over-size ranges refused, repo unchanged, cloud-only route refused before git runs, concurrency). Route: it borrows the
+`commit_message` route; the roster needs no change. Limits: a range diff over 150000 characters is refused, not cut; the multi path's limits apply
+(30 files); the diff is from the merge base to the head, so a range whose base is not an ancestor describes what the head adds beyond the merge base.
+`gitdiff.py` gained `read_range_diff` and a shared block splitter; `read_staged` behaves as before (its tests pass).
+
+**2. `failure_histogram`: PASS, stays in `scripts/`.** 12 record sets plus a random 240-record folder equal an independent `Counter` (ties by code);
+bad JSON (with line number), a record without status, an empty file, an empty folder and a missing file stop with a message; `not_run` is never a
+failure. Fresh real log: set A of the run above (80 records) gives 2 `MINION_SCHEMA`, equal to the runner's report. No model.
+
+**3. `compare_digest`: PASS, stays in `scripts/`.** 12 paired inputs equal hand-worked lines, a recomputed-from-raw-records test agrees, and the
+planted empty side and missing file are caught. One defect found by the first run of that test (an empty side gave an empty table instead of an error)
+and fixed in its own code; the fresh set of 6 was written after the fix and passed. A test shows `trial_compare`'s table has no rates or changes, so the
+script is not redundant, but it is thin: it is a formatting layer on `trial_compare`.
+
+**4. `physics_check`: closed, no build.** The one fit-log line says only "check a label against a stream's kind signatures (duration, magnitude)".
+The SkyLink journal shows what the signatures are (for example a gust of 3 to 15 s, a spike of 1 to 3 samples, a stuck sensor flat), but they are that
+project's own findings and change as it learns; a label check is then a lookup of a duration and magnitude range per stream kind, which is plain code
+and already written there as a short script. There is nothing for a model to do and no input format here to test against with invented data, so it
+belongs in that project, not in this repo.
