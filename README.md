@@ -312,3 +312,33 @@ Version 0.2. Early and small; expect changes.
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
+## Agents
+
+An agent picks its own steps, so nothing it does is checked step by step the way a minion's output is. What keeps it safe is where it works and what it may touch.
+
+### `gemini_agent(task, repo, role="default", base_ref="HEAD", test_command=None)`
+
+Runs [Gemini CLI](https://github.com/google-gemini/gemini-cli) headless as a coding agent.
+
+- **Throwaway clone.** Each run clones the repo at `base_ref` (committed work only) into `~/.cache/minions/agent-runs/<run_id>/work` and removes the remote. The repo itself is never touched.
+- **No blanket approval.** No `--yolo`. The `default` role runs with `--approval-mode auto_edit` (edits, in the clone only); `codereviewer` runs with `default` (no edits). `--sandbox` is on.
+- **Policy file** (`agents/policies/gemini-agent.toml`): pytest, `ruff check` and read-only git may run. Git remote commands, `curl`/`wget`/`ssh`, package installs, `web_fetch` and `google_web_search` are denied. Anything else needs approval, and headless mode treats that as a refusal.
+- **Result:** `changes.patch`, a `--stat`, the agent's own `<SUMMARY>`, token stats and a status: `ok`, `refused`, `cli_error`, `timeout`, `rate_limited` or `turn_limit`. You apply the patch yourself: `git -C <repo> apply <patch_path>`.
+- **Tests are not the agent's word.** With `test_command`, the server runs it in the clone after the agent is done and reports the exit code.
+- **Privacy.** Gemini CLI is a cloud model, and its free tier may use prompts for training. A run is refused unless the [privacy map](#tools) labels the repo `low` (no map means no repo), and unless the base commit is already on a remote-tracking branch: unpushed work is not yet public. A repo holding only invented data can be listed in `unpushed_ok_repos` to skip the second check.
+
+Setup: install the CLI (`npm install -g @google/gemini-cli`) and run `gemini` once to sign in. Optional settings go in `~/.config/minions/agents.json` (or `MINION_AGENTS_CONFIG`):
+
+```json
+{
+  "gemini": {"command": "gemini", "model": null, "timeout_s": 900, "sandbox": true, "max_response_chars": 20000},
+  "unpushed_ok_repos": []
+}
+```
+
+The same runner is on the command line: `uv run henchmen-agent gemini --repo <path> --test "python -m pytest -q" "<task>"`.
+
+Status: trial. It is not routed by `route_task` until it passes the coding bench as an agent.
+
+The runner pattern is adapted from `clink` in [PAL MCP Server](https://github.com/BeehiveInnovations/pal-mcp-server) (Apache-2.0); see [NOTICE](NOTICE).

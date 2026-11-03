@@ -279,6 +279,27 @@ def minion_report(days: float = 7.0) -> dict:
     return tools.report(days)
 
 
+# --- Agents --------------------------------------------------------------------------------------------------
+# Everything above is a minion: one bounded step the caller chose, output checked in code. Below are agents: they
+# pick their own steps. Their authority is proposals only. See agents/ and the README.
+
+
+@mcp.tool()
+def gemini_agent(task: str, repo: str, role: str = "default", base_ref: str = "HEAD",
+                 test_command: str | None = None) -> dict:
+    """AGENT, not a minion: Gemini CLI picks its own steps (read, edit, run pytest) in a throwaway clone of the repo
+    with no remote, and returns a patch for you to review and apply (git -C <repo> apply <patch_path>). Nothing is
+    changed in the repo itself. Cloud model on Google's free tier: refused unless the privacy map labels the repo
+    `low`, and unless the base commit is already pushed (or the repo is listed in unpushed_ok_repos).
+    role: "default" (may edit the clone) or "codereviewer" (reads and runs tests only). base_ref: commit or branch
+    the clone starts from; uncommitted work is not included. test_command: run by this server in the clone after
+    the agent finishes, e.g. "python -m pytest -q", so pass/fail is not the agent's own word.
+    Returns {"status", "run_id", "message", "summary", "patch_path", "diff_stat", "tests", ...}; status is one of
+    ok, refused, cli_error, timeout, rate_limited, turn_limit. Slow: minutes, not seconds."""
+    from agents.gemini_cli import run_task
+    return run_task(task, repo, role=role, base_ref=base_ref, test_command=test_command).to_dict()
+
+
 def main() -> None:
     import sys
     if sys.argv[1:2] == ["init"]:

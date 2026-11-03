@@ -1,0 +1,40 @@
+# Policy for Gemini CLI runs started by mcp-agents.
+# Loaded with --policy on every run. Headless mode treats ask_user as deny,
+# so anything not allowed below is refused, except edit tools, which
+# --approval-mode auto_edit approves. Edits land in a throwaway clone.
+
+# Tests and read-only inspection may run without asking.
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = [
+  "pytest",
+  "python -m pytest",
+  "python3 -m pytest",
+  "uv run pytest",
+  "ruff check",
+  "git status",
+  "git diff",
+  "git log",
+  "git show",
+  "ls",
+]
+decision = "allow"
+priority = 500
+
+# Never talk to remotes or the network.
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git (push|pull|fetch|clone|remote|submodule)"
+decision = "deny"
+priority = 900
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = ["curl", "wget", "ssh", "scp", "rsync", "nc", "pip install", "npm install", "brew"]
+decision = "deny"
+priority = 900
+
+[[rule]]
+toolName = ["web_fetch", "google_web_search"]
+decision = "deny"
+priority = 900
