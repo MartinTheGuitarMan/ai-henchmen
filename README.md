@@ -337,7 +337,7 @@ Runs [Gemini CLI](https://github.com/google-gemini/gemini-cli) headless as a cod
 - **Tests are not the agent's word.** With `test_command`, the server runs it in the clone after the agent is done and reports the exit code.
 - **Privacy.** Gemini CLI is a cloud model, and its free tier may use prompts for training. A run is refused unless the [privacy map](#tools) labels the repo `low` (no map means no repo), and unless the base commit is already on a remote-tracking branch: unpushed work is not yet public. A repo holding only invented data can be listed in `unpushed_ok_repos` to skip the second check.
 
-Setup: install the CLI (`npm install -g @google/gemini-cli`) and run `gemini` once to sign in. Optional settings go in `~/.config/minions/agents.json` (or `MINION_AGENTS_CONFIG`):
+Setup: install the CLI (`npm install -g @google/gemini-cli`) and give it a Gemini API key from Google AI Studio in `GEMINI_API_KEY` (in the environment the server runs in). Google ended personal "Sign in with Google" for Gemini CLI in 2026 and points those accounts to its Antigravity CLI, so the free route is the API key, with the free API tier's smaller daily quota. Optional settings go in `~/.config/minions/agents.json` (or `MINION_AGENTS_CONFIG`):
 
 ```json
 {
