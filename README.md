@@ -331,7 +331,7 @@ An agent picks its own steps, so nothing it does is checked step by step the way
 Runs [Gemini CLI](https://github.com/google-gemini/gemini-cli) headless as a coding agent.
 
 - **Throwaway clone.** Each run clones the repo at `base_ref` (committed work only) into `~/.cache/minions/agent-runs/<run_id>/work` and removes the remote. The repo itself is never touched.
-- **No blanket approval.** No `--yolo`. The `default` role runs with `--approval-mode auto_edit` (edits, in the clone only); `codereviewer` runs with `default` (no edits). `--sandbox` is on.
+- **No blanket approval.** No `--yolo`. The `default` role runs with `--approval-mode auto_edit` (edits, in the clone only); `codereviewer` runs with `default` (no edits). `--sandbox` is on. The clone is trusted for the session (`--skip-trust`, which headless runs need), so a repo that carries Gemini CLI workspace config (`.gemini/`, `.env*`) is refused rather than loaded.
 - **Policy file** (`agents/policies/gemini-agent.toml`): pytest, `ruff check` and read-only git may run. Git remote commands, `curl`/`wget`/`ssh`, package installs, `web_fetch` and `google_web_search` are denied. Anything else needs approval, and headless mode treats that as a refusal.
 - **Result:** `changes.patch`, a `--stat`, the agent's own `<SUMMARY>`, token stats and a status: `ok`, `refused`, `cli_error`, `timeout`, `rate_limited`, `busy` (the model is overloaded, HTTP 503) or `turn_limit`. You apply the patch yourself: `git -C <repo> apply <patch_path>`.
 - **Tests are not the agent's word.** With `test_command`, the server runs it in the clone after the agent is done and reports the exit code.

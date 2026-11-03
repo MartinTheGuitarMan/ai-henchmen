@@ -87,7 +87,7 @@ def test_ok_run_gives_patch_and_leaves_repo_alone(repo, conf, monkeypatch, tmp_p
     seen = json.loads(argv_out.read_text())
     argv = seen["argv"]
     assert "--yolo" not in argv and "yolo" not in argv
-    assert "--sandbox" in argv and "--policy" in argv
+    assert "--sandbox" in argv and "--policy" in argv and "--skip-trust" in argv
     assert Path(argv[argv.index("--policy") + 1]).is_file()
     assert argv[argv.index("--approval-mode") + 1] == "auto_edit"
     assert Path(seen["cwd"]).resolve() == Path(res.clone_path).resolve()
@@ -208,3 +208,16 @@ def test_server_exposes_gemini_agent():
     import asyncio
     names = [t.name for t in asyncio.run(server.mcp.list_tools())]
     assert "gemini_agent" in names
+
+
+@pytest.mark.parametrize("path", [".gemini/settings.json", ".env"])
+def test_repo_with_gemini_workspace_config_refused(repo, conf, monkeypatch, path):
+    monkeypatch.setenv("FAKE_GEMINI_MODE", "ok")
+    f = repo / path
+    f.parent.mkdir(exist_ok=True)
+    f.write_text("{}\n")
+    git("add", "-A", "-f", cwd=repo)
+    git("commit", "-qm", "add config", cwd=repo)
+    git("push", "-q", "origin", "main", cwd=repo)
+    res = run_task("x", repo, conf=conf)
+    assert res.status == "refused" and "workspace config" in res.message

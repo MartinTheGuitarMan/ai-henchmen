@@ -58,7 +58,9 @@ def build_command(settings: cfg.GeminiSettings, role: str) -> list[str]:
     exe = shutil.which(settings.command)
     if exe is None:
         raise FileNotFoundError(f"{settings.command!r} not found on PATH")
-    cmd = [exe, "-o", "json", "--approval-mode", cfg.ROLE_APPROVAL[role], "--policy", str(POLICY)]
+    # --skip-trust: headless runs refuse untrusted folders, and the clone is new every run. Trusting it would let a
+    # repo's own .gemini/ settings, .env files and MCP servers load, so _workspace_config refuses clones that have any.
+    cmd = [exe, "-o", "json", "--skip-trust", "--approval-mode", cfg.ROLE_APPROVAL[role], "--policy", str(POLICY)]
     if settings.sandbox:
         cmd.append("--sandbox")
     if settings.model:
@@ -134,6 +136,14 @@ def _classify(code: int | None, stderr: str, error: dict | None, response: str, 
     return "ok", "done; the patch is a proposal, nothing was applied"
 
 
+def _workspace_config(clone: Path) -> list[str]:
+    """Files in the clone that Gemini CLI would load from a trusted workspace (settings, MCP servers, env, memory)."""
+    found = [p.name for p in clone.glob(".env*") if p.is_file()]
+    if (clone / ".gemini").exists():
+        found.append(".gemini/")
+    return sorted(found)
+
+
 def _gate(root: Path, base: str, conf: cfg.AgentConfig) -> str | None:
     """Reason to refuse, or None. Cloud agent: the repo must be public in the privacy map, and the base commit
     already pushed (unpushed work is not yet public) unless the repo is listed as unpushed_ok."""
@@ -184,6 +194,11 @@ def run_task(
         make_clone(root, clone, base, f"agent/gemini/{run_id}")
     except IsolationError as exc:
         return refuse(str(exc))
+
+    found = _workspace_config(clone)
+    if found:
+        return refuse(f"the repo has Gemini CLI workspace config ({', '.join(found)}), which a trusted run would load; "
+                      f"remove it from the repo or run the agent elsewhere")
 
     prompt = f"{(HERE / 'prompts' / f'{role}.txt').read_text(encoding='utf-8')}\n\n=== TASK ===\n{task.strip()}\n"
     (run_dir / "prompt.txt").write_text(prompt, encoding="utf-8")
