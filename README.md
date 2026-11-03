@@ -1,6 +1,15 @@
-# mcp-minions
+# ai-henchmen
 
-An [MCP](https://modelcontextprotocol.io) server that hands narrow, well-defined jobs to **small models** instead of a big one: classify text, extract fields into a JSON Schema, check a claim against a source, tag, and summarize. By default the model runs on your own machine through [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai), so the text never leaves it.
+An [MCP](https://modelcontextprotocol.io) server that lets a big model hand work down to cheaper workers. It has two kinds, told apart by one test: **who decides what happens next?**
+
+- **Minions** do one bounded step the caller chose (classify, extract, summarize, check a claim) on small, mostly local models. They pick no next step, and their output is checked in code. Most of this README is about them.
+- **Agents** own a goal and pick their own steps (which file to read, what to edit, when to run the tests). Their authority is **proposals only**: they work in a throwaway copy of a repo and hand back a patch. See [Agents](#agents).
+
+The chain of command is human, then agents, then minions. The project was called mcp-minions until it gained agents.
+
+## Minions
+
+The minion tools give narrow, well-defined jobs to **small models** instead of a big one: classify text, extract fields into a JSON Schema, check a claim against a source, tag, and summarize. By default the model runs on your own machine through [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai), so the text never leaves it.
 
 An optional roster adds more models, on this machine or others you reach over the network, with voting and a judge. It can also list hosted cloud models. Those are used only when the caller marks the text as public (`sensitive=false`); every call is private by default, and the `*_file` tools always stay local. With the `*_file` tools the calling model passes a path and never reads the text itself.
 
@@ -45,20 +54,20 @@ The idea is "strong system, slim model": a small model is fine at reading and re
 Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/). You also need Ollama or LM Studio running with a model loaded.
 
 ```bash
-git clone https://github.com/MartinTheGuitarMan/mcp-minions
-cd mcp-minions
+git clone https://github.com/MartinTheGuitarMan/ai-henchmen
+cd ai-henchmen
 uv sync
-MINION_BACKEND=ollama MINION_MODEL=<your-model> uv run mcp-minions
+MINION_BACKEND=ollama MINION_MODEL=<your-model> uv run ai-henchmen
 ```
 
-Example MCP client entry (the exact file and format depend on your client):
+The old command name `mcp-minions` still works, so existing client entries need no change. Example MCP client entry (the exact file and format depend on your client):
 
 ```json
 {
   "mcpServers": {
     "minions": {
       "command": "uv",
-      "args": ["--directory", "/path/to/mcp-minions", "run", "mcp-minions"],
+      "args": ["--directory", "/path/to/ai-henchmen", "run", "ai-henchmen"],
       "env": { "MINION_BACKEND": "ollama", "MINION_MODEL": "<your-model>" }
     }
   }
@@ -80,7 +89,7 @@ Example MCP client entry (the exact file and format depend on your client):
 
 Instead of many `MINION_*` variables, point `MINION_CONFIG` at one TOML (or JSON) file with an optional `[machine]` table of flags and thresholds (`lifecycle`, `min_free_pct`, `large_gb`, `quiet_windows`, `allow_battery`, `model_dir`, `state_dir`, `log`, `meta`, ...), your `[models.*]` and `[routes.*]`. Real environment variables always win over the file, an unknown or mistyped setting is `MINION_BAD_CONFIG`, and keys never go in the file (cloud models name their key variable). With only a `[machine]` table the single-model setup from `MINION_MODEL` still applies. `MINION_ROSTER` keeps working. See [examples/minions.example.toml](examples/minions.example.toml); keep your own copy outside the repo.
 
-`uv run mcp-minions init` writes a commented starter file (default `~/.config/minions/minions.toml`; `--path`, `--backend lmstudio|ollama`, `--model <name>`). It never overwrites an existing file without `--force`, does not contact any runtime and writes no keys.
+`uv run ai-henchmen init` writes a commented starter file (default `~/.config/minions/minions.toml`; `--path`, `--backend lmstudio|ollama`, `--model <name>`). It never overwrites an existing file without `--force`, does not contact any runtime and writes no keys.
 
 ## Roster, quorum and judge (v0.2)
 

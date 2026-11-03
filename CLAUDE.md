@@ -1,6 +1,8 @@
-# mcp-minions
+# ai-henchmen
 
-An MCP server that gives narrow jobs (classify, extract, summarize) to small local models through Ollama or LM Studio, forces schema-constrained JSON, and **validates every result in code** before returning it. v0.2 adds an optional roster: several fast models, a classify quorum, and a reasoning judge. Public repo, MIT license.
+Formerly mcp-minions. Two kinds of worker, told apart by who decides what happens next: **minions** (`minions/`) do one bounded step the caller chose and code checks the output; **agents** (`agents/`) pick their own steps and may only propose. Chain of command: human, agents, minions. Keep the two apart in code, docs and the tool list.
+
+The minion side is an MCP server that gives narrow jobs (classify, extract, summarize) to small local models through Ollama or LM Studio, forces schema-constrained JSON, and **validates every result in code** before returning it. v0.2 adds an optional roster: several fast models, a classify quorum, and a reasoning judge. Public repo, MIT license.
 
 ## Layout
 - `minions/server.py`: the MCP tools, thin wrappers only.
@@ -22,7 +24,7 @@ An MCP server that gives narrow jobs (classify, extract, summarize) to small loc
 ```bash
 uv sync                                   # keep uv.lock in sync with pyproject.toml
 uv run pytest -q                          # unit tests, fake backend, no model needed
-MINION_BACKEND=ollama MINION_MODEL=<model> uv run mcp-minions     # run the server, single model
+MINION_BACKEND=ollama MINION_MODEL=<model> uv run ai-henchmen     # run the server, single model (`mcp-minions` still works)
 uv run python scripts/smoke.py ollama <model> --repeat 5          # live backend and a loaded model required
 uv run henchmen-agent gemini --repo <path> --test "python -m pytest -q" "<task>"   # agent, needs the real Gemini CLI
 ```
