@@ -22,6 +22,9 @@ if mode == "solve":
     if os.environ.get("FAKE_EXTRA"):
         open(os.environ["FAKE_EXTRA"], "w").write("x\n")
     print(json.dumps({"response": "done <SUMMARY>wrote solution.py</SUMMARY>"})); sys.exit(0)
+if mode == "503":
+    print('Attempt 1 failed with status 503. {"error": {"code": 503, "message": "This model is currently experiencing high demand.", "status": "UNAVAILABLE"}}', file=sys.stderr)
+    sys.exit(1)
 if mode == "429":
     print("Error: 429 rate limit exceeded", file=sys.stderr); print(json.dumps({"response": ""})); sys.exit(1)
 if mode == "error":

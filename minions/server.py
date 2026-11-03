@@ -295,7 +295,7 @@ def gemini_agent(task: str, repo: str, role: str = "default", base_ref: str = "H
     the clone starts from; uncommitted work is not included. test_command: run by this server in the clone after
     the agent finishes, e.g. "python -m pytest -q", so pass/fail is not the agent's own word.
     Returns {"status", "run_id", "message", "summary", "patch_path", "diff_stat", "tests", ...}; status is one of
-    ok, refused, cli_error, timeout, rate_limited, turn_limit. Slow: minutes, not seconds."""
+    ok, refused, cli_error, timeout, rate_limited, busy, turn_limit. Slow: minutes, not seconds."""
     from agents.gemini_cli import run_task
     return run_task(task, repo, role=role, base_ref=base_ref, test_command=test_command).to_dict()
 

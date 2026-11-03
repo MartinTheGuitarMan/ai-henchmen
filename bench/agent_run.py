@@ -133,8 +133,10 @@ def main(argv: list[str] | None = None) -> int:
             path.write_text(json.dumps(doc, indent=1))
             print(f"{t['id']}: {rec['agent_status']} {rec.get('failure') or rec.get('error') or 'code'} "
                   f"{rec['latency']}s files={rec['files']}", flush=True)
-            if rec["agent_status"] == "rate_limited":
-                print("rate limited: stopping; rerun later to resume", flush=True)
+            if rec["agent_status"] in ("rate_limited", "busy"):
+                del doc["tasks"][t["id"]]          # not a result: this task is tried again on the next run
+                path.write_text(json.dumps(doc, indent=1))
+                print(f"{rec['agent_status']}: stopping; rerun later to resume", flush=True)
                 break
             time.sleep(args.pause)
     return 0

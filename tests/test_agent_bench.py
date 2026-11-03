@@ -91,3 +91,10 @@ def test_task_md_change_counts_as_outside(monkeypatch, tmp_path):
     agent_run.main(["--out", str(out), "--tasks", "slugify", "--pause", "0"])
     rec = json.loads((out / "gen" / "gemini-cli-agent.json").read_text())["tasks"]["slugify"]
     assert rec["outside_own_files"] == ["TASK.md"]
+
+
+def test_busy_is_not_recorded_and_stops(monkeypatch, tmp_path):
+    monkeypatch.setenv("FAKE_GEMINI_MODE", "503")
+    out = tmp_path / "run"
+    agent_run.main(["--out", str(out), "--tasks", "slugify,merge_intervals", "--pause", "0"])
+    assert json.loads((out / "gen" / "gemini-cli-agent.json").read_text())["tasks"] == {}

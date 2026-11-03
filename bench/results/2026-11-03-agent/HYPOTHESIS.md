@@ -46,3 +46,13 @@ failures `wrong_answer` on a hidden edge case its own tests missed. Median 2 to 
 The agent runs its own pytest on its own code on this Mac inside Gemini CLI's sandbox (macOS Seatbelt), not in the
 bench's Docker sandbox. That is how the agent works in real use, so it is part of what is tested; only hidden tests and
 scoring stay in Docker. 25 tasks is small: one or two tasks either way is noise.
+
+## Amendment 2026-11-03 (before any result)
+
+TLDR: counted Google's "model overloaded" (HTTP 503) like a rate limit, because the first CLI test hit it and it says nothing about the agent; no task has run yet.
+
+A task that ends `busy` (503) or `rate_limited` is not recorded; the run stops and resumes later, inside the same 48
+hours. Neither counts toward criterion 3. Also: Google ended "Sign in with Google" for Gemini CLI on personal accounts,
+so the run uses a Gemini API key on the free API tier. The model is still the CLI's default unless `--model` is given;
+the model used is recorded per task.
+

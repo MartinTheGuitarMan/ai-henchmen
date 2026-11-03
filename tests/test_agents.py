@@ -152,7 +152,7 @@ def test_missing_binary_refused(repo, conf):
     assert res.status == "refused" and "not found" in res.message
 
 
-@pytest.mark.parametrize("mode,status", [("429", "rate_limited"), ("error", "cli_error"), ("turns", "turn_limit")])
+@pytest.mark.parametrize("mode,status", [("429", "rate_limited"), ("503", "busy"), ("error", "cli_error"), ("turns", "turn_limit")])
 def test_failure_modes(repo, conf, monkeypatch, mode, status):
     monkeypatch.setenv("FAKE_GEMINI_MODE", mode)
     res = run_task("x", repo, conf=conf)

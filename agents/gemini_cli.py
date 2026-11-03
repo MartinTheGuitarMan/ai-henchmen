@@ -30,7 +30,8 @@ HERE = Path(__file__).resolve().parent
 POLICY = HERE / "policies" / "gemini-agent.toml"
 SUMMARY_RE = re.compile(r"<SUMMARY>(.*?)</SUMMARY>", re.IGNORECASE | re.DOTALL)
 EXIT_TURN_LIMIT = 53
-STATUSES = ("ok", "refused", "cli_error", "timeout", "rate_limited", "turn_limit")
+STATUSES = ("ok", "refused", "cli_error", "timeout", "rate_limited", "busy", "turn_limit")
+BUSY = re.compile(r"\b503\b|UNAVAILABLE|high demand|overloaded", re.IGNORECASE)
 
 
 @dataclass
@@ -121,6 +122,8 @@ def _classify(code: int | None, stderr: str, error: dict | None, response: str, 
         return "timeout", f"killed after {timeout} s"
     if "429" in stderr or "rate limit" in stderr.lower() or (error and str(error.get("code")) == "429"):
         return "rate_limited", "Gemini reported a rate limit (429); the free quota may be spent for now"
+    if BUSY.search(stderr) or (error and str(error.get("code")) == "503"):
+        return "busy", "Gemini reported the model overloaded (503); try again later or pick another model"
     if code == EXIT_TURN_LIMIT:
         return "turn_limit", "Gemini CLI hit its turn limit"
     if code != 0 or error:
