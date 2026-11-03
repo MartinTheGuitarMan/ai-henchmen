@@ -63,3 +63,12 @@ uv run python bench/code_report.py bench/results/RUN > bench/results/RUN/RESULTS
 - A model call times out after at least 180 s, and a reply may use 6000 tokens, so thinking models are not cut short early;
   one that still runs out is recorded as `truncated`.
 - 17 tasks is small: one task is about 6 points. Treat differences of one or two tasks as noise.
+
+### Agents on the coding bench
+
+`agent_run.py` gives the same 25 tasks to an agent (`gemini_agent`) instead of a one-shot model. Each task becomes a tiny
+git repo (`TASK.md`, `solution.py`), the agent works in its throwaway clone and may run its own pytest there, and the
+`solution.py` it leaves is stored in `gen/gemini-cli-agent.json` in the format `code_run.py` writes. Scoring is unchanged:
+`code_run.py --models none --out RUN` runs the hidden tests in the Docker sandbox, and `code_report.py` puts the agent in
+the same tables. Also recorded: the agent's status, wall time, tokens, and any file it touched besides `solution.py` and
+its own tests. The temporary repos get their own privacy map (`low`); the real map and agents config are never changed.
