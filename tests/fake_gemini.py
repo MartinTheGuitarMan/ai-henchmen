@@ -17,6 +17,11 @@ if mode in ("ok", "commit"):
     out = {"response": "Added sub().\n<SUMMARY>Added sub to calc.py and new_file.txt.</SUMMARY>",
            "stats": {"models": {"gemini-x": {"tokens": {"total": 10}}}}}
     print(json.dumps(out)); sys.exit(0)
+if mode == "solve":
+    open("solution.py", "w").write(os.environ["FAKE_SOLUTION"])
+    if os.environ.get("FAKE_EXTRA"):
+        open(os.environ["FAKE_EXTRA"], "w").write("x\n")
+    print(json.dumps({"response": "done <SUMMARY>wrote solution.py</SUMMARY>"})); sys.exit(0)
 if mode == "429":
     print("Error: 429 rate limit exceeded", file=sys.stderr); print(json.dumps({"response": ""})); sys.exit(1)
 if mode == "error":
