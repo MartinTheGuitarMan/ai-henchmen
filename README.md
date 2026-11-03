@@ -1,6 +1,15 @@
-# mcp-minions
+# ai-henchmen
 
-An [MCP](https://modelcontextprotocol.io) server that hands narrow, well-defined jobs to **small models** instead of a big one: classify text, extract fields into a JSON Schema, check a claim against a source, tag, and summarize. By default the model runs on your own machine through [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai), so the text never leaves it.
+An [MCP](https://modelcontextprotocol.io) server that lets a big model hand work down to cheaper workers. It has two kinds, told apart by one test: **who decides what happens next?**
+
+- **Minions** do one bounded step the caller chose (classify, extract, summarize, check a claim) on small, mostly local models. They pick no next step, and their output is checked in code. Most of this README is about them.
+- **Agents** own a goal and pick their own steps (which file to read, what to edit, when to run the tests). Their authority is **proposals only**: they work in a throwaway copy of a repo and hand back a patch. See [Agents](#agents).
+
+The chain of command is human, then agents, then minions. The project was called mcp-minions until it gained agents.
+
+## Minions
+
+The minion tools give narrow, well-defined jobs to **small models** instead of a big one: classify text, extract fields into a JSON Schema, check a claim against a source, tag, and summarize. By default the model runs on your own machine through [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai), so the text never leaves it.
 
 An optional roster adds more models, on this machine or others you reach over the network, with voting and a judge. It can also list hosted cloud models. Those are used only when the caller marks the text as public (`sensitive=false`); every call is private by default, and the `*_file` tools always stay local. With the `*_file` tools the calling model passes a path and never reads the text itself.
 
@@ -45,20 +54,20 @@ The idea is "strong system, slim model": a small model is fine at reading and re
 Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/). You also need Ollama or LM Studio running with a model loaded.
 
 ```bash
-git clone https://github.com/MartinTheGuitarMan/mcp-minions
-cd mcp-minions
+git clone https://github.com/MartinTheGuitarMan/ai-henchmen
+cd ai-henchmen
 uv sync
-MINION_BACKEND=ollama MINION_MODEL=<your-model> uv run mcp-minions
+MINION_BACKEND=ollama MINION_MODEL=<your-model> uv run ai-henchmen
 ```
 
-Example MCP client entry (the exact file and format depend on your client):
+The old command name `mcp-minions` still works, so existing client entries need no change. Example MCP client entry (the exact file and format depend on your client):
 
 ```json
 {
   "mcpServers": {
     "minions": {
       "command": "uv",
-      "args": ["--directory", "/path/to/mcp-minions", "run", "mcp-minions"],
+      "args": ["--directory", "/path/to/ai-henchmen", "run", "ai-henchmen"],
       "env": { "MINION_BACKEND": "ollama", "MINION_MODEL": "<your-model>" }
     }
   }
@@ -80,7 +89,7 @@ Example MCP client entry (the exact file and format depend on your client):
 
 Instead of many `MINION_*` variables, point `MINION_CONFIG` at one TOML (or JSON) file with an optional `[machine]` table of flags and thresholds (`lifecycle`, `min_free_pct`, `large_gb`, `quiet_windows`, `allow_battery`, `model_dir`, `state_dir`, `log`, `meta`, ...), your `[models.*]` and `[routes.*]`. Real environment variables always win over the file, an unknown or mistyped setting is `MINION_BAD_CONFIG`, and keys never go in the file (cloud models name their key variable). With only a `[machine]` table the single-model setup from `MINION_MODEL` still applies. `MINION_ROSTER` keeps working. See [examples/minions.example.toml](examples/minions.example.toml); keep your own copy outside the repo.
 
-`uv run mcp-minions init` writes a commented starter file (default `~/.config/minions/minions.toml`; `--path`, `--backend lmstudio|ollama`, `--model <name>`). It never overwrites an existing file without `--force`, does not contact any runtime and writes no keys.
+`uv run ai-henchmen init` writes a commented starter file (default `~/.config/minions/minions.toml`; `--path`, `--backend lmstudio|ollama`, `--model <name>`). It never overwrites an existing file without `--force`, does not contact any runtime and writes no keys.
 
 ## Roster, quorum and judge (v0.2)
 
@@ -312,3 +321,33 @@ Version 0.2. Early and small; expect changes.
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
+## Agents
+
+An agent picks its own steps, so nothing it does is checked step by step the way a minion's output is. What keeps it safe is where it works and what it may touch.
+
+### `gemini_agent(task, repo, role="default", base_ref="HEAD", test_command=None)`
+
+Runs [Gemini CLI](https://github.com/google-gemini/gemini-cli) headless as a coding agent.
+
+- **Throwaway clone.** Each run clones the repo at `base_ref` (committed work only) into `~/.cache/minions/agent-runs/<run_id>/work` and removes the remote. The repo itself is never touched.
+- **No blanket approval.** No `--yolo`. The `default` role runs with `--approval-mode auto_edit` (edits, in the clone only); `codereviewer` runs with `default` (no edits). `--sandbox` is on.
+- **Policy file** (`agents/policies/gemini-agent.toml`): pytest, `ruff check` and read-only git may run. Git remote commands, `curl`/`wget`/`ssh`, package installs, `web_fetch` and `google_web_search` are denied. Anything else needs approval, and headless mode treats that as a refusal.
+- **Result:** `changes.patch`, a `--stat`, the agent's own `<SUMMARY>`, token stats and a status: `ok`, `refused`, `cli_error`, `timeout`, `rate_limited` or `turn_limit`. You apply the patch yourself: `git -C <repo> apply <patch_path>`.
+- **Tests are not the agent's word.** With `test_command`, the server runs it in the clone after the agent is done and reports the exit code.
+- **Privacy.** Gemini CLI is a cloud model, and its free tier may use prompts for training. A run is refused unless the [privacy map](#tools) labels the repo `low` (no map means no repo), and unless the base commit is already on a remote-tracking branch: unpushed work is not yet public. A repo holding only invented data can be listed in `unpushed_ok_repos` to skip the second check.
+
+Setup: install the CLI (`npm install -g @google/gemini-cli`) and run `gemini` once to sign in. Optional settings go in `~/.config/minions/agents.json` (or `MINION_AGENTS_CONFIG`):
+
+```json
+{
+  "gemini": {"command": "gemini", "model": null, "timeout_s": 900, "sandbox": true, "max_response_chars": 20000},
+  "unpushed_ok_repos": []
+}
+```
+
+The same runner is on the command line: `uv run henchmen-agent gemini --repo <path> --test "python -m pytest -q" "<task>"`.
+
+Status: trial. It is not routed by `route_task` until it passes the coding bench as an agent.
+
+The runner pattern is adapted from `clink` in [PAL MCP Server](https://github.com/BeehiveInnovations/pal-mcp-server) (Apache-2.0); see [NOTICE](NOTICE).

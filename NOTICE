@@ -1,0 +1,13 @@
+ai-henchmen
+
+agents/gemini_cli.py adapts the runner pattern of clink in PAL MCP Server by
+BeehiveInnovations (https://github.com/BeehiveInnovations/pal-mcp-server):
+subprocess with `-o json`, JSON error recovery, roles as prompt files, and the
+<SUMMARY> output cap. PAL MCP Server is licensed under the Apache License 2.0;
+a copy is in licenses/PAL-MCP-SERVER-APACHE-2.0.txt.
+
+Changes made here: no --yolo; sandbox on; a policy file that allows only tests
+and read-only git; work happens in a clone with no remote; the privacy map and
+a pushed-commits check gate every run; the output is a patch.
+
+The rest of this project is under the MIT License (LICENSE).
