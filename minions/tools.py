@@ -654,6 +654,34 @@ def check_claims(cfg, text: str, source: str, hint: str = "", sensitive: bool = 
                sensitive, check=check, repair=repair, repair_on=SchemaError)
 
 
+def check_claims_file(cfg, text: str, path: str, hint: str = "", sensitive: bool = True) -> dict:
+    """check_claims against the UTF-8 file at path (read like the other *_file tools: that one file, size-capped),
+    for a source longer than check_claims takes. A source over 12,000 characters is cut into overlapping chunks
+    (claims.chunks, at most claims.MAX_CHUNKS, a longer file is refused); every chunk is checked on its own, and a
+    claim is supported when any chunk supports it with a quote the code found. Returns {"claims", "chunks",
+    "chunks_failed"}. A chunk whose check fails (schema, invented term) is skipped and counted; if every chunk fails
+    the last error is raised. Hard failures (backend down, privacy, rate limit) propagate."""
+    from . import claims
+    _check_text(text)
+    source = read_text_file(cfg, path)
+    _check_text(source)
+    if len(source) <= 12000:
+        return {**check_claims(cfg, text, source, hint, sensitive), "chunks": 1, "chunks_failed": 0}
+    parts = claims.chunks(source)
+    if len(parts) > claims.MAX_CHUNKS:
+        raise BadInput(f"file is too long: {len(parts)} chunks, at most {claims.MAX_CHUNKS} (about "
+                       f"{claims.MAX_CHUNKS * claims.CHUNK} characters)")
+    results, failed, last = [], 0, None
+    for part in parts:
+        try:
+            results.append(check_claims(cfg, text, part, hint, sensitive))
+        except SchemaError as e:   # this chunk gave no usable answer; the others may still
+            failed, last = failed + 1, e
+    if not results:
+        raise last
+    return {"claims": claims.merge(results), "chunks": len(parts), "chunks_failed": failed}
+
+
 def commit_message(cfg, diff: str, hint: str = "", sensitive: bool = True) -> dict:
     """Draft {"subject", "body"} for a git diff. The subject is at most 72 characters, imperative, without a final
     period; every file the message names is in the diff (MINION_TOO_LONG, MINION_INVENTED, MINION_SCHEMA)."""

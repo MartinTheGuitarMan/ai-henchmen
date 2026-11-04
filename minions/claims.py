@@ -275,3 +275,55 @@ def make_check(text: str, source: str, quote_found=quote_found):
             raise SchemaError(f"claims leave out what the text says: {dropped[:5]}", str(obj)[:200])
 
     return check
+
+
+# ---- check_claims_file: a source longer than check_claims takes is checked in overlapping chunks
+CHUNK = 10000       # characters per chunk (check_claims takes 12,000)
+OVERLAP = 600       # the end of one chunk starts the next, so a fact on a boundary is whole in one of them
+MAX_CHUNKS = 10     # more than this is refused, never cut short
+SAME_CLAIM = 0.75   # share of content words and numbers two claims must share to be the same claim
+
+
+def chunks(source: str) -> list[str]:
+    """The source in pieces of at most CHUNK characters, cut at line ends where possible, each piece starting with
+    the last lines (up to OVERLAP characters) of the one before. Nothing is left out."""
+    lines: list[str] = []
+    for raw in source.splitlines(keepends=True):
+        lines += [raw[i:i + CHUNK] for i in range(0, len(raw), CHUNK)] or [raw]
+    out, cur = [], []
+    for line in lines:
+        if sum(map(len, cur)) + len(line) > CHUNK and cur:
+            out.append("".join(cur))
+            keep, size = [], 0
+            for prev in reversed(cur):
+                if size + len(prev) > OVERLAP:
+                    break
+                keep.insert(0, prev)
+                size += len(prev)
+            cur = keep
+        cur.append(line)
+    if cur:
+        out.append("".join(cur))
+    return out
+
+
+def same_claim(a: str, b: str) -> bool:
+    (an, aw), (bn, bw) = _tokens(a, False), _tokens(b, False)
+    x, y = an | aw, bn | bw
+    return bool(x and y) and len(x & y) / max(len(x), len(y)) >= SAME_CLAIM
+
+
+def merge(results: list[dict]) -> list[dict]:
+    """One claim list from the per-chunk results: a claim is supported when any chunk supported it (with a quote the
+    code found in that chunk, hence in the source). Claims the chunks word differently are matched by shared content."""
+    merged: list[dict] = []
+    for res in results:
+        for c in res["claims"]:
+            hit = next((m for m in merged if same_claim(m["claim"], c["claim"])), None)
+            if hit is None:
+                merged.append(dict(c))
+            elif c["supported"] and not hit["supported"]:
+                hit.update(c)
+            elif not hit["supported"] and c.get("flag") and not hit.get("flag"):
+                hit["flag"] = c["flag"]
+    return merged

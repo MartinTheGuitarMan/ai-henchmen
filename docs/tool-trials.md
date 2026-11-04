@@ -980,3 +980,44 @@ The coding bench is done for this round. Its results and readings are in `bench/
 - **Routing.** For narrow code steps on text that may leave the machine, use those three cloud models one-shot, with tests run by a person or a script. Treat mistral-ministral8b's passing tests as not enough alone. The 4B models and phi4-mini solved 0 of 8 complex tasks: easy tasks only. qwen3:14b solved 0 of 8 too, and air-qwen 2.
 - **No local verdict.** The local models did not finish the loop, and two night-host models and two laptop models have partial or no rows. Not run is not wrong.
 - **What would reopen it.** A design that runs the sandbox next to the model, because the loop was limited by the windows, not by the models. Until then, no more bench runs are queued.
+
+## `check_claims` format fix and `check_claims_file` (2026-11-04)
+
+TLDR: `check_claims` failed 29% of its calls with MINION_SCHEMA last week, mostly on harmless format differences, so it was fixed
+first and the file-reading idea `check_claims_file` was evaluated second; criteria below were fixed before the first run.
+
+### Part 1: the format fix (code change, not a new tool)
+
+Causes found by reproducing with invented pages (see `tests/test_claims_formats.py`):
+1. Dates were checked as loose numbers and capitalised words: `30 Oct 2026` against a source with `2026-10-30` gave MINION_INVENTED (`Oct`) or, in the claims, "claims leave out what the text says".
+2. The leave-out check compared raw strings: `1,712` against `1712`, `Oct` against `October`, `Ström` against `Strom` in different claim spellings.
+3. Numbers grouped with a space (`12 400`) were read as two numbers by the "claim is in the text" check, which dropped every claim and raised "no claims came back".
+4. A name written without its apostrophe (`OBrien`) was not found.
+5. Invalid or incomplete JSON from the model failed the call at once (no retry on the fast path).
+6. (c) and (d) of the weekly eval are limits, not bugs: the 12,000 character source cap, and `source_path` being a privacy label that does not read the file (now said in the docstring; the file tool below addresses the cap).
+
+Fix: dates compare as dates (any form `values.py` reads, plus month and year, which a source date in that month supports), numbers by value,
+names after folding accents and punctuation; one retry on any schema failure. Nothing was loosened that lets an invented fact in: a date,
+number or name the source does not have is still MINION_INVENTED, a quote not in the source still downgrades its claim.
+
+Pass criteria for the real-world shape (`check_claims_wiki`, 10 invented wiki-like pages, 2 repeats, `air-qwen`, `sensitive=true`, on `main` and on the branch):
+- W1. New MINION_SCHEMA rate at most half the old rate, and at most 5%.
+- W2. At least 90% of the answers correct on the new code.
+- W3. 0 invented answers (a planted wrong date, number or name returned supported), old and new.
+
+### Part 2: `check_claims_file(text, source_file, hint, sensitive=True)`
+
+Reads the one named file with `read_text_file` (same size cap and UTF-8 rule as the other `*_file` tools: no globbing, no folders), cuts a source over
+12,000 characters into overlapping chunks (10,000 characters, 600 overlap, at most 10 chunks, a longer file is refused), runs `check_claims` on
+each chunk, and calls a claim supported when any chunk supports it with a quote the code found in that chunk. Privacy: `sensitive` defaults to true
+and is tightened by the privacy map for the file path, like every path-aware tool. A chunk whose check fails is skipped and counted (`chunks_failed`);
+if every chunk fails, the last error is raised.
+
+Pass criteria (fixed before the first run), `air-qwen` on the roster's `check_claims` route, `sensitive=true`, 24 cases over four invented sources of 15,000 to 30,000 characters,
+facts placed early, in the middle and late (`CLAIMS_FILE` in `scripts/tool_trials.py`), 2 repeats:
+1. At least 90% of the answers correct. Called wrong: a claim marked the wrong way, or a call the code check rejected with every chunk.
+2. 0 invented answers: a claim about an invented person, a wrong number or a wrong date must never come back supported (zero tolerance, all repeats).
+3. The code check catches planted bad output, proven in `tests/test_claims_file.py`: a quote that is in no chunk, a number in no chunk, an invented name, and a quote that exists only in a different chunk than the claim's own check.
+4. The file guard: only the named file is read; a folder, a missing file and a non-UTF-8 file are refused; a local-only roster refuses `sensitive=false` for a path the map does not label low; a file over 10 chunks is refused.
+5. Latency (p50, p95) and `chunks_failed` are reported, not bars.
+If it fails, the tool stays out of `server.py` and the reason is recorded here. If it passes, it is wired into `server.py` with tests on the same branch.

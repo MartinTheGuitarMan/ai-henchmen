@@ -25,6 +25,7 @@ import re
 import statistics
 import subprocess
 import sys
+import tempfile
 import time
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -36,6 +37,7 @@ from minions.errors import (Busy, MinionDown, MinionError, PrivacyRefused, RateL
 
 TRIAL_TOOLS = ("check_claims", "commit_message", "dedupe", "score", "translate")
 IMPL = {"check_claims_holes": ("minions.tools", "check_claims")}   # runner name of the 2026-10-30 (2) set
+IMPL |= {"check_claims_file": ("minions.tools", "check_claims_file"), "check_claims_wiki": ("minions.tools", "check_claims")}
 IMPL |= {t: ("minions.tools", t) for t in TRIAL_TOOLS}   # `dedupe` failed its trial and was removed: its cases stay as evidence, the call no longer runs
 
 # ---------------------------------------------------------------- cases (all invented)
@@ -266,6 +268,130 @@ TRANSLATE = [
     ("t17", "Sofia Brandt said the project costs 40,000 euros.", "sv", [["sofia brandt"], ["projekt"], ["euro"]]),
 ]
 
+
+# ---------------------------------------------------------------- check_claims_file (2026-11-04): long invented sources
+# Four invented sources between 15,000 and 30,000 characters, built by code from a fixed seed: filler paragraphs plus
+# three or four facts placed early, in the middle and late, so that every chunk of check_claims_file is needed.
+# Filler numbers have five digits or two decimals and filler names are never a case name, so no case claim is
+# accidentally true or false because of filler.
+_FILL_NAMES = ["Hedda Brannigan", "Tomas Kessler", "Ilse Ravndal", "Piet Oosterhuis", "Neve Calloway", "Sami Ketola"]
+_FILL_PLACES = ["North Quay", "the Elm Yard", "Gull Street depot", "the Saltings", "West Annex", "the Tern Basin"]
+_FILL_THINGS = ["inspection round", "stock count", "maintenance log", "visitor survey", "weather review", "audit pass"]
+
+
+def _filler(rng_seed: int, target: int, facts: list) -> str:
+    import random
+    rng = random.Random(rng_seed)
+    out, size = [], 0
+    marks = [(int(target * f), t) for f, t in facts]
+    while size < target:
+        if marks and size >= marks[0][0]:
+            sentence = marks.pop(0)[1]
+        else:
+            sentence = (f"The {rng.choice(_FILL_THINGS)} at {rng.choice(_FILL_PLACES)} logged "
+                        f"{rng.randint(10, 99)},{rng.randint(100, 999)} entries and {rng.randint(1, 9)}.{rng.randint(10, 99)} "
+                        f"units per shift, as noted by {rng.choice(_FILL_NAMES)}.")
+        out.append(sentence)
+        size += len(sentence) + 1
+        if rng.random() < 0.18:
+            out.append("\n")
+    return " ".join(out).replace(" \n ", "\n")
+
+
+_LONG = {
+    "A": ("Marrowby Harbour Digest", 27000, 101, [
+        (0.08, "The Kelder Crane was commissioned on 14 March 2019 and lifts up to 85 tonnes."),
+        (0.50, "Harbourmaster Ingrid Valtonen-Roe retired in 2021 after 31 years of service."),
+        (0.92, "The breakwater extension cost 4,350,000 crowns and finished in September 2024.")]),
+    "B": ("Tessmere Valley Archive Notes", 30000, 202, [
+        (0.10, "Dr. Oskar Lindhammar catalogued 2,214 letters between 1998 and 2003."),
+        (0.52, "The reading room seats 46 visitors and opens at 09:30."),
+        (0.93, "The archive moved to the old mill on Fenwick Row in 2022.")]),
+    "C": ("Pellbrook Orchard Cooperative Report", 26000, 303, [
+        (0.06, "Founded in 1987 by twelve growers, the cooperative now has 148 members."),
+        (0.48, "The 2023 harvest was 912 tonnes of apples, mostly the Redfern variety."),
+        (0.90, "Treasurer Aino Castellanos-Reyes reported a surplus of 63,800 crowns.")]),
+    "D": ("Quillon Observatory Handbook", 15000, 404, [
+        (0.15, "The main telescope has a 0.9 metre mirror."),
+        (0.55, "Visitor nights run every second Friday."),
+        (0.88, "Director Bram Tolliver started on 2 May 2020.")]),
+}
+# (id, source, text, [(key, expected_supported, invented?)]); invented? also marks a wrong number or date
+CLAIMS_FILE = [
+    ("f01", "A", "The Kelder Crane was commissioned on 2019-03-14.", [("kelder crane", True, 0)]),
+    ("f02", "A", "The Kelder Crane can lift up to 85 tonnes.", [("85", True, 0)]),
+    ("f03", "A", "The Kelder Crane can lift up to 58 tonnes.", [("58", False, 1)]),
+    ("f04", "A", "Ingrid Valtonen-Roe retired as harbourmaster after 31 years.", [("valtonen", True, 0)]),
+    ("f05", "A", "Harbourmaster Elias Brandvold retired in 2021.", [("brandvold", False, 1)]),
+    ("f06", "A", "The breakwater extension cost 4350000 crowns.", [("4350000|4,350,000", True, 0)]),
+    ("f07", "A", "The breakwater extension finished in October 2024.", [("october", False, 1)]),
+    ("f08", "A", "The Kelder Crane was built by the Hallgren Foundry.", [("hallgren", False, 1)]),
+    ("f09", "B", "Oskar Lindhammar catalogued 2,214 letters.", [("lindhammar", True, 0)]),
+    ("f10", "B", "The reading room seats 46 visitors.", [("46", True, 0)]),
+    ("f11", "B", "The archive moved to the old mill on Fenwick Row in 2022.", [("fenwick", True, 0)]),
+    ("f12", "B", "The reading room opens at 10:30.", [("10:30", False, 1)]),
+    ("f13", "B", "Dr. Marit Soederholm catalogued the letters.", [("soederholm", False, 1)]),
+    ("f14", "B", "The archive holds 2,412 letters.", [("2,412|2412", False, 1)]),
+    ("f15", "C", "The cooperative was founded in 1987.", [("1987", True, 0)]),
+    ("f16", "C", "The cooperative has 148 members.", [("148", True, 0)]),
+    ("f17", "C", "The 2023 harvest was 912 tonnes of apples.", [("912", True, 0)]),
+    ("f18", "C", "Treasurer Aino Castellanos-Reyes reported a surplus of 63,800 crowns.", [("castellanos", True, 0)]),
+    ("f19", "C", "The 2023 harvest was 921 tonnes.", [("921", False, 1)]),
+    ("f20", "C", "The cooperative's chairman, Johan Ekwall, founded it.", [("ekwall", False, 1)]),
+    ("f21", "D", "The main telescope has a 0.9 metre mirror.", [("0.9", True, 0)]),
+    ("f22", "D", "Visitor nights run every second Friday.", [("friday", True, 0)]),
+    ("f23", "D", "Bram Tolliver became director on 2 May 2020.", [("tolliver", True, 0)]),
+    ("f24", "D", "Director Sunniva Haldorsen opened the observatory in 2020.", [("haldorsen", False, 1)]),
+]
+LONG_DIR = Path(tempfile.gettempdir()) / "henchmen-claims-file-trial"
+
+
+def long_source(key: str) -> Path:
+    """The invented source file for case-set key A to D, written once."""
+    title, size, seed, facts = _LONG[key]
+    LONG_DIR.mkdir(exist_ok=True)
+    path = LONG_DIR / f"source-{key}.txt"
+    if not path.exists():
+        path.write_text(f"{title}\n\n" + _filler(seed, size, facts) + "\n", encoding="utf-8")
+    return path
+
+
+# ---------------------------------------------------------------- check_claims on wiki-like pages (2026-11-04)
+# Ten invented pages: the SOURCE is a raw record (ISO dates, thousands separators), the TEXT is wiki prose that writes
+# the same facts in another form. Reported as a MINION_SCHEMA rate on the old and the new code; a wrong fact is planted in some.
+_W1 = "Incident record IR-4471\nOpened: 2026-10-30\nClosed: 2026-11-03\nOwner: Anne-Marie Østergaard\nFiles affected: 1,712"
+_W2 = "Project note\nKickoff: 14 September 2026\nLead: Zoë O'Brien-Lindqvist\nBudget: 12 400 EUR\nTeam size: 7"
+_W3 = "Sensor log\nSite: Kestrel Ridge\nInstalled 2025-03-02 by Jean-Luc Dubois-Ström\nReadings: 48,310\nUptime: 99.2%"
+_W4 = "Meeting notes, 2026-09-08\nPresent: Björn Åkesson, Maëlle Fournier\nDecision: ship the pilot in October 2026\nCost cap: 3'500 EUR"
+_W5 = "Release 4.2\nPublished: October 21, 2026\nAuthor: Siobhán Ó Dálaigh\nDownloads: 10,174\nOpen issues: 38"
+_W6 = "Audit file A-77\nStarted 2026-06-01, finished 2026-06-19\nAuditor: Tomás Nuñez-Hartmann\nFindings: 23\nFine: 1 250.50 EUR"
+_W7 = "Training course\nHeld on 2026-05-12 in Velmar\nTeacher: Dagný Þórsdóttir\nParticipants: 1,044\nPassed: 912"
+_W8 = "Delivery report\nShipped: 3 Nov 2026\nCarrier: Nordlys Freight\nParcels: 5,280\nDriver: Renée O'Sullivan"
+_W9 = "Survey results, March 2026\nRespondents: 2,615\nLead analyst: Łukasz Wiśniewski\nResponse rate: 61.4%"
+_W10 = "Maintenance ticket MT-902\nRaised 2026-02-27 by Lena Grau-Åberg\nPumps checked: 14\nFaulty: 2\nCost: 7,800 EUR"
+CLAIMS_WIKI = [
+    ("w01", _W1, "The incident was opened on 30 October 2026 and closed on 3 November 2026. Anne-Marie Østergaard owned it, and 1712 files were affected.",
+     [("opened|30 october", True, 0), ("1712|1,712", True, 0)]),
+    ("w02", _W2, "The project kicked off on 2026-09-14 under Zoë O'Brien-Lindqvist, with a budget of 12,400 EUR.",
+     [("2026-09-14|14 september", True, 0), ("12,400|12400|12 400", True, 0)]),
+    ("w03", _W3, "Jean-Luc Dubois-Ström installed the Kestrel Ridge sensor on 2 March 2025. It took 48310 readings.",
+     [("2 march 2025|2025-03-02", True, 0), ("48310|48,310", True, 0)]),
+    ("w04", _W4, "At the meeting of 8 September 2026 Björn Åkesson and Maëlle Fournier decided to ship the pilot in October 2026, with a cost cap of 3,500 EUR.",
+     [("october", True, 0), ("3,500|3500", True, 0)]),
+    ("w05", _W5, "Release 4.2 was published on 2026-10-21 by Siobhan O Dalaigh and downloaded 10174 times.",
+     [("2026-10-21|21 october", True, 0), ("10174|10,174", True, 0)]),
+    ("w06", _W6, "The audit ran from 1 June to 19 June 2026, led by Tomás Nuñez-Hartmann. It found 32 issues.",
+     [("19 june|2026-06-19", True, 0), ("32", False, 1)]),
+    ("w07", _W7, "The course was held in Velmar on 12 May 2026, taught by Dagný Þórsdóttir. 1,044 people took part and 912 passed.",
+     [("12 may|2026-05-12", True, 0), ("912", True, 0)]),
+    ("w08", _W8, "Nordlys Freight shipped the parcels on 2026-11-03; driver Renée O'Sullivan carried 5280 of them.",
+     [("5280|5,280", True, 0), ("2026-11-03|3 november", True, 0)]),
+    ("w09", _W9, "The March 2026 survey had 2615 respondents and a response rate of 61.4%. Analyst Lukasz Wisniewski led it.",
+     [("2615|2,615", True, 0), ("61.4", True, 0)]),
+    ("w10", _W10, "Lena Grau-Åberg raised the ticket on 27 February 2026 after checking 14 pumps. The repair cost 8,700 EUR.",
+     [("27 february|2026-02-27", True, 0), ("8,700", False, 1)]),
+]
+
 # ---------------------------------------------------------------- scoring (code, never a model)
 _WORDS = re.compile(r"[^\W\d_]+(?:['-][^\W\d_]+)*")
 
@@ -318,6 +444,10 @@ def cases(tool: str) -> list:
     """-> [(case id, kwargs for the tool call, scorer(out) -> (ok, invented))]"""
     if tool == "check_claims":
         return [(i, {"text": t, "source": s}, lambda o, k=k: score_claims(o, k)) for i, s, t, k in CLAIMS]
+    if tool == "check_claims_file":
+        return [(i, {"text": t, "path": str(long_source(k))}, lambda o, e=e: score_claims(o, e)) for i, k, t, e in CLAIMS_FILE]
+    if tool == "check_claims_wiki":
+        return [(i, {"text": t, "source": src}, lambda o, e=e: score_claims(o, e)) for i, src, t, e in CLAIMS_WIKI]
     if tool == "check_claims_holes":
         return [(i, {"text": t, "source": s}, lambda o, k=k, b=b: score_claims2(o, k, b)) for i, s, t, k, b in CLAIMS2]
     if tool == "commit_message":
@@ -353,7 +483,7 @@ def pinned_roster(raw: dict, model: str, max_file_bytes: int = 1_000_000) -> Ros
     """A throwaway roster in memory: only `model` serves the trial tools, through a route of its own."""
     raw = copy.deepcopy(raw)
     raw["models"][model].pop("caps", None)
-    raw.setdefault("routes", {}).update({t: {"fast": [model]} for t in TRIAL_TOOLS})
+    raw.setdefault("routes", {}).update({t: {"fast": [model]} for t in (*TRIAL_TOOLS, "check_claims_file")})
     return dataclasses.replace(Roster.from_dict(raw, max_file_bytes), meta=True)
 
 
