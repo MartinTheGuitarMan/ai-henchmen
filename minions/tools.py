@@ -29,10 +29,10 @@ def read_text_file(cfg, path: str) -> str:
 
 
 def _go(cfg, tool, build, text, name, labels=None, sensitive=True, descriptions=None, after=None, check=None,
-        repair=None) -> dict:
+        repair=None, repair_on=Invented) -> dict:
     """after(out, meta) -> out: a check that runs inside the same log line and token tally as the call.
     check(obj): a per-reply check the router treats as part of the schema (see router.run).
-    repair(e) -> build: on MINION_INVENTED, one more run with a task that names the terms to drop. The new reply goes
+    repair(e) -> build: on MINION_INVENTED (or repair_on, a SchemaError subclass: check_claims retries every schema failure, invalid JSON included), one more run with a task that names the terms to drop. The new reply goes
     through the same check; if it fails again, its error is raised. The log line shows MINION_INVENTED as repaired."""
     roster = Roster.coerce(cfg)
     started = time.time()
@@ -40,7 +40,7 @@ def _go(cfg, tool, build, text, name, labels=None, sensitive=True, descriptions=
     try:
         try:
             out, meta = router.run(roster, tool, build, text, name, labels, sensitive, descriptions, check)
-        except Invented as e:
+        except repair_on as e:
             if repair is None:
                 raise
             out, meta = router.run(roster, tool, repair(e), text, name, labels, sensitive, descriptions, check)
@@ -642,9 +642,44 @@ def check_claims(cfg, text: str, source: str, hint: str = "", sensitive: bool = 
     clean = lambda t: t.replace("=====", "== ==")
     data = f"=====TEXT=====\n{clean(text)}\n=====SOURCE=====\n{clean(source)}"
     check = claims.make_check(text, source)
-    return _go(Roster.coerce(cfg), "check_claims", lambda order=None: (claims.TASK + (f" {hint}" if hint else ""),
-                                                                       claims.SCHEMA), data, "claims", None, sensitive,
-               check=check)
+    task = claims.TASK + (f" {hint}" if hint else "")
+
+    def repair(e):   # one retry on any schema failure (invalid JSON, a missing field, a claim left out, a made-up term)
+        again = (f"{task} Your previous reply was rejected: {str(e)[:300]}. Reply again with one valid JSON object "
+                 "matching the schema. Keep every claim, copy quotes exactly from the SOURCE, and use only numbers "
+                 "and names that the SOURCE has.")
+        return lambda order=None: (again, claims.SCHEMA)
+
+    return _go(Roster.coerce(cfg), "check_claims", lambda order=None: (task, claims.SCHEMA), data, "claims", None,
+               sensitive, check=check, repair=repair, repair_on=SchemaError)
+
+
+def check_claims_file(cfg, text: str, path: str, hint: str = "", sensitive: bool = True) -> dict:
+    """check_claims against the UTF-8 file at path (read like the other *_file tools: that one file, size-capped),
+    for a source longer than check_claims takes. A source over 12,000 characters is cut into overlapping chunks
+    (claims.chunks, at most claims.MAX_CHUNKS, a longer file is refused); every chunk is checked on its own, and a
+    claim is supported when any chunk supports it with a quote the code found. Returns {"claims", "chunks",
+    "chunks_failed"}. A chunk whose check fails (schema, invented term) is skipped and counted; if every chunk fails
+    the last error is raised. Hard failures (backend down, privacy, rate limit) propagate."""
+    from . import claims
+    _check_text(text)
+    source = read_text_file(cfg, path)
+    _check_text(source)
+    if len(source) <= 12000:
+        return {**check_claims(cfg, text, source, hint, sensitive), "chunks": 1, "chunks_failed": 0}
+    parts = claims.chunks(source)
+    if len(parts) > claims.MAX_CHUNKS:
+        raise BadInput(f"file is too long: {len(parts)} chunks, at most {claims.MAX_CHUNKS} (about "
+                       f"{claims.MAX_CHUNKS * claims.CHUNK} characters)")
+    results, failed, last = [], 0, None
+    for part in parts:
+        try:
+            results.append(check_claims(cfg, text, part, hint, sensitive))
+        except SchemaError as e:   # this chunk gave no usable answer; the others may still
+            failed, last = failed + 1, e
+    if not results:
+        raise last
+    return {"claims": claims.merge(results), "chunks": len(parts), "chunks_failed": failed}
 
 
 def commit_message(cfg, diff: str, hint: str = "", sensitive: bool = True) -> dict:

@@ -56,31 +56,39 @@ def test_check_claims_quote_stays_exact_about_words_and_numbers(fake, cfg):
 
 
 def test_check_claims_schema_failure_still_raises(fake, cfg):
-    fake.replies.append(json.dumps({"claims": [{"claim": "Entry was free.", "quote": "Entry was free."}]}))
+    fake.replies += [json.dumps({"claims": [{"claim": "Entry was free.", "quote": "Entry was free."}]})] * 2
     with pytest.raises(SchemaError):
         tools.check_claims(cfg, "Entry was free.", SRC)
 
 
+def bad(fake, **obj):
+    """A bad reply twice: check_claims retries once, and the retry must fail the same check."""
+    reply(fake, **obj)
+    reply(fake, **obj)
+
+
 def test_check_claims_catches_supported_claim_with_unknown_name_or_number(fake, cfg):
-    reply(fake, claims=[claim("Orla Vennesund opened the festival.", True, "The festival drew about")])
+    bad(fake, claims=[claim("Orla Vennesund opened the festival.", True, "The festival drew about")])
     with pytest.raises(Invented):
         tools.check_claims(cfg, "Orla Vennesund opened the festival.", SRC)
-    reply(fake, claims=[claim("The festival drew 9,900 people.", True, "drew about 8,400 people")])
+    bad(fake, claims=[claim("The festival drew 9,900 people.", True, "drew about 8,400 people")])
     with pytest.raises(Invented):
         tools.check_claims(cfg, "The festival drew 9,900 people.", SRC)
 
 
 def test_check_claims_catches_unmarked_and_dropped_claims(fake, cfg):
-    fake.replies.append(json.dumps({"claims": [{"claim": "Entry was free.", "quote": "Entry was free."}]}))   # no supported flag
+    unmarked = json.dumps({"claims": [{"claim": "Entry was free.", "quote": "Entry was free."}]})   # no supported flag
+    fake.replies += [unmarked, unmarked]
     with pytest.raises(SchemaError):
         tools.check_claims(cfg, "Entry was free.", SRC)
-    fake.replies.append(json.dumps({"claims": [{"claim": "Entry was free.", "supported": None, "quote": ""}]}))
+    none = json.dumps({"claims": [{"claim": "Entry was free.", "supported": None, "quote": ""}]})
+    fake.replies += [none, none]
     with pytest.raises(SchemaError):
         tools.check_claims(cfg, "Entry was free.", SRC)
-    reply(fake, claims=[claim("Entry was free.", True, "Entry was free.")])   # the 8,400 of the text was dropped
+    bad(fake, claims=[claim("Entry was free.", True, "Entry was free.")])   # the 8,400 of the text was dropped
     with pytest.raises(SchemaError, match="leave out"):
         tools.check_claims(cfg, "Entry was free. About 8,400 came.", SRC)
-    reply(fake, claims=[])
+    bad(fake, claims=[])
     with pytest.raises(SchemaError):
         tools.check_claims(cfg, "Entry was free.", SRC)
 

@@ -97,7 +97,10 @@ def grounded(claim: str, source: str, hint: str = "", sensitive: bool = True, so
 def check_claims(text: str, source: str, hint: str = "", sensitive: bool = True, source_path: str = "") -> dict:
     """Split text into factual claims and mark each supported or not against source. Returns {"claims": [{claim,
     supported, quote}]}. A supported claim carries a quote copied from the source (checked in code; one whose quote
-    is not found is downgraded to unsupported with flag "quote_not_found") and may use only numbers and names the source has; a claim of the text that the model left out fails the call."""
+    is not found is downgraded to unsupported with flag "quote_not_found") and may use only numbers and names the source has (dates
+    and number formats are read as the same fact: 2026-10-30 is 30 October 2026, 1,712 is 1712); a claim of the text that the model left out fails the call.
+    One retry on a schema failure. Limits: text 6000 characters, source 12000. source and text are the strings
+    themselves: source_path is only a privacy label (it does not read the file); pass a long file to a *_file tool."""
     return tools.check_claims(Roster.from_env(), text, source, hint, privacy.tighten(sensitive, source_path))
 
 
