@@ -32,9 +32,14 @@ _WORD = re.compile(rf"\b({'|'.join(TENS)})(?:[ -]({'|'.join(list(WORDS)[1:10])})
 _NUM = re.compile(r"\d+(?:(?:[,.' ]|\s(?=\d{3}\b))\d+)*")
 
 
+_LETTERS = str.maketrans({"ł": "l", "Ł": "L", "ø": "o", "Ø": "O", "đ": "d", "Đ": "D", "ð": "d", "Ð": "D", "ı": "i",
+                          "ß": "ss", "æ": "ae", "Æ": "AE", "œ": "oe", "Œ": "OE", "þ": "th", "Þ": "Th"})   # NFKD leaves these whole
+
+
 def _fold(s: str) -> str:
-    """Case and accents folded, every run of punctuation or space one space: 'Malmö, INV-2291' -> 'malmo inv 2291'."""
-    s = "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c)).casefold()
+    """Case and accents folded, every run of punctuation or space one space: 'Malmö, INV-2291' -> 'malmo inv 2291'.
+    Letters that Unicode does not decompose (ł, ø, đ, ß, æ, þ ...) are written as their usual ASCII letters."""
+    s = "".join(c for c in unicodedata.normalize("NFKD", s.translate(_LETTERS)) if not unicodedata.combining(c)).casefold()
     return " ".join(re.sub(r"[\W_]+", " ", s).split())
 
 

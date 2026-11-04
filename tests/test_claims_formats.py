@@ -112,3 +112,32 @@ def test_invalid_json_twice_still_fails(fake, cfg):
     fake.replies += ["not json", "still not json"]
     with pytest.raises(SchemaError):
         tools.check_claims(cfg, "Entry was free.", "Entry was free.")
+
+
+# ---- found by the wiki trial (2026-11-04)
+@pytest.mark.parametrize("name,ascii_name", [("Łukasz Wiśniewski", "Lukasz Wisniewski"), ("Søren Ødegård", "Soren Odegard"),
+                                             ("Dagný Þórsdóttir", "Dagny Thorsdottir"), ("Weiß", "Weiss")])
+def test_letters_unicode_does_not_decompose_fold_to_ascii(fake, cfg, name, ascii_name):
+    src = f"Analyst: {name}."
+    c = ok(fake, cfg, f"{ascii_name} led it.", src, f"{ascii_name} led it.", f"Analyst: {name}")
+    assert c["supported"] is True
+
+
+def test_an_invented_name_with_such_letters_is_still_caught(fake, cfg):
+    planted(fake, cfg, "Analyst Mateusz Wisniewski led it.", "Analyst: Łukasz Wiśniewski.",
+            "Analyst Mateusz Wisniewski led it.", "Analyst: Łukasz Wiśniewski")
+
+
+@pytest.mark.parametrize("claim_text", ["The meeting was on September 8.", "The meeting was on 8 September.",
+                                        "The meeting was on 2026-09-08."])
+def test_a_claim_with_day_and_month_carries_the_date_of_the_text(fake, cfg, claim_text):
+    src = "Meeting notes, 2026-09-08. Decision: ship the pilot."
+    assert ok(fake, cfg, "The meeting was on 8 September 2026.", src, claim_text, "Meeting notes, 2026-09-08")["supported"]
+
+
+def test_a_claim_with_the_wrong_day_does_not_carry_the_date(fake, cfg):
+    src = "Meeting notes, 2026-09-08. Decision: ship the pilot."
+    fake.replies += [json.dumps({"claims": [{"claim": "The meeting was on September 9.", "supported": False,
+                                             "quote": ""}]})] * 2
+    with pytest.raises(SchemaError):
+        tools.check_claims(cfg, "The meeting was on 8 September 2026.", src)

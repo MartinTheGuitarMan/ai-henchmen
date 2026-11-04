@@ -23,6 +23,8 @@ TASK = ("The data holds a TEXT and a SOURCE. Split the TEXT into its separate fa
         "shows it; for a claim that is not supported leave quote empty.")
 
 
+_DM = re.compile(rf"\b{values._DAY}\s+(?:of\s+)?{values._MON}\b", re.I)    # '8 September' (no year)
+_MD = re.compile(rf"\b{values._MON}\s+{values._DAY}\b", re.I)               # 'September 8'
 _MY = re.compile(rf"\b{values._MON}\s+(\d{{4}})\b", re.I)   # 'October 2026'
 
 
@@ -108,8 +110,10 @@ def left_out(text: str, claim_text: str) -> list[str]:
     _, claim_dates = mask_dates(claim_text, None)
     cd = set().union(*[r for r, _ in claim_dates])
     cyms = {ym for _, ym in claim_dates if ym} | {(d.year, d.month) for d in cd}
+    cdm = {(values.MONTHS[m.group(2).lower()], int(m.group(1))) for m in _DM.finditer(claim_text)}
+    cdm |= {(values.MONTHS[m.group(1).lower()], int(m.group(2))) for m in _MD.finditer(claim_text)}   # day and month, no year
     missing = [str(sorted(r)[0]) if r else f"{ym[1]}/{ym[0]}" for r, ym in wanted_dates
-               if not ((ym in cyms) if ym else (r & cd))]
+               if not ((ym in cyms) if ym else (r & cd or any((d.month, d.day) in cdm for d in r)))]
     _, every = terms(masked, None)
     cvals = {v for m in values._NUM.finditer(claim_text) for v in values._readings(m.group(0))[0]}
     folded = values._fold(claim_text)
@@ -173,6 +177,10 @@ def _stem(w: str) -> str:
     return w
 
 
+def _dm_token(month: int, day: int) -> str:
+    return f"dm-{month:02d}-{day:02d}"
+
+
 def _tokens(s: str, side: bool = True) -> tuple[set[str], set[str]]:
     """(numbers and dates, stemmed content words) of s. Thousands separators are removed from numbers, so 1,712 is
     1712, and a date is one token in ISO form whatever its written form ('30 Oct 2026' is '2026-10-30'). side=True
@@ -185,11 +193,13 @@ def _tokens(s: str, side: bool = True) -> tuple[set[str], set[str]]:
         if ym:
             nums.add(f"{ym[0]}-{ym[1]:02d}")
         elif side:
-            nums |= {d.isoformat() for d in r} | {f"{d.year}-{d.month:02d}" for d in r}
+            nums |= {d.isoformat() for d in r} | {f"{d.year}-{d.month:02d}" for d in r} | {_dm_token(d.month, d.day) for d in r}
         else:
             d = min(r)
-            nums |= {d.isoformat(), f"{d.year}-{d.month:02d}"}
+            nums |= {d.isoformat(), f"{d.year}-{d.month:02d}", _dm_token(d.month, d.day)}
     s = "".join(masked) + s[last:]
+    for rx, mi, di in ((_DM, 2, 1), (_MD, 1, 2)):   # '8 September' / 'September 8': day and month, no year
+        s = rx.sub(lambda m: (nums.add(_dm_token(values.MONTHS[m.group(mi).lower()], int(m.group(di)))), " ")[1], s)
     for t in _TOKEN.findall(_fold_keep_dots(_ungroup(s))):
         if t[0].isdigit():
             nums.add(t)
@@ -200,7 +210,8 @@ def _tokens(s: str, side: bool = True) -> tuple[set[str], set[str]]:
 
 def _fold_keep_dots(s: str) -> str:
     """Case and accents folded; punctuation kept, so that 99.2 stays one number."""
-    return "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c)).casefold()
+    return "".join(c for c in unicodedata.normalize("NFKD", s.translate(values._LETTERS))
+                   if not unicodedata.combining(c)).casefold()
 
 
 def in_text(claim: str, text: str) -> bool:
