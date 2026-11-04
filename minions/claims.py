@@ -23,36 +23,129 @@ TASK = ("The data holds a TEXT and a SOURCE. Split the TEXT into its separate fa
         "shows it; for a claim that is not supported leave quote empty.")
 
 
-def terms(text: str, src: values.Source) -> tuple[list[str], list[str]]:
-    """(numbers, names) of text that the source does not have, plus all of them: -> (missing, all)."""
+_MY = re.compile(rf"\b{values._MON}\s+(\d{{4}})\b", re.I)   # 'October 2026'
+
+
+def _date_spans(text: str) -> list[tuple[int, int, set, tuple | None]]:
+    """Dates written in text, in any form values.py reads, plus month-and-year ('October 2026'):
+    (start, end, readings, (year, month) or None). Overlaps are skipped, full dates first."""
+    spans: list = []
+
+    def free(m) -> bool:
+        return not any(m.start() < b and a < m.end() for a, b, _, _ in spans)
+
+    for rx, _ in values.DATE_FORMS:
+        for m in rx.finditer(text):
+            if free(m) and (r := values._dates(m.group(0), whole=True)):
+                spans.append((m.start(), m.end(), r, None))
+    for m in _MY.finditer(text):
+        if free(m):
+            spans.append((m.start(), m.end(), set(), (int(m.group(2)), values.MONTHS[m.group(1).lower()])))
+    return sorted(spans, key=lambda t: t[0])
+
+
+class Facts:
+    """What the source holds, normalised once: its numbers and words (values.Source), its dates and month-and-year
+    mentions, its month numbers, and its words squashed together (so 'OBrien' finds 'O'Brien')."""
+
+    def __init__(self, source: str):
+        self.src = values.Source(source)
+        spans = _date_spans(source)
+        self.dates = set(self.src.dates).union(*[r for _, _, r, _ in spans])
+        self.yms = {(d.year, d.month) for d in self.dates} | {ym for *_, ym in spans if ym}
+        toks = self.src.folded.split()
+        self.months = {m for _, m in self.yms} | {values.MONTHS[t] for t in toks if t in values.MONTHS}
+        self.squashed = {"".join(toks[i:i + k]) for k in (1, 2, 3) for i in range(len(toks))}
+
+    def has_span(self, readings: set, ym: tuple | None) -> bool:
+        if ym:
+            return ym in self.yms
+        return bool(readings & self.dates)
+
+
+def mask_dates(text: str, facts: "Facts | None") -> tuple[str, list]:
+    """text with every date the source has (facts=None: every date at all) blanked out, so that '30 Oct 2026' and
+    '2026-10-30' are not read as stray numbers and names, and the dates blanked: -> (masked, [(readings, ym)]).
+    A date the source does not have stays in the text and is checked token by token, as before."""
+    out, found, last = [], [], 0
+    for a, b, r, ym in _date_spans(text):
+        if facts is None or facts.has_span(r, ym):
+            out += [text[last:a], " " * (b - a)]
+            found.append((r, ym))
+            last = b
+    return "".join(out) + text[last:], found
+
+
+def _month_ok(word: str, facts: Facts) -> bool:
+    n = values.MONTHS.get(values._fold(word))
+    return n is not None and n in facts.months
+
+
+def terms(text: str, facts: "Facts | None") -> tuple[list[str], list[str]]:
+    """(numbers, names) of text that the source does not have, plus all of them: -> (missing, all). Dates are
+    left out of both when the source has them (in any form). facts=None describes the text itself: nothing missing."""
+    masked, _ = mask_dates(text, facts)
+    src = facts.src if facts else values.Source(text)
     missing, every = [], []
-    for m in values._NUM.finditer(text):
+    for m in values._NUM.finditer(masked):
         every.append(m.group(0))
-        if not values._number_ok(m.group(0), text[m.end():], src):
+        if not values._number_ok(m.group(0), masked[m.end():], src):
             missing.append(m.group(0))
-    for m in values._WORD_TOKEN.finditer(text):
+    for m in values._WORD_TOKEN.finditer(masked):
         w = values._ENDING.sub("", m.group(0))
-        if w and values._is_name(w, text[:m.start()]):
+        if w and values._is_name(w, masked[:m.start()]):
             every.append(w)
-            if not values._word_ok(w, src):
+            if facts and not (values._word_ok(w, src) or _month_ok(w, facts)
+                              or values._fold(w).replace(" ", "") in facts.squashed):
                 missing.append(w)
     return missing, every
 
 
+def left_out(text: str, claim_text: str) -> list[str]:
+    """Numbers, names and dates of the text that no claim carries. Number formats (1,712 / 1712 / 1 712), date forms
+    (2026-10-30 / 30 Oct 2026), month abbreviations, accents and apostrophes in names are all read as the same."""
+    masked, wanted_dates = mask_dates(text, None)
+    _, claim_dates = mask_dates(claim_text, None)
+    cd = set().union(*[r for r, _ in claim_dates])
+    cyms = {ym for _, ym in claim_dates if ym} | {(d.year, d.month) for d in cd}
+    missing = [str(sorted(r)[0]) if r else f"{ym[1]}/{ym[0]}" for r, ym in wanted_dates
+               if not ((ym in cyms) if ym else (r & cd))]
+    _, every = terms(masked, None)
+    cvals = {v for m in values._NUM.finditer(claim_text) for v in values._readings(m.group(0))[0]}
+    folded = values._fold(claim_text)
+    cmonths = {values.MONTHS[t] for t in folded.split() if t in values.MONTHS} | {m for _, m in cyms}
+    for t in every:
+        if t[0].isdigit():
+            if not values._readings(t)[0] & cvals:
+                missing.append(t)
+        elif (n := values.MONTHS.get(values._fold(t))) is not None:
+            if n not in cmonths:
+                missing.append(t)
+        elif values._fold(t) not in f" {folded} " and values._fold(t).replace(" ", "") not in folded.replace(" ", ""):
+            missing.append(t)
+    return missing
+
+
 MIN_QUOTE = 3   # a quote shorter than this (non-space characters) proves nothing
 _GROUP = re.compile(r"(?<=\d)[,'\u00a0\u2009\u202f](?=\d{3}(?!\d))")   # thousands separators: 1,712 -> 1712
+_SPACED = re.compile(r"(?<![\d.,])\d{1,3}(?:[ \u00a0\u2009\u202f]\d{3}(?!\d))+")   # 12 400 -> 12400
+
+
+def _ungroup(s: str) -> str:
+    """Numbers without thousands separators (comma, apostrophe, space): 1,712 and 12 400 become 1712 and 12400."""
+    return _SPACED.sub(lambda m: re.sub(r"\D", "", m.group(0)), _GROUP.sub("", s))
 _EDGE = ".,;:!?\"'\u201c\u201d\u2018\u2019()[]"
 
 
 def _norm(s: str) -> str:
     """The light normalisation of values.py (case, accents, punctuation, whitespace), with thousands separators
     removed from numbers first, so '1,712' and '1712' are one number. No fuzzy matching."""
-    return f" {values._fold(_GROUP.sub('', s))} "
+    return f" {values._fold(_ungroup(s))} "
 
 
 def quote_found(quote: str, source: str) -> bool:
     """The quote occurs in the source as whole words, after normalisation. Punctuation round the quote is ignored."""
-    q = values._fold(_GROUP.sub("", quote.strip().strip(_EDGE)))
+    q = values._fold(_ungroup(quote.strip().strip(_EDGE)))
     return len(q.replace(" ", "")) >= MIN_QUOTE and f" {q} " in _norm(source)
 
 
@@ -80,10 +173,24 @@ def _stem(w: str) -> str:
     return w
 
 
-def _tokens(s: str) -> tuple[set[str], set[str]]:
-    """(numbers, stemmed content words) of s. Thousands separators are removed from numbers, so 1,712 is 1712."""
+def _tokens(s: str, side: bool = True) -> tuple[set[str], set[str]]:
+    """(numbers and dates, stemmed content words) of s. Thousands separators are removed from numbers, so 1,712 is
+    1712, and a date is one token in ISO form whatever its written form ('30 Oct 2026' is '2026-10-30'). side=True
+    (the text or a source line) gives every reading of an ambiguous date; side=False (a claim) gives one."""
     nums, words = set(), set()
-    for t in _TOKEN.findall(_fold_keep_dots(_GROUP.sub("", s))):
+    masked, last = [], 0
+    for a, b, r, ym in _date_spans(s):
+        masked += [s[last:a], " "]
+        last = b
+        if ym:
+            nums.add(f"{ym[0]}-{ym[1]:02d}")
+        elif side:
+            nums |= {d.isoformat() for d in r} | {f"{d.year}-{d.month:02d}" for d in r}
+        else:
+            d = min(r)
+            nums |= {d.isoformat(), f"{d.year}-{d.month:02d}"}
+    s = "".join(masked) + s[last:]
+    for t in _TOKEN.findall(_fold_keep_dots(_ungroup(s))):
         if t[0].isdigit():
             nums.add(t)
         elif t not in _STOP and len(t) > 1:
@@ -98,7 +205,7 @@ def _fold_keep_dots(s: str) -> str:
 
 def in_text(claim: str, text: str) -> bool:
     """The claim's content words and numbers mostly (MIN_IN_TEXT) occur in the text."""
-    cn, cw = _tokens(claim)
+    cn, cw = _tokens(claim, False)
     tn, tw = _tokens(text)
     wanted = cn | cw
     if not wanted:
@@ -116,7 +223,7 @@ def _lines(source: str) -> list[str]:
 def line_for(claim: str, source: str) -> str | None:
     """A source line that holds every number of the claim (read as whole numbers, separators ignored) and most of its
     other content words, with the same negations. Only claims with a number qualify. -> the line, or None."""
-    cn, cw = _tokens(claim)
+    cn, cw = _tokens(claim, False)
     if not cn:
         return None
     cneg = _negated(claim)
@@ -135,8 +242,7 @@ def line_for(claim: str, source: str) -> str | None:
 
 
 def make_check(text: str, source: str, quote_found=quote_found):
-    src = values.Source(source)
-    wanted = terms(text, values.Source(text))[1]   # numbers and names the text mentions
+    src = Facts(source)
 
     def check(obj: dict) -> None:
         kept = [c for c in obj["claims"] if not c["claim"].strip() or in_text(c["claim"], text)]
@@ -164,8 +270,7 @@ def make_check(text: str, source: str, quote_found=quote_found):
             if missing:
                 raise Invented(f"supported claim {c['claim'][:60]!r} names what the source does not: {missing}",
                                str(obj)[:200])
-        joined = values._fold(" ".join(c["claim"] for c in claims))
-        dropped = [t for t in wanted if values._fold(t) not in joined]
+        dropped = left_out(text, " ".join(c["claim"] for c in claims))
         if dropped:
             raise SchemaError(f"claims leave out what the text says: {dropped[:5]}", str(obj)[:200])
 
