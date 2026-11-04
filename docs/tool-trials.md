@@ -1021,3 +1021,31 @@ facts placed early, in the middle and late (`CLAIMS_FILE` in `scripts/tool_trial
 4. The file guard: only the named file is read; a folder, a missing file and a non-UTF-8 file are refused; a local-only roster refuses `sensitive=false` for a path the map does not label low; a file over 10 chunks is refused.
 5. Latency (p50, p95) and `chunks_failed` are reported, not bars.
 If it fails, the tool stays out of `server.py` and the reason is recorded here. If it passes, it is wired into `server.py` with tests on the same branch.
+
+### Results (2026-11-04, `air-qwen`, `sensitive=true`, AC power; criteria above unchanged)
+
+**Part 1, `check_claims_wiki`, 10 pages x 2 repeats = 20 answers per row**
+
+| code | ok | wrong | MINION_INVENTED | MINION_SCHEMA | invented answers |
+|---|---|---|---|---|---|
+| old (`main`) | 2 | 0 | 16 | 2 | 0 |
+| new, first run (commit 201bc30) | 14 | 2 | 2 | 2 | 0 |
+| new, after two more fixes (commit 879a4a0) | 18 | 2 | 0 | 0 | 0 |
+
+The first new run still failed on `Łukasz` (`ł` is not decomposed by Unicode normalisation, so it never folded to `l`) and on a claim that wrote
+"September 8" for "8 September 2026" (read as a dropped date). Both were fixed in code with tests. The remaining 2 wrong are `w08`, where the model
+marked "driver ... carried 5280 of them" unsupported: the fact spans two source lines (`Driver:` and `Parcels:`), so no single line holds it and the code
+rightly does not rescue it. A model miss, not a checker fault, and not an invented answer.
+- W1: old MINION_SCHEMA rate 10%, new 0% (at most half, at most 5%): **met**. The old code also failed 80% of answers with MINION_INVENTED on format differences; the new code 0%.
+- W2: 18/20 = 90%: **met** (borderline).
+- W3: 0 invented answers on both sides: **met**.
+- Verdict: **PASS** (the fix stays on the branch).
+
+**Part 2, `check_claims_file`, 24 cases x 2 repeats = 48 answers, fresh run on the final code**
+
+- Correct 41/48 = 85.4% (bar 90%): **not met**. 2 wrong, 5 `MINION_BACKEND_ERROR` (qwen3:8b timed out after 300 s on one chunk call; a timed-out call counts as a failure by the rules above). Without the timeouts it would be 41/43 = 95%, but the criteria do not allow dropping them.
+- Invented answers: **0** (zero tolerance met), including the invented-person, wrong-number and wrong-date claims.
+- Planted bad output: **met** (`tests/test_claims_file.py`). File guard: **met**.
+- Latency: p50 48 s, p95 300 s (reported only).
+- The 2 wrong (f01, both repeats): the chunks worded the claim differently (one joined the date to "lifts up to 85 tonnes"), so the merged list held an unsupported near-duplicate next to the supported claim, and the scorer read the pair as contradictory. `claims.merge` matches reworded claims only above 75% shared content.
+- Verdict: **FAIL**, on the share correct (timeouts and the merge of reworded claims). The MCP wrapper is not added to `server.py`. The code in `tools.py` and its tests stay on the branch, unexposed. A retry would need a per-chunk timeout that skips the chunk instead of failing the call, and merging by containment rather than overlap; that is a new trial with its own criteria.
