@@ -1,0 +1,254 @@
+{
+ "model": "air-jev-style",
+ "backend_model": "jev-style-0.8b-decision-v3",
+ "cloud": false,
+ "kind": "decision",
+ "machine": "local",
+ "units": {
+  "classify_batch": {
+   "status": "done",
+   "items": [
+    {
+     "tag": "plain",
+     "latency": 9.442360162734985,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.06161189079284668,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.16324830055236816,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.09424877166748047,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04631400108337402,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.050039052963256836,
+     "expected": "billing",
+     "got": "billing",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.0415191650390625,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04427003860473633,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.046610116958618164,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04989981651306152,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.12387394905090332,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04264497756958008,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.041632890701293945,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04480791091918945,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.042885780334472656,
+     "expected": "shipping",
+     "got": "other",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.045713186264038086,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.0441431999206543,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04366493225097656,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04026293754577637,
+     "expected": "account",
+     "got": "technical",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.039586782455444336,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.040743112564086914,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04346179962158203,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04268193244934082,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04921102523803711,
+     "expected": "account",
+     "got": "account",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.05765390396118164,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.045289039611816406,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04143166542053223,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.05529904365539551,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04254889488220215,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "plain",
+     "latency": 0.04403400421142578,
+     "expected": "other",
+     "got": "other",
+     "ok": true
+    },
+    {
+     "tag": "trap",
+     "latency": 0.07237505912780762,
+     "expected": "technical",
+     "got": "technical",
+     "ok": true
+    },
+    {
+     "tag": "trap",
+     "latency": 0.04445695877075195,
+     "expected": "shipping",
+     "got": "shipping",
+     "ok": true
+    },
+    {
+     "tag": "bad",
+     "latency": 6.699562072753906e-05,
+     "expected": "MINION_BAD_INPUT",
+     "got": "MINION_BAD_INPUT",
+     "ok": true
+    },
+    {
+     "tag": "bad",
+     "latency": 3.0040740966796875e-05,
+     "expected": "MINION_BAD_INPUT",
+     "got": "MINION_BAD_INPUT",
+     "ok": true
+    }
+   ],
+   "p50": 0.04436349868774414,
+   "p95": 0.12387394905090332
+  }
+ }
+}

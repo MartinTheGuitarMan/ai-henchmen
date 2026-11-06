@@ -1,0 +1,8 @@
+00:35:51 models: 2, tools: ['grounded', 'same', 'extract', 'classify_batch', 'tag_batch', 'ask'], groups: ['local']
+00:35:51 air-jev-style/classify_batch: start
+00:36:02 air-jev-style/classify_batch: done 32/34
+00:36:02 air-jev-style-qwen35-2b/classify_batch: start
+00:36:02 air-jev-style-qwen35-2b/classify_batch: unavailable 0/3 (MINION_DOWN: systemone backend not reachable at http://127.0.0.1:8766/v1/systemone (ConnectError))
+00:36:02 done
+ev-style-qwen35-2b/classify_batch: unavailable 0/3 (MINION_DOWN: systemone backend not reachable at http://127.0.0.1:8766/v1/systemone (ConnectError))
+00:36:02 done

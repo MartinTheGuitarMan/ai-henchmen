@@ -1,0 +1,39 @@
+{
+ "model": "air-jev-style-qwen35-2b",
+ "backend_model": "jev-style-2b-decision-v3",
+ "cloud": false,
+ "kind": "decision",
+ "machine": "local",
+ "units": {
+  "classify_batch": {
+   "status": "unavailable",
+   "reason": "MINION_DOWN: systemone backend not reachable at http://127.0.0.1:8766/v1/systemone (ConnectError)",
+   "items": [
+    {
+     "tag": "plain",
+     "latency": 0.0048198699951171875,
+     "expected": "billing",
+     "error": "MINION_DOWN",
+     "detail": "MINION_DOWN: systemone backend not reachable at http://127.0.0.1:8766/v1/systemone (ConnectError)",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.0035490989685058594,
+     "expected": "billing",
+     "error": "MINION_DOWN",
+     "detail": "MINION_DOWN: systemone backend not reachable at http://127.0.0.1:8766/v1/systemone (ConnectError)",
+     "ok": false
+    },
+    {
+     "tag": "plain",
+     "latency": 0.00923609733581543,
+     "expected": "billing",
+     "error": "MINION_DOWN",
+     "detail": "MINION_DOWN: systemone backend not reachable at http://127.0.0.1:8766/v1/systemone (ConnectError)",
+     "ok": false
+    }
+   ]
+  }
+ }
+}
