@@ -131,7 +131,7 @@ def test_window_helpers_and_night_floor(monkeypatch):
     assert code_run.minutes_left("22:00-23:00,06:00-07:00", datetime(2026, 10, 30, 22, 50)) == 10
     assert code_run.minutes_left("22:00-23:00", datetime(2026, 10, 30, 12, 0)) == 0
     monkeypatch.setattr(code_run, "in_windows", lambda spec, now=None: True)
-    assert code_run.floor_pct_now(True, "x") == 10 and code_run.floor_pct_now(False, "x") == 25
+    assert code_run.floor_pct_now(True, "x") == 10 and code_run.floor_pct_now(False, "x") == 5
     monkeypatch.setattr(code_run, "in_windows", lambda spec, now=None: False)
     assert code_run.floor_pct_now(True, "x") == 25            # outside the windows the margin stays at 25
 

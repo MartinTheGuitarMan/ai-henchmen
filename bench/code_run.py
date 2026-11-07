@@ -66,6 +66,7 @@ DAY_FLOCK = "/tmp/codebench-day-host.lock"        # across processes: one local 
 NIGHT_FLOCK = "/tmp/codebench-night-host.lock"     # across processes: a model on the night host and a sandbox run never overlap
 NIGHT_FLOOR_PCT = 10        # free memory that must remain after loading, on the night host inside its windows (25 elsewhere)
 DEFAULT_FLOOR_PCT = 25
+AIR_WINDOW_FLOOR_PCT = 5    # the day host (the Air, 24 GB) inside the night windows, nobody at it: a 16 GB model needs this
 SESSION_MIN = 20            # one model session on the night host is at most this long, so sandbox runs get turns between sessions
 UNLOAD_GUARD_MIN = 8        # no new night-host model call in the last minutes of a window, so the model is unloaded in time
 STATE = {"gen_done": False, "sandbox_ok": None}   # sandbox_ok: None = self-test not done yet
@@ -162,8 +163,10 @@ def night_model_ok(host: str, windows: str) -> tuple[bool, str]:
 
 
 def floor_pct_now(machine_is_night: bool, windows: str) -> int:
-    """The memory margin after loading: 10 percent on the night host inside its windows, 25 otherwise."""
-    return NIGHT_FLOOR_PCT if machine_is_night and in_windows(windows) else DEFAULT_FLOOR_PCT
+    """The memory margin after loading: 10 percent on the night host and 5 on the day host inside the windows, 25 otherwise."""
+    if not in_windows(windows):
+        return DEFAULT_FLOOR_PCT
+    return NIGHT_FLOOR_PCT if machine_is_night else AIR_WINDOW_FLOOR_PCT
 
 
 class NightExclusive:
