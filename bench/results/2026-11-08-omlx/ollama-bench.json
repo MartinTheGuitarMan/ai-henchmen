@@ -1,0 +1,14 @@
+{
+ "engine": "ollama",
+ "model": "gemma4:12b-mlx",
+ "completion_tokens": 1210,
+ "prompt_tokens": 105,
+ "finish": "stop",
+ "wall_s": 35.55,
+ "tok_per_s_wall": 34.04,
+ "tok_per_s_native": 34.06,
+ "warmup_load_s": 2.9,
+ "peak_rss_gb": 7.05,
+ "peak_system_used_delta_gb": 12.07,
+ "text_head": "```python\nimport pytest\n\ndef merge_intervals(intervals):\n    \"\"\"Merges overlapping or touching intervals and returns a sorted list.\"\"\"\n    if not intervals:\n        return []\n\n    # Sort intervals bas"
+}
