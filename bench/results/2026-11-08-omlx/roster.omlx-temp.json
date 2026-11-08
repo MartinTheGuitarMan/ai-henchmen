@@ -1,0 +1,2 @@
+{"models": {"air-omlx-gemma4-12b": {"backend": "openai-compat", "base_url": "http://127.0.0.1:8123/v1", "model": "gemma-4-12B-it-MLX-4bit", "kind": "fast", "timeout": 600}},
+ "routes": {"summarize": {"fast": ["air-omlx-gemma4-12b"]}}}

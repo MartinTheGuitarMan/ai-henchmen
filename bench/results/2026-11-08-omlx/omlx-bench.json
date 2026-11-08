@@ -1,0 +1,14 @@
+{
+ "engine": "omlx",
+ "model": "gemma-4-12B-it-MLX-4bit",
+ "completion_tokens": 729,
+ "prompt_tokens": 107,
+ "finish": "stop",
+ "wall_s": 45.82,
+ "tok_per_s_wall": 15.91,
+ "tok_per_s_native": null,
+ "warmup_load_s": 6.9,
+ "peak_rss_gb": 7.58,
+ "peak_system_used_delta_gb": 7.88,
+ "text_head": "```python\nimport pytest\n\ndef merge_intervals(intervals: list[tuple[int, int]]) -> list[tuple[int, int]]:\n    \"\"\"\n    Merges overlapping or touching intervals and returns a sorted list of merged interv"
+}
