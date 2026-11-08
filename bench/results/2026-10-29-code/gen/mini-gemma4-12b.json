@@ -1,0 +1,24 @@
+{
+ "model": "mini-gemma4-12b",
+ "backend_model": "gemma4:12b",
+ "cloud": false,
+ "machine": "night-host",
+ "tasks": {
+  "merge_intervals": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: ollama/gemma4:12b timed out after 300.0s",
+   "latency": 300.0
+  },
+  "parse_duration": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: ollama/gemma4:12b timed out after 300.0s",
+   "latency": 299.99
+  },
+  "slugify": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: ollama/gemma4:12b timed out after 300.0s",
+   "latency": 300.0
+  }
+ },
+ "unavailable": "MINION_BACKEND_ERROR: ollama/gemma4:12b timed out after 300.0s"
+}

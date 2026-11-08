@@ -18,6 +18,42 @@
    "elapsed": 0.52,
    "collection_error": false,
    "tail": ""
+  },
+  "business_days": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.61,
+   "collection_error": false,
+   "tail": ""
+  },
+  "parse_csv_line": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.55,
+   "collection_error": false,
+   "tail": ""
+  },
+  "wrap_text": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.55,
+   "collection_error": false,
+   "tail": ""
+  },
+  "compare_versions": {
+   "kind": "ok",
+   "passed": 7,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.57,
+   "collection_error": false,
+   "tail": ""
   }
  }
 }

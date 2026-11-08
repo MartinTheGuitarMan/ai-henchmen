@@ -3895,3 +3895,347 @@ Run 'docker run --help' for more information
 09:08:39 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
 09:10:39 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
 09:13:50 air-gptoss20b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+20:43:07 models: ['air-gemma4-26b']; tasks: 25; groups: ['day-host']
+20:43:07 sandbox self-test: waiting (outside the night host's allowed windows (22:00-23:00,06:00-07:00))
+20:43:07 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+20:45:07 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+20:50:07 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+20:52:07 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+20:57:08 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+20:59:08 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:04:08 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:06:08 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:11:08 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:13:08 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:18:09 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:20:09 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:25:09 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:27:09 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:32:09 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:34:09 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:39:10 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:41:10 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:46:10 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:48:10 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:53:10 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+21:55:10 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:00:11 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:02:11 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:03:15 exec mini-gemma4e4b/business_days: ok 7/7 0.61s
+22:03:16 exec mini-gemma4e4b/parse_csv_line: ok 8/8 0.55s
+22:03:17 exec mini-gemma4e4b/wrap_text: ok 8/8 0.55s
+22:03:19 exec mini-gemma4e4b/compare_versions: ok 7/7 0.57s
+22:03:20 exec mini-nemotronmini/merge_intervals: wrong_answer 7/8 0.62s
+22:03:21 exec mini-nemotronmini/parse_duration: wrong_answer 6/8 0.57s
+22:07:11 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:09:11 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:14:12 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:16:12 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:21:12 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:23:12 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:28:12 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:30:12 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:35:13 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:37:13 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:42:13 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:44:13 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:49:14 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:51:14 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:56:15 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+22:58:15 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+23:03:16 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+23:05:16 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+23:10:17 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+23:12:17 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; on battery)
+23:17:17 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:19:17 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:24:17 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:26:17 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:31:18 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:33:18 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:38:19 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:40:20 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:45:20 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:47:20 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:52:21 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:54:21 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+23:59:22 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:01:21 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:06:22 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:08:22 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:13:22 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:15:22 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:20:22 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:22:22 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:27:23 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:29:23 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:34:23 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:36:23 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:41:23 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:43:23 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:48:24 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:50:24 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:55:24 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+00:57:24 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:02:24 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:04:24 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:09:25 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:11:25 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:16:25 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:18:25 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:23:25 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:25:25 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:30:26 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:32:26 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:37:26 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:39:26 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:44:26 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:46:26 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:51:27 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:53:27 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+01:58:27 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:00:27 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:05:27 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:07:27 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:12:27 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:14:27 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:19:28 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:21:28 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:26:28 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:28:28 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:33:28 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:35:28 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:40:29 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:42:29 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:47:29 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:49:29 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:54:29 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+02:56:29 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:01:30 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:03:30 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:08:30 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:10:30 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:15:30 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:17:31 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:22:31 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:24:31 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:29:31 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:31:31 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:36:31 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:38:31 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:43:32 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:45:32 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:50:32 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:52:32 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:57:32 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+03:59:32 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:04:33 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:06:33 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:11:33 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:13:33 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:18:33 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:20:33 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:25:34 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:27:34 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:32:34 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:34:34 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:39:35 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:41:35 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:46:35 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:48:35 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:53:35 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+04:55:35 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:00:36 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:02:36 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:07:36 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:09:36 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:14:36 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:16:36 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:21:37 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:23:37 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:28:37 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:30:37 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:35:37 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:37:37 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:42:38 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:44:38 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:49:38 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:51:38 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:56:38 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+05:58:38 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:03:38 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:05:38 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:10:39 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:12:39 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:17:39 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:19:39 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:24:39 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:26:40 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:31:40 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:33:40 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:38:40 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:40:40 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:45:41 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:47:40 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:52:41 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:54:41 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+06:59:41 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:01:41 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:06:41 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:08:41 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:13:42 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:15:42 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:20:42 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:22:42 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:27:42 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:29:42 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:34:43 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:36:43 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:41:43 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:43:43 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:48:43 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:50:43 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:55:44 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+07:57:44 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:02:44 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:04:44 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:09:44 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:11:44 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:16:45 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:18:45 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:23:45 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:25:45 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:30:45 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:32:45 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:37:46 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:39:46 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:44:46 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:46:46 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:51:46 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:53:46 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+08:58:47 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:00:47 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:05:47 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:07:47 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:12:47 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:14:47 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:19:48 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:21:48 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:26:48 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:28:48 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:33:48 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:35:48 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:40:49 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:42:49 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:47:49 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:49:49 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:54:50 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+09:56:50 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:01:50 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:03:50 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:08:51 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:10:51 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:15:51 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:34:08 models: ['air-gemma4-26b', 'air-gemma4-12b']; tasks: 25; groups: ['day-host']
+10:34:08 sandbox self-test: waiting (outside the night host's allowed windows (22:00-23:00,06:00-07:00))
+10:34:09 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:36:09 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+10:36:17 air-gemma4-12b: machine busy, pausing
+10:41:17 air-gemma4-12b: machine busy, pausing
+10:41:33 models: ['mini-gemma4-12b']; tasks: 25; groups: ['night-host']
+10:41:33 sandbox self-test: waiting (outside the night host's allowed windows (22:00-23:00,06:00-07:00))
+10:46:18 air-gemma4-12b: machine busy, pausing
+10:53:59 air-gemma4-12b/merge_intervals: code 161.51s
+10:58:59 air-gemma4-12b/parse_duration: MINION_BACKEND_ERROR 299.99s
+10:58:59 air-gemma4-12b: machine busy, pausing
+11:03:59 air-gemma4-12b: machine busy, pausing
+11:08:59 air-gemma4-12b: machine busy, pausing
+11:13:59 air-gemma4-12b: machine busy, pausing
+11:18:59 air-gemma4-12b: machine busy, pausing
+11:20:27 models: ['air-gemma4-26b', 'air-gemma4-12b']; tasks: 25; groups: ['day-host']
+11:20:27 models: ['mini-gemma4-12b']; tasks: 25; groups: ['night-host']
+11:20:27 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB; memory pressure is warn)
+11:20:36 exec air-gemma4-12b/merge_intervals: ok 8/8 0.64s
+11:20:38 exec air-gemma4-12b/merge_intervals: ok 8/8 0.52s
+11:30:28 mini-gemma4-12b/merge_intervals: MINION_BACKEND_ERROR 300.0s
+11:35:29 mini-gemma4-12b/parse_duration: MINION_BACKEND_ERROR 299.99s
+11:40:29 mini-gemma4-12b/slugify: MINION_BACKEND_ERROR 300.0s
+11:40:29 mini-gemma4-12b: unloaded
+11:40:36 done
+16:09:05 models: ['air-gemma4-26b', 'air-gemma4-12b']; tasks: 25; groups: ['day-host']
+16:09:05 models: ['mini-gemma4-12b']; tasks: 25; groups: ['night-host']
+16:09:05 sandbox self-test: waiting (outside the night host's allowed windows (22:00-07:00))
+16:09:05 sandbox self-test: waiting (outside the night host's allowed windows (22:00-07:00))
+16:09:06 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+16:11:06 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+16:11:06 air-gemma4-12b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 8 GB)
+16:13:06 air-gemma4-12b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 8 GB)
+16:18:06 air-gemma4-26b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+16:20:06 air-gemma4-26b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 16 GB)
+16:20:07 air-gemma4-12b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 8 GB)
+16:22:15 air-gemma4-12b: machine busy, pausing
+16:27:15 air-gemma4-12b: machine busy, pausing
+16:32:15 air-gemma4-12b: machine busy, pausing
+16:42:15 air-gemma4-12b/parse_duration: MINION_BACKEND_ERROR 300.06s
+16:42:16 air-gemma4-12b: machine busy, pausing
+16:47:16 air-gemma4-12b: machine busy, pausing
+16:52:16 air-gemma4-12b: machine busy, pausing
+16:57:16 air-gemma4-12b: machine busy, pausing
+17:02:16 air-gemma4-12b: machine busy, pausing
+17:07:16 air-gemma4-12b: machine busy, pausing
+17:12:16 air-gemma4-12b: machine busy, pausing
+17:17:16 air-gemma4-12b: machine busy, pausing
+17:22:16 air-gemma4-12b: machine busy, pausing
+17:23:27 models: ['air-gemma4-26b', 'air-gemma4-12b']; tasks: 25; groups: ['day-host']
+17:23:27 sandbox self-test: waiting (outside the night host's allowed windows (22:00-07:00))
+17:23:44 models: ['air-gemma4-26b', 'air-gemma4-12b']; tasks: 25; groups: ['day-host']
+17:23:44 sandbox self-test: waiting (outside the night host's allowed windows (22:00-07:00))
+17:23:45 air-gemma4-26b: machine busy, pausing
+17:28:45 air-gemma4-26b/merge_intervals: MINION_DOWN 0.04s
+17:28:45 air-gemma4-26b/parse_duration: MINION_DOWN 0.0s
+17:28:45 air-gemma4-26b/slugify: MINION_DOWN 0.0s
+17:28:49 air-gemma4-26b: unloaded
+17:28:49 air-gemma4-12b load: waiting (MINION_BUSY: on battery)
+17:30:49 air-gemma4-12b: deferred (MINION_BUSY: on battery)
+17:35:50 air-gemma4-12b load: waiting (MINION_BUSY: on battery)
+17:37:50 air-gemma4-12b: deferred (MINION_BUSY: on battery)
+17:42:50 air-gemma4-12b load: waiting (MINION_BUSY: on battery)
+17:44:50 air-gemma4-12b: deferred (MINION_BUSY: on battery)
+17:49:50 air-gemma4-12b load: waiting (MINION_BUSY: free memory would fall below 25 percent after loading about 8 GB; on battery)
+17:51:50 air-gemma4-12b: deferred (MINION_BUSY: free memory would fall below 25 percent after loading about 8 GB; on battery)
+17:56:51 air-gemma4-12b load: waiting (MINION_BUSY: on battery)
+17:58:51 air-gemma4-12b: deferred (MINION_BUSY: on battery)
+18:03:51 air-gemma4-12b load: waiting (MINION_BUSY: on battery)
+18:05:51 air-gemma4-12b: deferred (MINION_BUSY: on battery)
+18:41:34 air-gemma4-12b/parse_duration: MINION_BACKEND_ERROR 1835.44s
+18:51:35 air-gemma4-12b/slugify: MINION_BACKEND_ERROR 600.05s
+18:51:35 air-gemma4-12b/business_days: MINION_BACKEND_ERROR 0.22s
+19:01:35 air-gemma4-12b/parse_csv_line: MINION_BACKEND_ERROR 600.02s
+19:11:35 air-gemma4-12b/wrap_text: MINION_BACKEND_ERROR 600.01s
+19:21:35 air-gemma4-12b/compare_versions: MINION_BACKEND_ERROR 600.0s
+19:29:28 air-gemma4-12b/toposort: truncated 473.56s
+19:38:21 air-gemma4-12b/lru_cache: truncated 532.15s
+19:47:18 air-gemma4-12b/flatten_dict: truncated 537.59s
+19:55:42 air-gemma4-12b/fix_median: truncated 503.4s
+19:58:55 air-gemma4-12b/fix_chunked: code 192.99s
+20:01:11 air-gemma4-12b/fix_unique_bucket: code 135.99s
+20:09:29 air-gemma4-12b/fix_top_words: truncated 497.83s
+20:15:10 air-gemma4-12b/re_hex_color: code 341.44s
+20:15:10 air-gemma4-12b: machine busy, pausing
+20:20:10 air-gemma4-12b: machine busy, pausing
+20:33:25 air-gemma4-12b/re_dates_in_text: truncated 495.1s
+20:41:46 air-gemma4-12b/re_ipv4: truncated 500.52s
+20:50:15 air-gemma4-12b/cx_ttl_cache: truncated 509.22s
+20:58:38 air-gemma4-12b/cx_scheduler: truncated 502.71s
+21:06:58 air-gemma4-12b/cx_expression: truncated 500.28s
+21:15:34 air-gemma4-12b/cx_ini_parser: truncated 516.21s
+21:23:59 air-gemma4-12b/cx_shortest_path: truncated 504.56s
+21:32:31 air-gemma4-12b/cx_schedule_algos: truncated 511.75s
+21:40:46 air-gemma4-12b/cx_inventory_fix: truncated 495.1s
+21:49:22 air-gemma4-12b/cx_template: truncated 516.33s
+21:49:24 air-gemma4-12b: unloaded
+22:04:28 exec air-gemma4-12b/fix_chunked: ok 6/6 0.51s
+22:04:29 exec air-gemma4-12b/fix_unique_bucket: ok 4/4 0.53s
+22:04:30 exec air-gemma4-12b/re_hex_color: ok 4/4 0.52s
+22:04:30 done
+22:04:48 done

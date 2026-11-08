@@ -1,0 +1,209 @@
+{
+ "model": "air-gemma4-12b",
+ "backend_model": "google/gemma-4-12b",
+ "cloud": false,
+ "machine": "day-host",
+ "tasks": {
+  "merge_intervals": {
+   "raw": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merges overlapping or touching intervals in a list of (start, end) tuples.\n    The input list is not modified.\n    \"\"\"\n    if not intervals:\n        return []\n\n    # Sort the list by start time to ensure sequential processing.\n    # sorted() creates a new list, leaving the original input unchanged.\n    sorted_intervals = sorted(intervals)\n\n    merged = []\n    # Initialize the current interval tracking.\n    curr_start, curr_end = sorted_intervals[0]\n\n    # Iterate through the list starting from the second element.\n    for i in range(1, len(sorted_intervals)):\n        next_start, next_end = sorted_intervals[i]\n        \n        # If the current interval overlaps or touches the next one.\n        if next_start <= curr_end:\n            # Update the end bound to be the maximum of both.\n            curr_end = max(curr_end, next_end)\n        else:\n            # No overlap or touch; the current interval is complete.\n            merged.append((curr_start, curr_end))\n            # Move to the next interval's bounds.\n            curr_start, curr_end = next_start, next_end\n\n    # Append the final interval.\n    merged.append((curr_start, curr_end))\n\n    return merged\n```",
+   "finish": "stop",
+   "latency": 161.51,
+   "code": "def merge_intervals(intervals):\n    \"\"\"\n    Merges overlapping or touching intervals in a list of (start, end) tuples.\n    The input list is not modified.\n    \"\"\"\n    if not intervals:\n        return []\n\n    # Sort the list by start time to ensure sequential processing.\n    # sorted() creates a new list, leaving the original input unchanged.\n    sorted_intervals = sorted(intervals)\n\n    merged = []\n    # Initialize the current interval tracking.\n    curr_start, curr_end = sorted_intervals[0]\n\n    # Iterate through the list starting from the second element.\n    for i in range(1, len(sorted_intervals)):\n        next_start, next_end = sorted_intervals[i]\n        \n        # If the current interval overlaps or touches the next one.\n        if next_start <= curr_end:\n            # Update the end bound to be the maximum of both.\n            curr_end = max(curr_end, next_end)\n        else:\n            # No overlap or touch; the current interval is complete.\n            merged.append((curr_start, curr_end))\n            # Move to the next interval's bounds.\n            curr_start, curr_end = next_start, next_end\n\n    # Append the final interval.\n    merged.append((curr_start, curr_end))\n\n    return merged\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "parse_duration": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: lmstudio/google/gemma-4-12b timed out after 600.0s",
+   "latency": 1835.44
+  },
+  "slugify": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: lmstudio/google/gemma-4-12b timed out after 600.0s",
+   "latency": 600.05
+  },
+  "business_days": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: lmstudio HTTP 400: {\"error\":\"The model has crashed without additional information. (Exit code: null)\"}",
+   "latency": 0.22
+  },
+  "parse_csv_line": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: lmstudio/google/gemma-4-12b timed out after 600.0s",
+   "latency": 600.02
+  },
+  "wrap_text": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: lmstudio/google/gemma-4-12b timed out after 600.0s",
+   "latency": 600.01
+  },
+  "compare_versions": {
+   "error": "MINION_BACKEND_ERROR",
+   "detail": "MINION_BACKEND_ERROR: lmstudio/google/gemma-4-12b timed out after 600.0s",
+   "latency": 600.0
+  },
+  "toposort": {
+   "raw": "",
+   "finish": "length",
+   "latency": 473.56,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "lru_cache": {
+   "raw": "",
+   "finish": "length",
+   "latency": 532.15,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "flatten_dict": {
+   "raw": "",
+   "finish": "length",
+   "latency": 537.59,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "fix_median": {
+   "raw": "",
+   "finish": "length",
+   "latency": 503.4,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "fix_chunked": {
+   "raw": "```python\ndef chunked(items, size):\n    if size < 1:\n        raise ValueError(\"Size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n```",
+   "finish": "stop",
+   "latency": 192.99,
+   "code": "def chunked(items, size):\n    if size < 1:\n        raise ValueError(\"Size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_unique_bucket": {
+   "raw": "```python\ndef append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n```",
+   "finish": "stop",
+   "latency": 135.99,
+   "code": "def append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_top_words": {
+   "raw": "",
+   "finish": "length",
+   "latency": 497.83,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "re_hex_color": {
+   "raw": "```python\nimport re\n\nPATTERN = re.compile(r'^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$')\n```",
+   "finish": "stop",
+   "latency": 341.44,
+   "code": "import re\n\nPATTERN = re.compile(r'^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_dates_in_text": {
+   "raw": "",
+   "finish": "length",
+   "latency": 495.1,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "re_ipv4": {
+   "raw": "",
+   "finish": "length",
+   "latency": 500.52,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_ttl_cache": {
+   "raw": "",
+   "finish": "length",
+   "latency": 509.22,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_scheduler": {
+   "raw": "",
+   "finish": "length",
+   "latency": 502.71,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_expression": {
+   "raw": "",
+   "finish": "length",
+   "latency": 500.28,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_ini_parser": {
+   "raw": "",
+   "finish": "length",
+   "latency": 516.21,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_shortest_path": {
+   "raw": "",
+   "finish": "length",
+   "latency": 504.56,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_schedule_algos": {
+   "raw": "",
+   "finish": "length",
+   "latency": 511.75,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_inventory_fix": {
+   "raw": "",
+   "finish": "length",
+   "latency": 495.1,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_template": {
+   "raw": "",
+   "finish": "length",
+   "latency": 516.33,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  }
+ }
+}

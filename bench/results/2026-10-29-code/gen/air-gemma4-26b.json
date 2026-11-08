@@ -1,0 +1,24 @@
+{
+ "model": "air-gemma4-26b",
+ "backend_model": "google/gemma-4-26b-a4b-qat",
+ "cloud": false,
+ "machine": "day-host",
+ "tasks": {
+  "merge_intervals": {
+   "error": "MINION_DOWN",
+   "detail": "MINION_DOWN: lmstudio backend not reachable at http://127.0.0.1:1234/v1/chat/completions (ConnectError)",
+   "latency": 0.04
+  },
+  "parse_duration": {
+   "error": "MINION_DOWN",
+   "detail": "MINION_DOWN: lmstudio backend not reachable at http://127.0.0.1:1234/v1/chat/completions (ConnectError)",
+   "latency": 0.0
+  },
+  "slugify": {
+   "error": "MINION_DOWN",
+   "detail": "MINION_DOWN: lmstudio backend not reachable at http://127.0.0.1:1234/v1/chat/completions (ConnectError)",
+   "latency": 0.0
+  }
+ },
+ "unavailable": "MINION_DOWN: lmstudio backend not reachable at http://127.0.0.1:1234/v1/chat/completions (ConnectError)"
+}
