@@ -91,6 +91,8 @@ def complete_ex(cfg: Config, messages: list, schema: dict | None = None, name: s
             payload["format"] = schema
         if max_tokens:
             payload["options"]["num_predict"] = max_tokens
+        if cfg.manage:      # same context as the managed load, or Ollama reloads the model at its default size
+            payload["options"]["num_ctx"] = cfg.context
         body = _post(cfg, f"{cfg.base_url.removesuffix('/v1')}/api/chat", payload)
         try:
             finish = "length" if body.get("done_reason") == "length" else "stop"
