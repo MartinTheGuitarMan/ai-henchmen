@@ -1,0 +1,7 @@
+{"variant": "think_on_32k", "task": "merge_intervals", "secs": 2645, "done": "length", "tokens": 32000, "content_len": 0, "think_len": 65131, "failure": "truncated", "code": null}
+{"variant": "think_on_32k", "task": "parse_duration", "secs": 2754, "done": "length", "tokens": 32000, "content_len": 0, "think_len": 99604, "failure": "truncated", "code": null}
+{"variant": "think_on_32k", "task": "slugify", "secs": 2686, "done": "length", "tokens": 32000, "content_len": 0, "think_len": 108027, "failure": "truncated", "code": null}
+{"variant": "think_on_32k", "task": "business_days", "secs": 2749, "done": "length", "tokens": 32000, "content_len": 0, "think_len": 84379, "failure": "truncated", "code": null}
+{"variant": "think_on_32k", "task": "parse_csv_line", "secs": 2753, "done": "length", "tokens": 32000, "content_len": 0, "think_len": 92808, "failure": "truncated", "code": null}
+{"variant": "think_on_32k", "task": "wrap_text", "secs": 2761, "done": "length", "tokens": 32000, "content_len": 0, "think_len": 76212, "failure": "truncated", "code": null}
+{"variant": "think_on_32k", "task": "compare_versions", "secs": 2721, "done": "length", "tokens": 32000, "content_len": 0, "think_len": 74623, "failure": "truncated", "code": null}

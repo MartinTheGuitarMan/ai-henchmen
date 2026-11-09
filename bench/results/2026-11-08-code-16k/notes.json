@@ -1,0 +1,11 @@
+{
+ "notes": [
+  "air-qwen-judge: same model as air-qwen, not run twice",
+  "typesafe-jev: decision model, does not write code",
+  "air-jev-style: decision model, does not write code",
+  "air-jev-style-2b: decision model, does not write code"
+ ],
+ "models": [
+  "mini-gemma4-12b"
+ ]
+}

@@ -1,0 +1,233 @@
+{
+ "model": "air-gemma4-12b-mlx",
+ "backend_model": "gemma4:12b-mlx",
+ "cloud": false,
+ "machine": "day-host",
+ "tasks": {
+  "merge_intervals": {
+   "raw": "",
+   "finish": "length",
+   "latency": 572.87,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "parse_duration": {
+   "raw": "",
+   "finish": "length",
+   "latency": 741.84,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "slugify": {
+   "raw": "",
+   "finish": "length",
+   "latency": 694.57,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "business_days": {
+   "raw": "",
+   "finish": "length",
+   "latency": 774.72,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "parse_csv_line": {
+   "raw": "",
+   "finish": "length",
+   "latency": 728.86,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "wrap_text": {
+   "raw": "",
+   "finish": "length",
+   "latency": 660.17,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "compare_versions": {
+   "raw": "",
+   "finish": "length",
+   "latency": 658.53,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "toposort": {
+   "raw": "",
+   "finish": "length",
+   "latency": 688.84,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "lru_cache": {
+   "raw": "```python\nfrom collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n            return self.cache[key]\n        return None\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.capacity:\n            self.cache.popitem(False)\n\n    def __len__(self):\n        return len(self.cache)\n\n    def keys(self):\n        return list(self.cache.keys())\n```",
+   "finish": "stop",
+   "latency": 249.63,
+   "code": "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        if capacity < 1:\n            raise ValueError(\"Capacity must be at least 1\")\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n            return self.cache[key]\n        return None\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.capacity:\n            self.cache.popitem(False)\n\n    def __len__(self):\n        return len(self.cache)\n\n    def keys(self):\n        return list(self.cache.keys())\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "flatten_dict": {
+   "raw": "",
+   "finish": "length",
+   "latency": 644.58,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "fix_median": {
+   "raw": "```python\ndef median(values):\n    if not values:\n        raise ValueError(\"List is empty\")\n    s = sorted(values)\n    n = len(s)\n    if n % 2 == 1:\n        return s[n // 2]\n    else:\n        return (s[n // 2 - 1] + s[n // 2]) / 2\n```",
+   "finish": "stop",
+   "latency": 179.46,
+   "code": "def median(values):\n    if not values:\n        raise ValueError(\"List is empty\")\n    s = sorted(values)\n    n = len(s)\n    if n % 2 == 1:\n        return s[n // 2]\n    else:\n        return (s[n // 2 - 1] + s[n // 2]) / 2\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_chunked": {
+   "raw": "```python\ndef chunked(items, size):\n    if size < 1:\n        raise ValueError(\"Size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n```",
+   "finish": "stop",
+   "latency": 331.42,
+   "code": "def chunked(items, size):\n    if size < 1:\n        raise ValueError(\"Size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_unique_bucket": {
+   "raw": "```python\ndef append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n```",
+   "finish": "stop",
+   "latency": 95.35,
+   "code": "def append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_top_words": {
+   "raw": "",
+   "finish": "length",
+   "latency": 723.69,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "re_hex_color": {
+   "raw": "```python\nimport re\n\nPATTERN = re.compile(r'#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})')\n```",
+   "finish": "stop",
+   "latency": 151.58,
+   "code": "import re\n\nPATTERN = re.compile(r'#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "re_dates_in_text": {
+   "raw": "",
+   "finish": "length",
+   "latency": 595.27,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "re_ipv4": {
+   "raw": "",
+   "finish": "length",
+   "latency": 778.29,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_ttl_cache": {
+   "raw": "",
+   "finish": "length",
+   "latency": 705.56,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_scheduler": {
+   "raw": "",
+   "finish": "length",
+   "latency": 595.82,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_expression": {
+   "raw": "",
+   "finish": "length",
+   "latency": 709.28,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_ini_parser": {
+   "raw": "",
+   "finish": "length",
+   "latency": 714.6,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_shortest_path": {
+   "raw": "",
+   "finish": "length",
+   "latency": 680.31,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_schedule_algos": {
+   "raw": "",
+   "finish": "length",
+   "latency": 650.68,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_inventory_fix": {
+   "raw": "",
+   "finish": "length",
+   "latency": 641.37,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "cx_template": {
+   "raw": "",
+   "finish": "length",
+   "latency": 714.2,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  }
+ }
+}

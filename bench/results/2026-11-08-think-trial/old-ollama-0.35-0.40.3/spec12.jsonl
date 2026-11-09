@@ -1,0 +1,8 @@
+{"v": "warm", "task": "slugify", "tok": 255, "tps": 28.1, "sha": "bad804ac"}
+{"v": "warm", "task": "toposort", "tok": 459, "tps": 35.7, "sha": "b1f3df33"}
+{"v": "warm", "task": "cx_ttl_cache", "tok": 1500, "tps": 27.3, "sha": "4ee6186f"}
+{"v": "default", "task": "slugify", "tok": 255, "tps": 19.0, "sha": "bad804ac"}
+{"v": "default", "task": "toposort", "tok": 459, "tps": 22.2, "sha": "b1f3df33"}
+{"v": "default", "task": "cx_ttl_cache", "tok": 1054, "tps": 15.1, "sha": "012c613c"}
+{"v": "draft0", "task": "slugify", "tok": 266, "tps": 18.0, "sha": "0ef8c9aa"}
+{"v": "draft0", "task": "toposort", "tok": 459, "tps": 21.5, "sha": "9bd97302"}

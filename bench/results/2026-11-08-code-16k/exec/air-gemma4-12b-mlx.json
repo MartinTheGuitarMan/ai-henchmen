@@ -1,0 +1,50 @@
+{
+ "model": "air-gemma4-12b-mlx",
+ "tasks": {
+  "lru_cache": {
+   "kind": "ok",
+   "passed": 8,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 2.44,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_median": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 0.92,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_chunked": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 1.28,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_unique_bucket": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 1.15,
+   "collection_error": false,
+   "tail": ""
+  },
+  "re_hex_color": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 1.23,
+   "collection_error": false,
+   "tail": ""
+  }
+ }
+}

@@ -1,0 +1,143 @@
+{
+ "model": "mini-gemma4-12b",
+ "backend_model": "gemma4:12b-mlx",
+ "cloud": false,
+ "machine": "night-host",
+ "tasks": {
+  "merge_intervals": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1112.48,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "parse_duration": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1198.19,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "slugify": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1220.37,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "business_days": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1210.64,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "parse_csv_line": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1237.78,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "wrap_text": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1150.04,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "compare_versions": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1180.58,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "toposort": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1181.08,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "lru_cache": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1248.77,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "flatten_dict": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1195.13,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "fix_median": {
+   "raw": "```python\ndef median(values):\n    if not values:\n        raise ValueError(\"List is empty\")\n    s = sorted(values)\n    n = len(s)\n    mid = n // 2\n    if n % 2 == 0:\n        return (s[mid - 1] + s[mid]) / 2\n    else:\n        return s[mid]\n```",
+   "finish": "stop",
+   "latency": 292.0,
+   "code": "def median(values):\n    if not values:\n        raise ValueError(\"List is empty\")\n    s = sorted(values)\n    n = len(s)\n    mid = n // 2\n    if n % 2 == 0:\n        return (s[mid - 1] + s[mid]) / 2\n    else:\n        return s[mid]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_chunked": {
+   "raw": "```python\ndef chunked(items, size):\n    if size < 1:\n        raise ValueError(\"Size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n```",
+   "finish": "stop",
+   "latency": 378.9,
+   "code": "def chunked(items, size):\n    if size < 1:\n        raise ValueError(\"Size must be at least 1\")\n    return [list(items[i:i + size]) for i in range(0, len(items), size)]\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_unique_bucket": {
+   "raw": "```python\ndef append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n```",
+   "finish": "stop",
+   "latency": 203.25,
+   "code": "def append_unique(item, bucket=None):\n    if bucket is None:\n        bucket = []\n    if item not in bucket:\n        bucket.append(item)\n    return bucket\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "fix_top_words": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1156.3,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "re_hex_color": {
+   "raw": "",
+   "finish": "length",
+   "latency": 1241.35,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  }
+ }
+}

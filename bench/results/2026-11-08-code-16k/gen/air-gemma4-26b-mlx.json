@@ -1,0 +1,62 @@
+{
+ "model": "air-gemma4-26b-mlx",
+ "backend_model": "gemma4:26b-mlx",
+ "cloud": false,
+ "machine": "day-host",
+ "tasks": {
+  "merge_intervals": {
+   "raw": "",
+   "finish": "length",
+   "latency": 561.42,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "parse_duration": {
+   "raw": "",
+   "finish": "length",
+   "latency": 606.64,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "slugify": {
+   "raw": "```python\nimport unicodedata\nimport re\n\ndef slugify(text):\n    \"\"\"\n    Turns a title into a URL slug.\n    - Accented letters are reduced to their plain ASCII letter.\n    - Everything is lower case.\n    - Every run of characters that are not ASCII letters or digits becomes a single '-'.\n    - Leading and trailing '-' are removed.\n    - If nothing is left, the result is an empty string.\n    \"\"\"\n    # Normalize to NFD to decompose accented characters (e.g., '\u00e9' -> 'e' + accent)\n    text = unicodedata.normalize('NFD', text)\n    \n    # Filter out the combining marks (accents) to keep only the base characters\n    text = \"\".join(c for c in text if not unicodedata.combining(c))\n    \n    # Convert to lowercase\n    text = text.lower()\n    \n    # Replace any run of characters that are not ASCII letters or digits with a single '-'\n    # Since we've lowercased, we only need to check for a-z and 0-9\n    text = re.sub(r'[^a-z0-9]+', '-', text)\n    \n    # Remove leading and trailing '-'\n    return text.strip('-')\n```",
+   "finish": "stop",
+   "latency": 204.6,
+   "code": "import unicodedata\nimport re\n\ndef slugify(text):\n    \"\"\"\n    Turns a title into a URL slug.\n    - Accented letters are reduced to their plain ASCII letter.\n    - Everything is lower case.\n    - Every run of characters that are not ASCII letters or digits becomes a single '-'.\n    - Leading and trailing '-' are removed.\n    - If nothing is left, the result is an empty string.\n    \"\"\"\n    # Normalize to NFD to decompose accented characters (e.g., '\u00e9' -> 'e' + accent)\n    text = unicodedata.normalize('NFD', text)\n    \n    # Filter out the combining marks (accents) to keep only the base characters\n    text = \"\".join(c for c in text if not unicodedata.combining(c))\n    \n    # Convert to lowercase\n    text = text.lower()\n    \n    # Replace any run of characters that are not ASCII letters or digits with a single '-'\n    # Since we've lowercased, we only need to check for a-z and 0-9\n    text = re.sub(r'[^a-z0-9]+', '-', text)\n    \n    # Remove leading and trailing '-'\n    return text.strip('-')\n",
+   "failure": null,
+   "blocks": 1,
+   "detail": ""
+  },
+  "business_days": {
+   "raw": "",
+   "finish": "length",
+   "latency": 563.12,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "parse_csv_line": {
+   "raw": "",
+   "finish": "length",
+   "latency": 612.48,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  },
+  "wrap_text": {
+   "raw": "",
+   "finish": "length",
+   "latency": 552.29,
+   "code": null,
+   "failure": "truncated",
+   "blocks": 0,
+   "detail": "token budget ran out or fence never closed"
+  }
+ }
+}

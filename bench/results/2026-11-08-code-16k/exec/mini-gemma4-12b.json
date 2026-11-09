@@ -1,0 +1,32 @@
+{
+ "model": "mini-gemma4-12b",
+ "tasks": {
+  "fix_median": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 1.66,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_chunked": {
+   "kind": "ok",
+   "passed": 6,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 1.59,
+   "collection_error": false,
+   "tail": ""
+  },
+  "fix_unique_bucket": {
+   "kind": "ok",
+   "passed": 4,
+   "failed": 0,
+   "rc": 0,
+   "elapsed": 1.49,
+   "collection_error": false,
+   "tail": ""
+  }
+ }
+}

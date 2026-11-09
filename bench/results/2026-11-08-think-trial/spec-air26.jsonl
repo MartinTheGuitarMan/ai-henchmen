@@ -1,0 +1,3 @@
+{"v": "warm", "task": "slugify", "tok": 810, "tps": 18.6, "sha": "8dfed28b"}
+{"v": "warm", "task": "toposort", "tok": 566, "tps": 13.0, "sha": "2f33056b"}
+{"v": "warm", "task": "cx_ttl_cache", "tok": 627, "tps": 13.3, "sha": "ed16c45f"}

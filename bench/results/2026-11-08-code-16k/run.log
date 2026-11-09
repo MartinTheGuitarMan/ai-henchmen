@@ -1,0 +1,83 @@
+10:36:49 models: ['air-gemma4-26b', 'mini-gemma4-12b', 'air-gemma4-12b']; tasks: 25; groups: ['day-host', 'night-host']
+10:36:49 sandbox self-test: waiting (outside the night host's allowed windows (22:00-07:00))
+10:37:03 air-gemma4-26b: machine busy, pausing
+10:59:53 models: ['mini-gemma4-12b']; tasks: 25; groups: ['night-host']
+11:00:08 sandbox self-test: {'probes_blocked': True, 'probes_passed': '12/12', 'infinite_loop_killed': True, 'memory_hog_killed': True, 'good_snippet_passes': True, 'ok': True, 'mem_kind': 'killed', 'hang_kind': 'timeout'}
+11:02:05 models: ['air-gemma4-12b-mlx']; tasks: 25; groups: ['day-host']
+11:09:17 models: ['air-gemma4-12b-mlx', 'air-gemma4-26b-mlx']; tasks: 25; groups: ['day-host']
+11:14:42 mini-gemma4-12b/merge_intervals: MINION_DOWN 587.45s
+11:14:42 mini-gemma4-12b: unloaded
+11:17:11 models: ['air-gemma4-12b-mlx', 'air-gemma4-26b-mlx']; tasks: 25; groups: ['day-host']
+11:17:11 models: ['mini-gemma4-12b']; tasks: 25; groups: ['night-host']
+11:26:44 air-gemma4-12b-mlx/merge_intervals: truncated 572.87s
+11:39:06 air-gemma4-12b-mlx/parse_duration: truncated 741.84s
+11:40:46 mini-gemma4-12b/merge_intervals: truncated 1112.48s
+11:51:57 models: ['air-gemma4-12b-mlx', 'air-gemma4-26b-mlx']; tasks: 25; groups: ['day-host']
+12:00:45 mini-gemma4-12b/parse_duration: truncated 1198.19s
+12:00:45 mini-gemma4-12b: unloaded
+12:03:32 air-gemma4-12b-mlx/slugify: truncated 694.57s
+12:16:27 air-gemma4-12b-mlx/business_days: truncated 774.72s
+12:26:07 mini-gemma4-12b/slugify: truncated 1220.37s
+12:26:07 mini-gemma4-12b: unloaded
+12:28:35 air-gemma4-12b-mlx/parse_csv_line: truncated 728.86s
+12:39:36 air-gemma4-12b-mlx/wrap_text: truncated 660.17s
+12:50:34 air-gemma4-12b-mlx/compare_versions: truncated 658.53s
+12:51:20 mini-gemma4-12b/business_days: truncated 1210.64s
+12:51:20 mini-gemma4-12b: unloaded
+13:02:03 air-gemma4-12b-mlx/toposort: truncated 688.84s
+13:06:13 air-gemma4-12b-mlx/lru_cache: code 249.63s
+13:16:57 air-gemma4-12b-mlx/flatten_dict: truncated 644.58s
+13:16:59 mini-gemma4-12b/parse_csv_line: truncated 1237.78s
+13:17:00 mini-gemma4-12b: unloaded
+13:17:04 exec air-gemma4-12b-mlx/lru_cache: ok 8/8 2.44s
+13:19:57 air-gemma4-12b-mlx/fix_median: code 179.46s
+13:20:06 exec air-gemma4-12b-mlx/fix_median: ok 6/6 0.92s
+13:25:28 air-gemma4-12b-mlx/fix_chunked: code 331.42s
+13:27:04 air-gemma4-12b-mlx/fix_unique_bucket: code 95.35s
+13:39:07 air-gemma4-12b-mlx/fix_top_words: truncated 723.69s
+13:41:11 mini-gemma4-12b/wrap_text: truncated 1150.04s
+13:41:39 air-gemma4-12b-mlx/re_hex_color: code 151.58s
+13:51:34 air-gemma4-12b-mlx/re_dates_in_text: truncated 595.27s
+14:04:32 air-gemma4-12b-mlx/re_ipv4: truncated 778.29s
+14:10:52 mini-gemma4-12b/compare_versions: truncated 1180.58s
+14:10:52 mini-gemma4-12b: unloaded
+14:10:56 exec air-gemma4-12b-mlx/fix_chunked: ok 6/6 1.28s
+14:10:57 exec air-gemma4-12b-mlx/fix_unique_bucket: ok 4/4 1.15s
+14:10:59 exec air-gemma4-12b-mlx/re_hex_color: ok 4/4 1.23s
+14:16:18 air-gemma4-12b-mlx/cx_ttl_cache: truncated 705.56s
+14:16:18 air-gemma4-12b-mlx: machine busy, pausing
+14:31:14 air-gemma4-12b-mlx/cx_scheduler: truncated 595.82s
+14:35:35 mini-gemma4-12b/toposort: truncated 1181.08s
+14:43:03 air-gemma4-12b-mlx/cx_expression: truncated 709.28s
+14:54:58 air-gemma4-12b-mlx/cx_ini_parser: truncated 714.6s
+14:56:24 mini-gemma4-12b/lru_cache: truncated 1248.77s
+14:56:24 mini-gemma4-12b: unloaded
+15:06:18 air-gemma4-12b-mlx/cx_shortest_path: truncated 680.31s
+15:17:09 air-gemma4-12b-mlx/cx_schedule_algos: truncated 650.68s
+15:21:21 mini-gemma4-12b/flatten_dict: truncated 1195.13s
+15:26:13 mini-gemma4-12b/fix_median: code 292.0s
+15:26:14 mini-gemma4-12b: unloaded
+15:26:32 exec mini-gemma4-12b/fix_median: ok 6/6 1.66s
+15:27:50 air-gemma4-12b-mlx/cx_inventory_fix: truncated 641.37s
+15:37:34 mini-gemma4-12b/fix_chunked: code 378.9s
+15:39:44 air-gemma4-12b-mlx/cx_template: truncated 714.2s
+15:39:44 air-gemma4-12b-mlx: unloaded
+15:40:58 mini-gemma4-12b/fix_unique_bucket: code 203.25s
+15:49:06 air-gemma4-26b-mlx/merge_intervals: truncated 561.42s
+15:59:13 air-gemma4-26b-mlx/parse_duration: truncated 606.64s
+16:02:37 air-gemma4-26b-mlx/slugify: code 204.6s
+16:10:16 mini-gemma4-12b/fix_top_words: truncated 1156.3s
+16:10:16 mini-gemma4-12b: unloaded
+16:10:19 exec mini-gemma4-12b/fix_chunked: ok 6/6 1.59s
+16:10:21 exec mini-gemma4-12b/fix_unique_bucket: ok 4/4 1.49s
+16:10:23 exec air-gemma4-26b-mlx/slugify: ok 7/7 0.56s
+16:12:00 air-gemma4-26b-mlx/business_days: truncated 563.12s
+16:12:00 air-gemma4-26b-mlx: machine busy, pausing
+16:17:00 air-gemma4-26b-mlx: machine busy, pausing
+16:32:13 air-gemma4-26b-mlx/parse_csv_line: truncated 612.48s
+16:32:13 air-gemma4-26b-mlx: machine busy, pausing
+16:35:59 mini-gemma4-12b/re_hex_color: truncated 1241.35s
+16:36:00 mini-gemma4-12b: unloaded
+16:46:25 air-gemma4-26b-mlx/wrap_text: truncated 552.29s
+16:46:25 air-gemma4-26b-mlx: machine busy, pausing
+16:51:25 air-gemma4-26b-mlx: machine busy, pausing
