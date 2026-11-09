@@ -100,6 +100,7 @@ class Config:
     timeout: float = 120.0
     max_file_bytes: int = 1_000_000
     ollama_native: bool = False  # use /api/chat `format` instead of response_format json_schema
+    think: bool | None = None    # native Ollama only: false switches the model's thinking off (None = the model's default)
     kind: str = "fast"           # fast = constrained decoding; reasoning = free thinking, we validate
     name: str = "default"
     max_tokens: int | None = None
@@ -242,7 +243,7 @@ class Roster:
             models[name] = Config(
                 backend=backend, base_url=base_url.rstrip("/"),
                 model=m["model"], timeout=float(m.get("timeout", DEFAULT_TIMEOUT[kind])),
-                max_file_bytes=max_file_bytes, ollama_native=bool(m.get("ollama_native", False)),
+                max_file_bytes=max_file_bytes, ollama_native=bool(m.get("ollama_native", False)), think=m.get("think"),
                 kind=kind, name=name, max_tokens=m.get("max_tokens"),
                 cloud=cloud, key_env=key_env, caps=tuple(caps) if caps is not None else None, rpm=rpm,
                 constrain=constrain, knowledge=bool(m.get("knowledge", False)),

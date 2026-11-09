@@ -30,3 +30,11 @@ def test_unmanaged_leaves_context_alone(monkeypatch):
     seen = _capture(monkeypatch)
     backends.complete_ex(_cfg(), [{"role": "user", "content": "hi"}])
     assert "num_ctx" not in seen[0][1]["options"]
+
+
+def test_think_false_is_sent_only_when_set(monkeypatch):
+    seen = _capture(monkeypatch)
+    backends.complete_ex(_cfg(think=False), [{"role": "user", "content": "hi"}])
+    backends.complete_ex(_cfg(), [{"role": "user", "content": "hi"}])
+    assert seen[0][1]["think"] is False
+    assert "think" not in seen[1][1]
